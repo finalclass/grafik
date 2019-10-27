@@ -1,0 +1,3 @@
+postgres/data
+backend/.elixir_ls/
+backend/rel/
