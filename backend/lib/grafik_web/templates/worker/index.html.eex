@@ -1,0 +1,26 @@
+<h1>Listing Workers</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for worker <- @workers do %>
+    <tr>
+      <td><%= worker.name %></td>
+
+      <td>
+        <span><%= link "Show", to: Routes.worker_path(@conn, :show, worker) %></span>
+        <span><%= link "Edit", to: Routes.worker_path(@conn, :edit, worker) %></span>
+        <span><%= link "Delete", to: Routes.worker_path(@conn, :delete, worker), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Worker", to: Routes.worker_path(@conn, :new) %></span>

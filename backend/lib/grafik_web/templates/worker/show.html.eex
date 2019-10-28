@@ -1,0 +1,13 @@
+<h1>Show Worker</h1>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @worker.name %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.worker_path(@conn, :edit, @worker) %></span>
+<span><%= link "Back", to: Routes.worker_path(@conn, :index) %></span>
