@@ -1,10 +1,11 @@
-<h1>Listing Projects</h1>
+<h1>Projekty</h1>
 
 <table>
   <thead>
     <tr>
-      <th>Name</th>
+      <th>Nazwa</th>
       <th>Deadline</th>
+      <th>Klient</th>
 
       <th></th>
     </tr>
@@ -12,17 +13,19 @@
   <tbody>
 <%= for project <- @projects do %>
     <tr>
-      <td><%= project.name %></td>
-      <td><%= project.deadline %></td>
-
       <td>
-        <span><%= link "Show", to: Routes.project_path(@conn, :show, project) %></span>
-        <span><%= link "Edit", to: Routes.project_path(@conn, :edit, project) %></span>
-        <span><%= link "Delete", to: Routes.project_path(@conn, :delete, project), method: :delete, data: [confirm: "Are you sure?"] %></span>
+        <%= link project.name, to: Routes.project_path(@conn, :show, project) %>
+      </td>
+      <td><%= project.deadline %></td>
+      <td><%= project.client.name %></td>
+      
+      <td>
+        <span><%= link "Edytuj", to: Routes.project_path(@conn, :edit, project) %></span>
+        <span><%= link "Usuń", to: Routes.project_path(@conn, :delete, project), method: :delete, data: [confirm: "Are you sure?"] %></span>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
 
-<span><%= link "New Project", to: Routes.project_path(@conn, :new) %></span>
+<span><%= link "Nowy projekt", to: Routes.project_path(@conn, :new) %></span>

@@ -1,18 +1,17 @@
-<h1>Show Project</h1>
+<h1>Projekt: <%= @project.name %></h1>
 
 <ul>
-
-  <li>
-    <strong>Name:</strong>
-    <%= @project.name %>
-  </li>
 
   <li>
     <strong>Deadline:</strong>
     <%= @project.deadline %>
   </li>
 
+  <li>
+    <strong>Klient:</strong>
+    <%= link @project.client.name, to: Routes.client_path(@conn, :show, @project.client) %>
+  </li>
 </ul>
 
-<span><%= link "Edit", to: Routes.project_path(@conn, :edit, @project) %></span>
-<span><%= link "Back", to: Routes.project_path(@conn, :index) %></span>
+<span><%= link "Edytuj", to: Routes.project_path(@conn, :edit, @project) %></span>
+<span><%= link "Lista", to: Routes.project_path(@conn, :index) %></span>

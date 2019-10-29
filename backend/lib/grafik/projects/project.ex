@@ -14,7 +14,7 @@ defmodule Grafik.Projects.Project do
   @doc false
   def changeset(project, attrs) do
     project
-    |> cast(attrs, [:name, :deadline])
-    |> validate_required([:name, :deadline])
+    |> cast(attrs, [:name, :deadline, :client_id])
+    |> validate_required([:name, :deadline, :client_id])
   end
 end

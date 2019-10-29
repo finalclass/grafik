@@ -18,7 +18,9 @@ defmodule Grafik.Projects do
 
   """
   def list_projects do
-    Repo.all(Project)
+    Project
+    |> Repo.all()
+    |> Repo.preload(:client)
   end
 
   @doc """
@@ -35,7 +37,11 @@ defmodule Grafik.Projects do
       ** (Ecto.NoResultsError)
 
   """
-  def get_project!(id), do: Repo.get!(Project, id)
+  def get_project!(id) do
+    Project
+    |> Repo.get!(id)
+    |> Repo.preload(:client)
+  end
 
   @doc """
   Creates a project.
