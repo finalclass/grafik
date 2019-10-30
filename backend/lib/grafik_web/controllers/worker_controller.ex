@@ -18,7 +18,7 @@ defmodule GrafikWeb.WorkerController do
     case Workers.create_worker(worker_params) do
       {:ok, worker} ->
         conn
-        |> put_flash(:info, "Worker created successfully.")
+        |> put_flash(:info, "Utworzono pracownika.")
         |> redirect(to: Routes.worker_path(conn, :show, worker))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -43,7 +43,7 @@ defmodule GrafikWeb.WorkerController do
     case Workers.update_worker(worker, worker_params) do
       {:ok, worker} ->
         conn
-        |> put_flash(:info, "Worker updated successfully.")
+        |> put_flash(:info, "Zmodyfikowano pracownika.")
         |> redirect(to: Routes.worker_path(conn, :show, worker))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -56,7 +56,7 @@ defmodule GrafikWeb.WorkerController do
     {:ok, _worker} = Workers.delete_worker(worker)
 
     conn
-    |> put_flash(:info, "Worker deleted successfully.")
+    |> put_flash(:info, "Pracownik został usunięty.")
     |> redirect(to: Routes.worker_path(conn, :index))
   end
 end

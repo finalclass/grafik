@@ -11,21 +11,37 @@ defmodule GrafikWeb.TaskController do
 
   def new(conn, _params) do
     changeset = Projects.change_task(%Task{})
-    render(conn, "new.html", changeset: changeset)
+    conn
+    |> init_workers()
+    |> init_projects()
+    |> render("new.html", changeset: changeset)
   end
 
   def create(conn, %{"task" => task_params}) do
     case Projects.create_task(task_params) do
       {:ok, task} ->
         conn
-        |> put_flash(:info, "Task created successfully.")
+        |> put_flash(:info, "Utworzony nowe zadanie.")
         |> redirect(to: Routes.task_path(conn, :show, task))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
+        conn
+        |> init_workers()
+        |> init_projects()
+        |> render("new.html", changeset: changeset)
     end
   end
 
+  defp init_projects(conn) do
+    projects = Grafik.Projects.list_projects() |> Enum.map(&{&1.name, &1.id})
+    conn |> assign(:projects, projects)
+  end
+  
+  defp init_workers(conn) do
+    workers = Grafik.Workers.list_workers() |> Enum.map(&{&1.name, &1.id})
+    conn |> assign(:workers, workers)
+  end
+  
   def show(conn, %{"id" => id}) do
     task = Projects.get_task!(id)
     render(conn, "show.html", task: task)
@@ -34,7 +50,10 @@ defmodule GrafikWeb.TaskController do
   def edit(conn, %{"id" => id}) do
     task = Projects.get_task!(id)
     changeset = Projects.change_task(task)
-    render(conn, "edit.html", task: task, changeset: changeset)
+    conn
+    |> init_workers()
+    |> init_projects()
+    |> render("edit.html", task: task, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "task" => task_params}) do
@@ -43,11 +62,14 @@ defmodule GrafikWeb.TaskController do
     case Projects.update_task(task, task_params) do
       {:ok, task} ->
         conn
-        |> put_flash(:info, "Task updated successfully.")
+        |> put_flash(:info, "Zmodyfikowano zadanie.")
         |> redirect(to: Routes.task_path(conn, :show, task))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", task: task, changeset: changeset)
+        conn
+        |> init_workers()
+        |> init_projects()
+        |> render("edit.html", task: task, changeset: changeset)
     end
   end
 
@@ -56,7 +78,7 @@ defmodule GrafikWeb.TaskController do
     {:ok, _task} = Projects.delete_task(task)
 
     conn
-    |> put_flash(:info, "Task deleted successfully.")
+    |> put_flash(:info, "Zadanie zostało usunięte.")
     |> redirect(to: Routes.task_path(conn, :index))
   end
 end

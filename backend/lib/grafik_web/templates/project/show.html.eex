@@ -13,5 +13,5 @@
   </li>
 </ul>
 
-<span><%= link "Edytuj", to: Routes.project_path(@conn, :edit, @project) %></span>
-<span><%= link "Lista", to: Routes.project_path(@conn, :index) %></span>
+<span><%= edit_button(@conn, @project) %></span>
+<span><%= list_button(@conn) %></span>

@@ -1,11 +1,6 @@
-<h1>Klient</h1>
+<h1>Klient: <%= @client.name %></h1>
 
 <ul>
-
-  <li>
-    <strong>Nazwa:</strong>
-    <%= @client.name %>
-  </li>
 
   <li>
     <strong>Wfirma id:</strong>
@@ -14,5 +9,5 @@
 
 </ul>
 
-<span><%= link "Edytuj", to: Routes.client_path(@conn, :edit, @client) %></span>
-<span><%= link "Wstecz", to: Routes.client_path(@conn, :index) %></span>
+<span><%= edit_button(@con, @client) %></span>
+<span><%= list_button(@conn) %></span>

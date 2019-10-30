@@ -15,7 +15,7 @@ defmodule Grafik.Projects.Task do
   @doc false
   def changeset(task, attrs) do
     task
-    |> cast(attrs, [:name, :status, :description])
-    |> validate_required([:name, :status, :description])
+    |> cast(attrs, [:name, :status, :description, :worker_id, :project_id])
+    |> validate_required([:name, :status, :worker_id, :project_id])
   end
 end

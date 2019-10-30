@@ -1,11 +1,12 @@
-<h1>Listing Tasks</h1>
+<h1>Zadania</h1>
 
 <table>
   <thead>
     <tr>
-      <th>Name</th>
+      <th>Nazwa</th>
       <th>Status</th>
-      <th>Description</th>
+      <th>Projekt</th>
+      <th>Pracownik</th>
 
       <th></th>
     </tr>
@@ -13,18 +14,18 @@
   <tbody>
 <%= for task <- @tasks do %>
     <tr>
-      <td><%= task.name %></td>
-      <td><%= task.status %></td>
-      <td><%= task.description %></td>
+      <td><%= show_button(@conn, task) %></td>
+      <td><%= task_status_to_human(task.status) %></td>
+      <td><%= task.project.name %></td>
+      <td><%= task.worker.name %></td>
 
       <td>
-        <span><%= link "Show", to: Routes.task_path(@conn, :show, task) %></span>
-        <span><%= link "Edit", to: Routes.task_path(@conn, :edit, task) %></span>
-        <span><%= link "Delete", to: Routes.task_path(@conn, :delete, task), method: :delete, data: [confirm: "Are you sure?"] %></span>
+        <span><%= edit_button(@conn, task) %></span>
+        <span><%= delete_button(@conn, task) %></span>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
 
-<span><%= link "New Task", to: Routes.task_path(@conn, :new) %></span>
+<span><%= new_button(@conn) %></span>

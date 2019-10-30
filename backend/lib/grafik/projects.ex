@@ -7,6 +7,17 @@ defmodule Grafik.Projects do
   alias Grafik.Repo
 
   alias Grafik.Projects.Project
+  alias Grafik.Projects.Task
+
+  def get_statuses() do
+    %{
+      "todo" => "Do wykonania",
+      "in_propress" => "W trakcie realizacji",
+      "made" => "Do odbioru",
+      "received" => "Odebrane",
+      "sent" => "Wysłane"
+    }
+  end
 
   @doc """
   Returns the list of projects.
@@ -21,6 +32,7 @@ defmodule Grafik.Projects do
     Project
     |> Repo.all()
     |> Repo.preload(:client)
+    |> Repo.preload(:tasks)
   end
 
   @doc """
@@ -108,8 +120,6 @@ defmodule Grafik.Projects do
     Project.changeset(project, %{})
   end
 
-  alias Grafik.Projects.Task
-
   @doc """
   Returns the list of tasks.
 
@@ -120,7 +130,10 @@ defmodule Grafik.Projects do
 
   """
   def list_tasks do
-    Repo.all(Task)
+    Task
+    |> Repo.all()
+    |> Repo.preload(:project)
+    |> Repo.preload(:worker)
   end
 
   @doc """
@@ -137,7 +150,12 @@ defmodule Grafik.Projects do
       ** (Ecto.NoResultsError)
 
   """
-  def get_task!(id), do: Repo.get!(Task, id)
+  def get_task!(id) do
+    Task
+    |> Repo.get!(id)
+    |> Repo.preload(:project)
+    |> Repo.preload(:worker)
+  end
 
   @doc """
   Creates a task.

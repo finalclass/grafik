@@ -18,7 +18,7 @@ defmodule GrafikWeb.ClientController do
     case Clients.create_client(client_params) do
       {:ok, client} ->
         conn
-        |> put_flash(:info, "Client created successfully.")
+        |> put_flash(:info, "Utworzono klienta.")
         |> redirect(to: Routes.client_path(conn, :show, client))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -43,7 +43,7 @@ defmodule GrafikWeb.ClientController do
     case Clients.update_client(client, client_params) do
       {:ok, client} ->
         conn
-        |> put_flash(:info, "Client updated successfully.")
+        |> put_flash(:info, "Zmodyfikowano klienta.")
         |> redirect(to: Routes.client_path(conn, :show, client))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -56,7 +56,7 @@ defmodule GrafikWeb.ClientController do
     {:ok, _client} = Clients.delete_client(client)
 
     conn
-    |> put_flash(:info, "Client deleted successfully.")
+    |> put_flash(:info, "Klient został usunięty.")
     |> redirect(to: Routes.client_path(conn, :index))
   end
 end

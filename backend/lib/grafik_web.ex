@@ -42,6 +42,16 @@ defmodule GrafikWeb do
       import GrafikWeb.ErrorHelpers
       import GrafikWeb.Gettext
       alias GrafikWeb.Router.Helpers, as: Routes
+
+      def form_general_error(changeset) do
+        if (changeset.action) do
+          ~e"""
+          <div class="alert alert-danger">
+            <p>Coś poszło nie tak, popraw błędy formularza</p>
+          </div>
+          """
+        end
+      end
     end
   end
 

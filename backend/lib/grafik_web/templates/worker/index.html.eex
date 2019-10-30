@@ -11,17 +11,16 @@
   <tbody>
 <%= for worker <- @workers do %>
     <tr>
-      <td>
-        <%= link worker.name, to: Routes.worker_path(@conn, :show, worker) %>
+      <td><%= show_button(@conn, worker) %>
       </td>
       
       <td>
-        <span><%= link "Edytuj", to: Routes.worker_path(@conn, :edit, worker) %></span>
-        <span><%= link "Usuń", to: Routes.worker_path(@conn, :delete, worker), method: :delete, data: [confirm: "Are you sure?"] %></span>
+        <span><%= edit_button(@conn, worker) %></span>
+        <span><%= delete_button(@conn, worker) %></span>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
 
-<span><%= link "Nowy pracownik", to: Routes.worker_path(@conn, :new) %></span>
+<span><%= new_button(@conn) %></span>

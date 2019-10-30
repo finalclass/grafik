@@ -13,19 +13,17 @@
   <tbody>
 <%= for project <- @projects do %>
     <tr>
-      <td>
-        <%= link project.name, to: Routes.project_path(@conn, :show, project) %>
-      </td>
+      <td><%= show_button(@conn, project) %></td>
       <td><%= project.deadline %></td>
       <td><%= project.client.name %></td>
       
       <td>
-        <span><%= link "Edytuj", to: Routes.project_path(@conn, :edit, project) %></span>
-        <span><%= link "Usuń", to: Routes.project_path(@conn, :delete, project), method: :delete, data: [confirm: "Are you sure?"] %></span>
+        <span><%= edit_button(@conn, project) %></span>
+        <span><%= delete_button(@conn, project) %></span>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
 
-<span><%= link "Nowy projekt", to: Routes.project_path(@conn, :new) %></span>
+<span><%= new_button(@conn) %></span>

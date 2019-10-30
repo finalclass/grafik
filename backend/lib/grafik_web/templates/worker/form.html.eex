@@ -1,9 +1,5 @@
 <%= form_for @changeset, @action, fn f -> %>
-  <%= if @changeset.action do %>
-    <div class="alert alert-danger">
-      <p>Coś poszło nie tak, popraw błędy formularza</p>
-    </div>
-  <% end %>
+  <%= form_general_error(@changeset) %>
 
   <label for="">
     Nazwa:
