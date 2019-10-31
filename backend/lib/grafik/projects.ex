@@ -55,6 +55,10 @@ defmodule Grafik.Projects do
     |> Repo.preload(:client)
   end
 
+  def get_project_with_tasks!(id) do
+    get_project!(id) |> Repo.preload(:tasks)
+  end
+
   @doc """
   Creates a project.
 

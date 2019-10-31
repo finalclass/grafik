@@ -1,4 +1,4 @@
-defmodule GrafikWeb.PageController do
+defmodule GrafikWeb.DashboardController do
   use GrafikWeb, :controller
 
   def index(conn, _params) do

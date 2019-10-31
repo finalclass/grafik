@@ -16,11 +16,13 @@ defmodule GrafikWeb.Router do
   scope "/", GrafikWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    get "/", DashboardController, :index
     resources "/clients", ClientController
     resources "/projects", ProjectController
     resources "/workers", WorkerController
     resources "/tasks", TaskController
+
+    get "/projects/:id/tasks/new", TaskController, :add_to_project
   end
 
   # Other scopes may use custom stacks.

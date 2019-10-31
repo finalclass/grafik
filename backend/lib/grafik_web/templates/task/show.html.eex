@@ -9,12 +9,12 @@
 
   <li>
     <strong>Projekt:</strong>
-    <%= @task.project.name %>
+    <%= GrafikWeb.ProjectView.show_button(@conn, @task.project) %>
   </li>
   
   <li>
     <strong>Pracownik:</strong>
-    <%= @task.worker.name %>
+    <%= GrafikWeb.WorkerView.show_button(@conn, @task.worker) %>
   </li>
   
   <li>

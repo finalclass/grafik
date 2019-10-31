@@ -16,8 +16,8 @@
     <tr>
       <td><%= show_button(@conn, task) %></td>
       <td><%= task_status_to_human(task.status) %></td>
-      <td><%= task.project.name %></td>
-      <td><%= task.worker.name %></td>
+      <td><%= GrafikWeb.ProjectView.show_button(@conn, task.project) %></td>
+      <td><%= GrafikWeb.WorkerView.show_button(@conn, task.worker) %></td>
 
       <td>
         <span><%= edit_button(@conn, task) %></span>

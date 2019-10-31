@@ -13,5 +13,16 @@
   </li>
 </ul>
 
+<h2>Zadania</h2>
+
+<ul>
+  <%= for task <- @project.tasks do %>
+    <li>
+      <%= GrafikWeb.TaskView.show_button(@conn, task) %>
+    </li>
+  <% end %>
+</ul>
+
 <span><%= edit_button(@conn, @project) %></span>
 <span><%= list_button(@conn) %></span>
+<span><%= add_task(@conn, @project) %></span>

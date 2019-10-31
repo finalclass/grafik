@@ -23,4 +23,8 @@ defmodule GrafikWeb.ProjectView do
       method: :delete,
       data: [confirm: "Na pewno usunąć \"" <> project.name <> "\"?"]
   end
+
+  def add_task(conn, project) do
+    link "Dodaj zadanie", to: Routes.task_path(conn, :add_to_project, project)
+  end
 end

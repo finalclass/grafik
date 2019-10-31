@@ -38,7 +38,7 @@ defmodule GrafikWeb.ProjectController do
   end
 
   def show(conn, %{"id" => id}) do
-    project = Projects.get_project!(id)
+    project = Projects.get_project_with_tasks!(id)
     IO.inspect(project)
     render(conn, "show.html", project: project)
   end

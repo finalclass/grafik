@@ -27,7 +27,7 @@ defmodule GrafikWeb.WorkerController do
   end
 
   def show(conn, %{"id" => id}) do
-    worker = Workers.get_worker!(id)
+    worker = Workers.get_worker_with_tasks!(id)
     render(conn, "show.html", worker: worker)
   end
 

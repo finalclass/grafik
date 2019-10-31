@@ -10,11 +10,22 @@ defmodule GrafikWeb.TaskController do
   end
 
   def new(conn, _params) do
-    changeset = Projects.change_task(%Task{})
+    conn
+    |> assign(:changeset, Projects.change_task(%Task{}))
+    |> render_new_page()
+  end
+
+  def add_to_project(conn, %{"id" => id}) do
+    conn
+    |> assign(:changeset, Projects.change_task(%Task{project_id: id}))
+    |> render_new_page()
+  end
+
+  defp render_new_page(conn) do
     conn
     |> init_workers()
     |> init_projects()
-    |> render("new.html", changeset: changeset)
+    |> render("new.html")
   end
 
   def create(conn, %{"task" => task_params}) do
@@ -36,12 +47,12 @@ defmodule GrafikWeb.TaskController do
     projects = Grafik.Projects.list_projects() |> Enum.map(&{&1.name, &1.id})
     conn |> assign(:projects, projects)
   end
-  
+
   defp init_workers(conn) do
     workers = Grafik.Workers.list_workers() |> Enum.map(&{&1.name, &1.id})
     conn |> assign(:workers, workers)
   end
-  
+
   def show(conn, %{"id" => id}) do
     task = Projects.get_task!(id)
     render(conn, "show.html", task: task)
@@ -50,6 +61,7 @@ defmodule GrafikWeb.TaskController do
   def edit(conn, %{"id" => id}) do
     task = Projects.get_task!(id)
     changeset = Projects.change_task(task)
+
     conn
     |> init_workers()
     |> init_projects()
