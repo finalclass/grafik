@@ -1,7 +1,7 @@
 defmodule Grafik.Projects.Project do
   use Ecto.Schema
   import Ecto.Changeset
-
+  
   schema "projects" do
     field :deadline, :date
     field :name, :string

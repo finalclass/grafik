@@ -35,6 +35,11 @@ defmodule Grafik.Projects do
     |> Repo.preload(:tasks)
   end
 
+  def list_full_projects do
+    Repo.all from project in Project,
+      preload: [{:tasks, :worker}, :client]
+  end
+
   @doc """
   Gets a single project.
 

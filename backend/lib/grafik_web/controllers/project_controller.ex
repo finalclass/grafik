@@ -9,7 +9,7 @@ defmodule GrafikWeb.ProjectController do
     projects = Projects.list_projects()
     render(conn, "index.html", projects: projects)
   end
-
+  
   def new(conn, _params) do
     changeset = Projects.change_project(%Project{})
 
@@ -39,7 +39,6 @@ defmodule GrafikWeb.ProjectController do
 
   def show(conn, %{"id" => id}) do
     project = Projects.get_project_with_tasks!(id)
-    IO.inspect(project)
     render(conn, "show.html", project: project)
   end
 

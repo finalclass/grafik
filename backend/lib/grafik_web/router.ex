@@ -11,6 +11,7 @@ defmodule GrafikWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+
   end
 
   scope "/", GrafikWeb do
@@ -26,7 +27,9 @@ defmodule GrafikWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", GrafikWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", GrafikWeb.Api, as: :api do
+    pipe_through :api
+
+    resources "/projects/", ProjectController, only: [:index]
+  end
 end
