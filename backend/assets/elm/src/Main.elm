@@ -2,6 +2,7 @@ module Main exposing (..)
 
 import Browser
 import Debug exposing (log)
+import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -26,14 +27,24 @@ main =
 -- MODEL
 
 
+type alias ExpandedProjects =
+    Dict Int Bool
+
+
+type alias ModelValue =
+    { projects : List Project
+    , expandedProjects : ExpandedProjects
+    }
+
+
 type Model
-    = Failure
-    | Loading
-    | Projects (List Project)
+    = Loading
+    | Failure
+    | Success ModelValue
 
 
 init : () -> ( Model, Cmd Msg )
-init _ =
+init flags =
     ( Loading, getAllProjects )
 
 
@@ -42,19 +53,41 @@ init _ =
 
 
 type Msg
-    = GotProjects (Result Http.Error (List Project))
+    = ToggleProjectExpand Project
+    | GotProjects (Result Http.Error (List Project))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GotProjects result ->
-            case Debug.log "abc" result of
+            case Debug.log "projects" result of
                 Ok projects ->
-                    ( Projects projects, Cmd.none )
+                    ( Success { projects = projects, expandedProjects = Dict.empty }, Cmd.none )
 
                 Err _ ->
                     ( Failure, Cmd.none )
+
+        ToggleProjectExpand project ->
+            case model of
+                Failure ->
+                    ( Failure, Cmd.none )
+
+                Loading ->
+                    ( Loading, Cmd.none )
+
+                Success successModel ->
+                    let
+                        expandedProjects =
+                            successModel.expandedProjects
+
+                        isExpanded =
+                            isProjectExpanded project expandedProjects
+
+                        newExpandedProjects =
+                            Dict.insert project.id (not isExpanded) expandedProjects
+                    in
+                    ( Success { successModel | expandedProjects = newExpandedProjects }, Cmd.none )
 
 
 
@@ -75,8 +108,8 @@ view model =
     div []
         [ h2 [] [ text "Projects" ]
         , case model of
-            Projects projects ->
-                renderProjects projects
+            Success { projects, expandedProjects } ->
+                projectsView projects expandedProjects
 
             Failure ->
                 text "loading failed"
@@ -86,18 +119,48 @@ view model =
         ]
 
 
-renderProjects : List Project -> Html Msg
-renderProjects projects =
+projectsView : List Project -> ExpandedProjects -> Html Msg
+projectsView projects expandedProjects =
     ul []
-        (List.map renderProject projects)
+        (List.map (projectView expandedProjects) projects)
 
 
-renderProject : Project -> Html Msg
-renderProject project =
+projectView : ExpandedProjects -> Project -> Html Msg
+projectView expandedProjects project =
     li []
         [ span [] [ text project.name ]
-        , ul [] (List.map renderTask project.tasks)
+        , toggleExpandButtonView project expandedProjects
+        , case isProjectExpanded project expandedProjects of
+            True ->
+                ul [] (List.map renderTask project.tasks)
+
+            False ->
+                text ""
         ]
+
+
+toggleExpandButtonView : Project -> ExpandedProjects -> Html Msg
+toggleExpandButtonView project expandedProjects =
+    button [ onClick (ToggleProjectExpand project) ]
+        [ text
+            (case isProjectExpanded project expandedProjects of
+                True ->
+                    "collapse"
+
+                False ->
+                    "expand"
+            )
+        ]
+
+
+isProjectExpanded : Project -> ExpandedProjects -> Bool
+isProjectExpanded project expandedProjects =
+    case Dict.get project.id expandedProjects of
+        Just value ->
+            value
+
+        Nothing ->
+            False
 
 
 renderTask : Task -> Html Msg
