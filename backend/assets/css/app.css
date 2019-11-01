@@ -18,6 +18,31 @@ select.full {
 }
 
 
+.projects-list {
+    list-style-type: none;
+}
+
+.project-expander {
+    display: inline-block;
+    cursor: default;
+}
+
+.project-expander .icon {
+    margin-right: 5px;
+}
+
 .hidden {
     display: none;
+}
+
+i.icon {
+    font-style: normal;
+}
+
+.icon.caret-right::after {
+    content: '▸';
+}
+
+.icon.caret-down::after {
+    content: '▾';
 }
