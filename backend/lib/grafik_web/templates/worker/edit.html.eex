@@ -1,5 +1,0 @@
-<h1>Edytuj pracownika</h1>
-
-<%= render "form.html", Map.put(assigns, :action, Routes.worker_path(@conn, :update, @worker)) %>
-
-<span><%= list_button(@conn) %></span>
