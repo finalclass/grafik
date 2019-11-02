@@ -6,11 +6,13 @@ import Http
 
 type Msg
     = ToggleProjectExpand Project
-    | GotProjects (Result Http.Error (List Project))
+    | GotProjects ModelValue (Result Http.Error (List Project))
+    | CreatedTask ModelValue Project (Result Http.Error Task)
+    | CreateNewTask Project
 
 
 type alias ExpandedProjects =
-    Dict Int Bool
+    Dict String Bool
 
 
 type alias ModelValue =
@@ -35,7 +37,7 @@ type alias Task =
     { id : Int
     , name : String
     , status : String
-    , worker : Worker
+    , worker : Maybe Worker
     }
 
 

@@ -1,3 +1,4 @@
+/*global localStorage*/
 // We need to import the CSS so that webpack will load it.
 // The MiniCssExtractPlugin is used to separate it out into
 // its own CSS file.
@@ -20,5 +21,15 @@ import { Elm } from '../elm/src/Main.elm';
 
 const elmMain = document.getElementById('elm-main');
 if (elmMain) {
-    Elm.Main.init({ node: elmMain });
-}
+    const storageKey = 'grafik-dashboard';
+    
+    const app = Elm.Main.init({
+        node: elmMain,
+        flags: localStorage.getItem(storageKey) || "{}"
+    });
+    
+    app.ports.expandedProjectsCache.subscribe(function(val) {
+        localStorage.setItem(storageKey, JSON.stringify(val));
+    });
+ }
+

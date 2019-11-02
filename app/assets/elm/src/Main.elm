@@ -6,6 +6,7 @@ import Types
 import View
 
 
+main : Program String Types.Model Types.Msg
 main =
     Browser.element
         { init = State.init
@@ -16,5 +17,5 @@ main =
 
 
 subscriptions : Types.Model -> Sub Types.Msg
-subscriptions model =
+subscriptions _ =
     Sub.none

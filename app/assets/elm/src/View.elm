@@ -37,11 +37,6 @@ mergeProjects expandedProjects project all =
     projectView expandedProjects project ++ all
 
 
-flatten2d : List (List a) -> List a
-flatten2d list =
-    List.foldr (++) [] list
-
-
 projectView : ExpandedProjects -> Project -> List (Html Msg)
 projectView expandedProjects project =
     [ thead []
@@ -50,12 +45,11 @@ projectView expandedProjects project =
                 [ onClick (ToggleProjectExpand project)
                 , class
                     ("project-expander "
-                        ++ (case Utils.isProjectExpanded project expandedProjects of
-                                True ->
-                                    "icon caret-down"
+                        ++ (if Utils.isProjectExpanded project expandedProjects then
+                                "icon caret-down"
 
-                                False ->
-                                    "icon caret-right"
+                            else
+                                "icon caret-right"
                            )
                     )
                 ]
@@ -64,15 +58,14 @@ projectView expandedProjects project =
                 [ text project.name ]
             ]
         ]
-    , case Utils.isProjectExpanded project expandedProjects of
-        True ->
-            tbody []
-                (List.map taskView project.tasks
-                    ++ [ addTaskButtonView project ]
-                )
+    , if Utils.isProjectExpanded project expandedProjects then
+        tbody []
+            (List.map taskView project.tasks
+                ++ [ addTaskButtonView project ]
+            )
 
-        False ->
-            text ""
+      else
+        text ""
     ]
 
 
@@ -89,8 +82,11 @@ addTaskButtonView project =
     tr []
         [ td [] [ text "" ]
         , td []
-            [ button [ class "add-task-button" ]
-                [ text "➕ dodaj"
+            [ button
+                [ class "add-task-button"
+                , onClick (Types.CreateNewTask project)
+                ]
+                [ text "➕ nowe zadanie"
                 ]
             ]
         ]

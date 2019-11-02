@@ -6,7 +6,7 @@ import Types
 
 isProjectExpanded : Types.Project -> Types.ExpandedProjects -> Bool
 isProjectExpanded project expandedProjects =
-    case Dict.get project.id expandedProjects of
+    case Dict.get (String.fromInt project.id) expandedProjects of
         Just value ->
             value
 

@@ -31,5 +31,6 @@ defmodule GrafikWeb.Router do
     pipe_through :api
 
     resources "/projects/", ProjectController, only: [:index]
+    post "/projects/:project_id/tasks/", TaskController, :create_empty
   end
 end

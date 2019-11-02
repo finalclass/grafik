@@ -1,3 +1,4 @@
-postgres/data
-backend/.elixir_ls/
-backend/rel/
+/postgres/data
+/backend/.elixir_ls/
+/backend/rel/
+/.log

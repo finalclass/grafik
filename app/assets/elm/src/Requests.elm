@@ -1,45 +1,58 @@
-module Requests exposing (getAllProjects)
+module Requests exposing (createNewTask, getAllProjects)
 
 import Http
-import Json.Decode exposing (..)
+import Json.Decode as D
 import Types
 
 
-getAllProjects : Cmd Types.Msg
-getAllProjects =
+getAllProjects : Types.ModelValue -> Cmd Types.Msg
+getAllProjects model =
     Http.get
         { url = "/api/projects"
-        , expect = Http.expectJson Types.GotProjects projectsDecoder
+        , expect = Http.expectJson (Types.GotProjects model) projectsDecoder
         }
 
 
-projectsDecoder : Decoder (List Types.Project)
+createNewTask : Types.ModelValue -> Types.Project -> Cmd Types.Msg
+createNewTask modelValue project =
+    Http.post
+        { url = "/api/projects/" ++ String.fromInt project.id ++ "/tasks"
+        , body = Http.emptyBody
+        , expect = Http.expectJson (Types.CreatedTask modelValue project) taskDecoder
+        }
+
+
+taskDecoder : D.Decoder Types.Task
+taskDecoder =
+    D.map4 Types.Task
+        (D.field "id" D.int)
+        (D.field "name" D.string)
+        (D.field "status" D.string)
+        (D.field "worker"
+            (D.nullable
+                (D.map2 Types.Worker
+                    (D.field "id" D.int)
+                    (D.field "name" D.string)
+                )
+            )
+        )
+
+
+projectsDecoder : D.Decoder (List Types.Project)
 projectsDecoder =
-    field "data"
-        (list
-            (map4 Types.Project
-                (field "id" int)
-                (field "name" string)
-                (field "client"
-                    (map2 Types.Client
-                        (field "id" int)
-                        (field "name" string)
+    D.field "data"
+        (D.list
+            (D.map4 Types.Project
+                (D.field "id" D.int)
+                (D.field "name" D.string)
+                (D.field "client"
+                    (D.map2 Types.Client
+                        (D.field "id" D.int)
+                        (D.field "name" D.string)
                     )
                 )
-                (field "tasks"
-                    (list
-                        (map4 Types.Task
-                            (field "id" int)
-                            (field "name" string)
-                            (field "status" string)
-                            (field "worker"
-                                (map2 Types.Worker
-                                    (field "id" int)
-                                    (field "name" string)
-                                )
-                            )
-                        )
-                    )
+                (D.field "tasks"
+                    (D.list taskDecoder)
                 )
             )
         )
