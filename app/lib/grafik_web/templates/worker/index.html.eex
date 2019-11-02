@@ -1,0 +1,26 @@
+<h1>Pracownicy</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Nazwa</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for worker <- @workers do %>
+    <tr>
+      <td><%= show_button(@conn, worker) %>
+      </td>
+      
+      <td>
+        <span><%= edit_button(@conn, worker) %></span>
+        <span><%= delete_button(@conn, worker) %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= new_button(@conn) %></span>

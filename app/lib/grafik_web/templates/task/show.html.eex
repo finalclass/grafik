@@ -1,0 +1,28 @@
+<h1>Zadanie: <%= @task.name %></h1>
+
+<ul>
+
+  <li>
+    <strong>Status:</strong>
+    <%= task_status_to_human(@task.status) %>
+  </li>
+
+  <li>
+    <strong>Projekt:</strong>
+    <%= GrafikWeb.ProjectView.show_button(@conn, @task.project) %>
+  </li>
+  
+  <li>
+    <strong>Pracownik:</strong>
+    <%= GrafikWeb.WorkerView.show_button(@conn, @task.worker) %>
+  </li>
+  
+  <li>
+    <strong>Description:</strong>
+    <%= @task.description %>
+  </li>
+
+</ul>
+
+<span><%= edit_button(@conn, @task) %></span>
+<span><%= list_button(@conn) %></span>

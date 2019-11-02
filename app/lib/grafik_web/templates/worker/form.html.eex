@@ -1,0 +1,13 @@
+<%= form_for @changeset, @action, fn f -> %>
+  <%= form_general_error(@changeset) %>
+
+  <label for="">
+    Nazwa:
+    <%= text_input f, :name %>
+  </label>
+  <%= error_tag f, :name %>
+
+  <div>
+    <%= submit "Zapisz" %>
+  </div>
+<% end %>

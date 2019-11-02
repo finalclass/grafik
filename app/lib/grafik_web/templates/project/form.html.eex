@@ -1,0 +1,24 @@
+<%= form_for @changeset, @action, fn f -> %>
+  <%= form_general_error(@changeset) %>
+
+  <label for="">
+    Nazwa
+    <%= text_input f, :name %>    
+  </label>
+  <%= error_tag f, :name %>
+
+  <label for="">
+    Deadline
+    <%= date_select f, :deadline %>
+  </label>
+  <%= error_tag f, :deadline %>
+
+  <label for="">
+    Klient
+    <%= select f, :client_id, @clients %>
+  </label>
+  
+  <div>
+    <%= submit "Save" %>
+  </div>
+<% end %>

@@ -1,0 +1,56 @@
+/* This file is for your main application css. */
+
+@import "./phoenix.css";
+
+.hidden {
+    display: none;
+}
+
+i.icon {
+    font-style: normal;
+}
+
+.icon.caret-right::after {
+    content: '▸';
+}
+
+.icon.caret-down::after {
+    content: '▾';
+}
+
+.grafik-logo {
+    color: #00aaaa;
+    font-style: italic;
+    font-size: 20px;
+}
+
+.main-nav li {
+    display: inline-block;
+    margin: 0 10px;
+}
+
+select.full {
+    width: 100%;
+}
+
+
+.projects-list .project-expander {
+    cursor: default;
+    width: 15px;
+    margin-right: 0;
+    padding-right: 0;
+}
+
+.projects-list .project-name {
+    margin-left: 0;
+    padding-left: 0;
+    cursor: default;
+}
+
+.projects-list .project-expander .icon {
+    margin-right: 5px;
+}
+
+.projects-list .add-task-button {
+    margin: 0;
+}

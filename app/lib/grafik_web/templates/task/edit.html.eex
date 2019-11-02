@@ -1,0 +1,5 @@
+<h1>Edytuj zadanie</h1>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.task_path(@conn, :update, @task)) %>
+
+<span><%= list_button(@conn) %></span>
