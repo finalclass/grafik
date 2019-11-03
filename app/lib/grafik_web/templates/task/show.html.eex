@@ -14,7 +14,9 @@
   
   <li>
     <strong>Pracownik:</strong>
-    <%= GrafikWeb.WorkerView.show_button(@conn, @task.worker) %>
+    <%= if @task.worker !== nil do %>
+      <%= GrafikWeb.WorkerView.show_button(@conn, @task.worker) %>
+    <% end %>
   </li>
   
   <li>

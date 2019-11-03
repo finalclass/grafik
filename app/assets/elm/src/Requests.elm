@@ -1,15 +1,15 @@
-module Requests exposing (createNewTask, getAllProjects, removeTask)
+module Requests exposing (createNewTask, getAllData, removeTask)
 
 import Http
 import Json.Decode as D
 import Types as T
 
 
-getAllProjects : Cmd T.Msg
-getAllProjects =
+getAllData : Cmd T.Msg
+getAllData =
     Http.get
-        { url = "/api/projects"
-        , expect = Http.expectJson T.GotProjects projectsDecoder
+        { url = "/api/all"
+        , expect = Http.expectJson T.AllDataReceived projectsDecoder
         }
 
 
@@ -52,21 +52,31 @@ taskDecoder =
         )
 
 
-projectsDecoder : D.Decoder (List T.Project)
+projectsDecoder : D.Decoder T.AllData
 projectsDecoder =
-    D.field "data"
-        (D.list
-            (D.map4 T.Project
-                (D.field "id" D.int)
-                (D.field "name" D.string)
-                (D.field "client"
-                    (D.map2 T.Client
-                        (D.field "id" D.int)
-                        (D.field "name" D.string)
+    D.map2 T.AllData
+        (D.field "projects"
+            (D.list
+                (D.map4 T.Project
+                    (D.field "id" D.int)
+                    (D.field "name" D.string)
+                    (D.field "client"
+                        (D.map2 T.Client
+                            (D.field "id" D.int)
+                            (D.field "name" D.string)
+                        )
+                    )
+                    (D.field "tasks"
+                        (D.list taskDecoder)
                     )
                 )
-                (D.field "tasks"
-                    (D.list taskDecoder)
+            )
+        )
+        (D.field "workers"
+            (D.list
+                (D.map2 T.Worker
+                    (D.field "id" D.int)
+                    (D.field "name" D.string)
                 )
             )
         )

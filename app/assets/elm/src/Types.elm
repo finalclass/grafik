@@ -6,7 +6,7 @@ import Http
 
 type Msg
     = ToggleProjectExpand Project
-    | GotProjects (Result Http.Error (List Project))
+    | AllDataReceived (Result Http.Error AllData)
     | TaskCreated Project (Result Http.Error Task)
     | TaskCreateRequest Project
     | TaskRemoveRequest Task
@@ -18,15 +18,22 @@ type alias ExpandedProjects =
 
 
 type MainViewState
-    = MainViewShowProjects
-    | MainViewShowLoading
-    | MainViewShowFailure
+    = SuccessState
+    | LoadingState
+    | FailureState
+
+
+type Modal
+    = HiddenModal
+    | ExampleModal
 
 
 type alias Model =
     { projects : List Project
+    , workers : List Worker
     , expandedProjects : ExpandedProjects
     , mainViewState : MainViewState
+    , modal : Modal
     }
 
 
@@ -56,4 +63,10 @@ type alias Project =
     , name : String
     , client : Client
     , tasks : List Task
+    }
+
+
+type alias AllData =
+    { projects : List Project
+    , workers : List Worker
     }

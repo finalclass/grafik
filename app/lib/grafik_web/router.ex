@@ -30,7 +30,7 @@ defmodule GrafikWeb.Router do
   scope "/api", GrafikWeb.Api, as: :api do
     pipe_through :api
 
-    resources "/projects/", ProjectController, only: [:index]
+    get "/all", DashboardController, :index
     post "/projects/:project_id/tasks/", TaskController, :create_empty
     delete "/projects/:project_id/tasks/:task_id", TaskController, :delete
   end

@@ -11,39 +11,49 @@ import Utils
 init : String -> ( T.Model, Cmd T.Msg )
 init flags =
     ( { projects = []
+      , workers = []
+      , modal = T.ExampleModal
       , expandedProjects = ExpandedProjectsCache.decodeExpandedProjectsCache flags
-      , mainViewState = T.MainViewShowLoading
+      , mainViewState = T.LoadingState
       }
-    , Requests.getAllProjects
+    , Requests.getAllData
     )
 
 
 update : T.Msg -> T.Model -> ( T.Model, Cmd T.Msg )
 update msg model =
     case msg of
-        T.GotProjects result ->
-            case Debug.log "projects" result of
-                Ok projects ->
+        T.AllDataReceived result ->
+            case Debug.log "allData" result of
+                Ok allData ->
                     ( { model
-                        | projects = projects
-                        , mainViewState = T.MainViewShowProjects
+                        | projects = allData.projects
+                        , workers = allData.workers
+                        , mainViewState = T.SuccessState
                       }
                     , Cmd.none
                     )
 
                 Err _ ->
-                    ( { model | mainViewState = T.MainViewShowFailure }, Cmd.none )
+                    ( { model | mainViewState = T.FailureState }, Cmd.none )
+
+        T.TaskCreateRequest project ->
+            ( { model | mainViewState = T.LoadingState }, Requests.createNewTask project )
 
         T.TaskCreated project result ->
             case Debug.log "Task" result of
                 Ok task ->
-                    ( addTaskToProject model project task, Cmd.none )
+                    let
+                        newModel =
+                            { model | mainViewState = T.SuccessState }
+
+                        newModelWithTask =
+                            addTaskToProject newModel project task
+                    in
+                    ( newModelWithTask, Cmd.none )
 
                 Err _ ->
-                    ( model, Cmd.none )
-
-        T.TaskCreateRequest project ->
-            ( model, Requests.createNewTask project )
+                    ( { model | mainViewState = T.FailureState }, Cmd.none )
 
         T.ToggleProjectExpand project ->
             let
@@ -61,19 +71,23 @@ update msg model =
             )
 
         T.TaskRemoveRequest task ->
-            ( model, Requests.removeTask task )
+            ( { model | mainViewState = T.LoadingState }, Requests.removeTask task )
 
         T.TaskRemoved task result ->
             case result of
                 Ok delSucceed ->
                     if delSucceed then
-                        ( removeTask task model, Cmd.none )
+                        let
+                            newModel =
+                                { model | mainViewState = T.SuccessState }
+                        in
+                        ( removeTask task newModel, Cmd.none )
 
                     else
-                        ( { model | mainViewState = T.MainViewShowFailure }, Cmd.none )
+                        ( { model | mainViewState = T.FailureState }, Cmd.none )
 
                 Err _ ->
-                    ( { model | mainViewState = T.MainViewShowFailure }, Cmd.none )
+                    ( { model | mainViewState = T.FailureState }, Cmd.none )
 
 
 addTaskToProject : T.Model -> T.Project -> T.Task -> T.Model
