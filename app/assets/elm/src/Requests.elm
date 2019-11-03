@@ -1,7 +1,8 @@
-module Requests exposing (createNewTask, getAllData, removeTask)
+module Requests exposing (changeTaskWorker, createNewTask, getAllData, removeTask, renameTask)
 
 import Http
 import Json.Decode as D
+import Json.Encode as E
 import Types as T
 
 
@@ -33,6 +34,43 @@ createNewTask project =
         , body = Http.emptyBody
         , expect = Http.expectJson (T.TaskCreated project) taskDecoder
         }
+
+
+modifyTask : T.Task -> E.Value -> Cmd T.Msg
+modifyTask task fields =
+    Http.request
+        { method = "PUT"
+        , url = "/api/projects/" ++ String.fromInt task.project_id ++ "/tasks/" ++ String.fromInt task.id
+        , body = Http.jsonBody fields
+        , headers = []
+        , expect = Http.expectJson T.TaskUpdated taskDecoder
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
+changeTaskWorker : T.Task -> String -> Cmd T.Msg
+changeTaskWorker task workerId =
+    modifyTask task
+        (E.object
+            [ ( "task"
+              , E.object
+                    [ ( "worker_id", E.string workerId ) ]
+              )
+            ]
+        )
+
+
+renameTask : T.Task -> String -> Cmd T.Msg
+renameTask task newName =
+    modifyTask task
+        (E.object
+            [ ( "task"
+              , E.object
+                    [ ( "name", E.string newName ) ]
+              )
+            ]
+        )
 
 
 taskDecoder : D.Decoder T.Task

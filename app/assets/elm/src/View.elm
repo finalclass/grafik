@@ -3,6 +3,8 @@ module View exposing (mainView)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Json.Decode as D
+import ModalView exposing (modalView)
 import Types as T
 import Utils
 
@@ -20,35 +22,12 @@ mainView model =
                    )
             )
         ]
-        [ if model.modal == T.HiddenModal then
-            text ""
-
-          else
-            modalView model
-        , h2 []
-            [ i [ class "icon-caret-right" ] []
-            , text "Projects"
-            ]
+        [ modalView model
         , if model.mainViewState == T.FailureState then
-            text "loading failed"
+            text "problem z połączeniem"
 
           else
             projectsView model
-        ]
-
-
-modalView : T.Model -> Html T.Msg
-modalView model =
-    div [ class "modal" ]
-        [ div [ class "modal-content" ]
-            [ div [ class "modal-header" ]
-                [ h2 [] [ text "Header" ]
-                ]
-            , div [ class "modal-body" ]
-                [ p [] [ text "modal text" ]
-                ]
-            ]
-        , div [ class "modal-overlay" ] []
         ]
 
 
@@ -103,7 +82,7 @@ taskView : T.Model -> T.Task -> Html T.Msg
 taskView model task =
     tr [ class "task" ]
         [ td [] [ text "" ]
-        , td [] [ text task.name ]
+        , td [ class "task-name", onClick (T.TaskRenameModalShow task) ] [ text task.name ]
         , td []
             [ selectWorkerView model task
             ]
@@ -136,12 +115,13 @@ addTaskButtonView project =
 
 selectWorkerView : T.Model -> T.Task -> Html T.Msg
 selectWorkerView model task =
-    select []
+    select [ onInput (T.TaskSetWorkerRequest task) ]
         (option [] []
             :: List.map
                 (\w ->
                     option
-                        [ selected
+                        [ value (String.fromInt w.id)
+                        , selected
                             (case task.worker of
                                 Just worker ->
                                     worker.id == w.id

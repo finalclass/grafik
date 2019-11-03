@@ -12,7 +12,8 @@ init : String -> ( T.Model, Cmd T.Msg )
 init flags =
     ( { projects = []
       , workers = []
-      , modal = T.ExampleModal
+      , modal = T.ModalHidden
+      , modalPromptValue = ""
       , expandedProjects = ExpandedProjectsCache.decodeExpandedProjectsCache flags
       , mainViewState = T.LoadingState
       }
@@ -71,7 +72,12 @@ update msg model =
             )
 
         T.TaskRemoveRequest task ->
-            ( { model | mainViewState = T.LoadingState }, Requests.removeTask task )
+            ( { model | modal = T.ModalConfirm "Potwierdź" "Czy na pewno usunąć?" (T.TaskRemoveConfirmed task) }
+            , Cmd.none
+            )
+
+        T.TaskRemoveConfirmed task ->
+            ( { model | mainViewState = T.LoadingState, modal = T.ModalHidden }, Requests.removeTask task )
 
         T.TaskRemoved task result ->
             case result of
@@ -88,6 +94,48 @@ update msg model =
 
                 Err _ ->
                     ( { model | mainViewState = T.FailureState }, Cmd.none )
+
+        T.TaskSetWorkerRequest task workerId ->
+            ( { model | mainViewState = T.LoadingState }, Requests.changeTaskWorker task workerId )
+
+        T.TaskUpdated result ->
+            case result of
+                Ok task ->
+                    let
+                        newModel =
+                            updateTask model task
+                    in
+                    ( { newModel | mainViewState = T.SuccessState }, Cmd.none )
+
+                Err _ ->
+                    ( { model | mainViewState = T.FailureState }, Cmd.none )
+
+        T.TaskRenameModalShow task ->
+            ( { model
+                | modal = T.ModalPrompt "Nazwa zadania" (T.TaskRenameRequest task)
+                , modalPromptValue = task.name
+              }
+            , Cmd.none
+            )
+
+        T.TaskRenameRequest task ->
+            let
+                taskName =
+                    model.modalPromptValue
+            in
+            ( { model
+                | modalPromptValue = ""
+                , modal = T.ModalHidden
+                , mainViewState = T.LoadingState
+              }
+            , Requests.renameTask task taskName
+            )
+
+        T.ModalClose ->
+            ( { model | modal = T.ModalHidden, modalPromptValue = "" }, Cmd.none )
+
+        T.ModalUpdatePromptValue value ->
+            ( { model | modalPromptValue = value }, Cmd.none )
 
 
 addTaskToProject : T.Model -> T.Project -> T.Task -> T.Model
@@ -119,3 +167,24 @@ removeTask task model =
 removeTaskFromProject : T.Task -> T.Project -> T.Project
 removeTaskFromProject task project =
     { project | tasks = List.filter (\t -> t.id /= task.id) project.tasks }
+
+
+updateTask : T.Model -> T.Task -> T.Model
+updateTask model task =
+    modifyProjectById task.project_id model (modifyTaskInProject task)
+
+
+modifyTaskInProject : T.Task -> T.Project -> T.Project
+modifyTaskInProject task project =
+    { project
+        | tasks =
+            List.map
+                (\t ->
+                    if t.id == task.id then
+                        task
+
+                    else
+                        t
+                )
+                project.tasks
+    }

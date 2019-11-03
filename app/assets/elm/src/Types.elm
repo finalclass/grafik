@@ -10,7 +10,14 @@ type Msg
     | TaskCreated Project (Result Http.Error Task)
     | TaskCreateRequest Project
     | TaskRemoveRequest Task
+    | TaskRemoveConfirmed Task
+    | TaskSetWorkerRequest Task String
+    | TaskUpdated (Result Http.Error Task)
     | TaskRemoved Task (Result Http.Error Bool)
+    | TaskRenameModalShow Task
+    | TaskRenameRequest Task
+    | ModalUpdatePromptValue String
+    | ModalClose
 
 
 type alias ExpandedProjects =
@@ -24,8 +31,9 @@ type MainViewState
 
 
 type Modal
-    = HiddenModal
-    | ExampleModal
+    = ModalHidden
+    | ModalConfirm String String Msg
+    | ModalPrompt String Msg
 
 
 type alias Model =
@@ -34,6 +42,7 @@ type alias Model =
     , expandedProjects : ExpandedProjects
     , mainViewState : MainViewState
     , modal : Modal
+    , modalPromptValue : String
     }
 
 

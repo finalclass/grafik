@@ -1,6 +1,7 @@
 /* This file is for your main application css. */
 
 @import "./phoenix.css";
+@import "./modal.css";
 
 .hidden {
     display: none;
@@ -64,51 +65,6 @@ select.full {
     margin: 0;
 }
 
-.modal {
-    left: 50%;
-    margin: 0 0 0 -200px;
-    position: fixed;
-    top: 10%;
-    width: 400px;
-    box-shadow: 0 3px 7px rgba(0,0,0,.25);
-    box-sizing: border-box;
+.projects-list .task-name {
+    cursor: default;
 }
-
-.modal .modal-header, .modal .modal-footer {
-    border-radius: 5px 5px 0 0
-}
-
-.modal .modal-footer, .modal .modal-footer {
-    border: none;
-}
-
-.modal .modal-header h2 {
-    margin: 0;
-}
-
-.modal .modal-body, .modal .modal-header, .modal .modal-footer {
-    padding: 10px;
-}
-
-.modal-content {
-    background: #fff;
-    position: relative;
-    z-index: 20;
-    border-radius: 5px;
-    border: solid 1px #aaa;
-    border-radius: 5px;
-}
-
-.modal .modal-body { background: #fff }
-
-.modal .modal-overlay {
-    background-color: #fff;
-    background: rgba(255,255,255,.8);
-    height: 100%;
-    left: 0;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 10
-}
-
