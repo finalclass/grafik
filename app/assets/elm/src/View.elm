@@ -3,46 +3,46 @@ module View exposing (mainView)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Types exposing (..)
+import Types as T
 import Utils
 
 
-mainView : Model -> Html Msg
+mainView : T.Model -> Html T.Msg
 mainView model =
     div []
         [ h2 []
             [ i [ class "icon-caret-right" ] []
             , text "Projects"
             ]
-        , case model of
-            Success { projects, expandedProjects } ->
-                projectsView projects expandedProjects
+        , case model.mainViewState of
+            T.MainViewShowProjects ->
+                projectsView model.projects model.expandedProjects
 
-            Failure ->
+            T.MainViewShowFailure ->
                 text "loading failed"
 
-            Loading ->
+            T.MainViewShowLoading ->
                 text "loading"
         ]
 
 
-projectsView : List Project -> ExpandedProjects -> Html Msg
+projectsView : List T.Project -> T.ExpandedProjects -> Html T.Msg
 projectsView projects expandedProjects =
     table [ class "projects-list" ]
         (List.foldr (mergeProjects expandedProjects) [] projects)
 
 
-mergeProjects : ExpandedProjects -> Project -> List (Html Msg) -> List (Html Msg)
+mergeProjects : T.ExpandedProjects -> T.Project -> List (Html T.Msg) -> List (Html T.Msg)
 mergeProjects expandedProjects project all =
     projectView expandedProjects project ++ all
 
 
-projectView : ExpandedProjects -> Project -> List (Html Msg)
+projectView : T.ExpandedProjects -> T.Project -> List (Html T.Msg)
 projectView expandedProjects project =
     [ thead []
         [ tr []
             [ th
-                [ onClick (ToggleProjectExpand project)
+                [ onClick (T.ToggleProjectExpand project)
                 , class
                     ("project-expander "
                         ++ (if Utils.isProjectExpanded project expandedProjects then
@@ -54,7 +54,11 @@ projectView expandedProjects project =
                     )
                 ]
                 []
-            , th [ class "project-name", onClick (ToggleProjectExpand project) ]
+            , th
+                [ class "project-name"
+                , colspan 2
+                , onClick (T.ToggleProjectExpand project)
+                ]
                 [ text project.name ]
             ]
         ]
@@ -69,22 +73,31 @@ projectView expandedProjects project =
     ]
 
 
-taskView : Task -> Html Msg
+taskView : T.Task -> Html T.Msg
 taskView task =
     tr [ class "task" ]
         [ td [] [ text "" ]
         , td [] [ text task.name ]
+        , td []
+            [ button
+                [ class "button-outline"
+                , title "Usuń"
+                , onClick (T.TaskRemoveRequest task)
+                ]
+                [ i [ class "icon remove" ] []
+                ]
+            ]
         ]
 
 
-addTaskButtonView : Project -> Html Msg
+addTaskButtonView : T.Project -> Html T.Msg
 addTaskButtonView project =
     tr []
         [ td [] [ text "" ]
-        , td []
+        , td [ colspan 2 ]
             [ button
                 [ class "add-task-button"
-                , onClick (Types.CreateNewTask project)
+                , onClick (T.TaskCreateRequest project)
                 ]
                 [ text "➕ nowe zadanie"
                 ]

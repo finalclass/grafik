@@ -13,4 +13,10 @@ defmodule GrafikWeb.Api.TaskController do
 
     render(conn, "empty-task.json", task: task)
   end
+
+  def delete(conn, %{"task_id" => task_id}) do
+    task = Projects.get_task!(task_id)
+    {:ok, _} = Projects.delete_task(task)
+    render(conn, "deletion-result.json", result: true)
+  end
 end

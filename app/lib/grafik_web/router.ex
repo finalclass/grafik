@@ -32,5 +32,6 @@ defmodule GrafikWeb.Router do
 
     resources "/projects/", ProjectController, only: [:index]
     post "/projects/:project_id/tasks/", TaskController, :create_empty
+    delete "/projects/:project_id/tasks/:task_id", TaskController, :delete
   end
 end

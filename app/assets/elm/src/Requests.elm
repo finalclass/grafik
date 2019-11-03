@@ -1,36 +1,50 @@
-module Requests exposing (createNewTask, getAllProjects)
+module Requests exposing (createNewTask, getAllProjects, removeTask)
 
 import Http
 import Json.Decode as D
-import Types
+import Types as T
 
 
-getAllProjects : Types.ModelValue -> Cmd Types.Msg
-getAllProjects model =
+getAllProjects : Cmd T.Msg
+getAllProjects =
     Http.get
         { url = "/api/projects"
-        , expect = Http.expectJson (Types.GotProjects model) projectsDecoder
+        , expect = Http.expectJson T.GotProjects projectsDecoder
         }
 
 
-createNewTask : Types.ModelValue -> Types.Project -> Cmd Types.Msg
-createNewTask modelValue project =
+removeTask : T.Task -> Cmd T.Msg
+removeTask task =
+    Http.request
+        { method = "DELETE"
+        , url = "/api/projects/" ++ String.fromInt task.project_id ++ "/tasks/" ++ String.fromInt task.id
+        , body = Http.emptyBody
+        , headers = []
+        , expect = Http.expectJson (T.TaskRemoved task) taskRemoveDecoder
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
+createNewTask : T.Project -> Cmd T.Msg
+createNewTask project =
     Http.post
         { url = "/api/projects/" ++ String.fromInt project.id ++ "/tasks"
         , body = Http.emptyBody
-        , expect = Http.expectJson (Types.CreatedTask modelValue project) taskDecoder
+        , expect = Http.expectJson (T.TaskCreated project) taskDecoder
         }
 
 
-taskDecoder : D.Decoder Types.Task
+taskDecoder : D.Decoder T.Task
 taskDecoder =
-    D.map4 Types.Task
+    D.map5 T.Task
         (D.field "id" D.int)
+        (D.field "project_id" D.int)
         (D.field "name" D.string)
         (D.field "status" D.string)
         (D.field "worker"
             (D.nullable
-                (D.map2 Types.Worker
+                (D.map2 T.Worker
                     (D.field "id" D.int)
                     (D.field "name" D.string)
                 )
@@ -38,15 +52,15 @@ taskDecoder =
         )
 
 
-projectsDecoder : D.Decoder (List Types.Project)
+projectsDecoder : D.Decoder (List T.Project)
 projectsDecoder =
     D.field "data"
         (D.list
-            (D.map4 Types.Project
+            (D.map4 T.Project
                 (D.field "id" D.int)
                 (D.field "name" D.string)
                 (D.field "client"
-                    (D.map2 Types.Client
+                    (D.map2 T.Client
                         (D.field "id" D.int)
                         (D.field "name" D.string)
                     )
@@ -56,3 +70,8 @@ projectsDecoder =
                 )
             )
         )
+
+
+taskRemoveDecoder : D.Decoder Bool
+taskRemoveDecoder =
+    D.field "ok" D.bool

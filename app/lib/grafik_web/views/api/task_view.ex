@@ -4,6 +4,7 @@ defmodule GrafikWeb.Api.TaskView do
   def render("task.json", %{task: task}) do
     %{
       id: task.id,
+      project_id: task.project_id,
       name: task.name,
       status: task.status,
       worker: render_one(task.worker, GrafikWeb.Api.WorkerView, "worker.json")
@@ -13,6 +14,7 @@ defmodule GrafikWeb.Api.TaskView do
   def render("empty-task.json", %{task: task}) do
     %{
       id: task.id,
+      project_id: task.project_id,
       name: task.name,
       status: task.status,
       worker: %{
@@ -20,6 +22,10 @@ defmodule GrafikWeb.Api.TaskView do
         name: ""
       }
     }
+  end
+
+  def render("deletion-result.json", %{result: result}) do
+    %{ ok: result }
   end
      
 end

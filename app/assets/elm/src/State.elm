@@ -4,77 +4,104 @@ import Debug exposing (log)
 import Dict
 import ExpandedProjectsCache
 import Requests
-import Types
+import Types as T
 import Utils
 
 
-init : String -> ( Types.Model, Cmd Types.Msg )
+init : String -> ( T.Model, Cmd T.Msg )
 init flags =
-    ( Types.Loading
+    ( { projects = []
+      , expandedProjects = ExpandedProjectsCache.decodeExpandedProjectsCache flags
+      , mainViewState = T.MainViewShowLoading
+      }
     , Requests.getAllProjects
-        { projects = []
-        , expandedProjects = ExpandedProjectsCache.decodeExpandedProjectsCache flags
-        }
     )
 
 
-update : Types.Msg -> Types.Model -> ( Types.Model, Cmd Types.Msg )
+update : T.Msg -> T.Model -> ( T.Model, Cmd T.Msg )
 update msg model =
     case msg of
-        Types.GotProjects modelValue result ->
+        T.GotProjects result ->
             case Debug.log "projects" result of
                 Ok projects ->
-                    ( Types.Success { modelValue | projects = projects }, Cmd.none )
-
-                Err _ ->
-                    ( Types.Failure, Cmd.none )
-
-        Types.CreatedTask modelValue project result ->
-            case Debug.log "Task" result of
-                Ok task ->
-                    ( Types.Success (addTaskToProject modelValue project task), Cmd.none )
-
-                Err _ ->
-                    ( Types.Failure, Cmd.none )
-
-        Types.CreateNewTask project ->
-            case model of
-                Types.Success modelValue ->
-                    ( Types.Success modelValue, Requests.createNewTask modelValue project )
-
-                model2 ->
-                    ( model2, Cmd.none )
-
-        Types.ToggleProjectExpand project ->
-            case model of
-                Types.Success successModel ->
-                    let
-                        expandedProjects =
-                            successModel.expandedProjects
-
-                        isExpanded =
-                            Utils.isProjectExpanded project expandedProjects
-
-                        newExpandedProjects =
-                            Dict.insert (String.fromInt project.id) (not isExpanded) expandedProjects
-                    in
-                    ( Types.Success { successModel | expandedProjects = newExpandedProjects }
-                    , ExpandedProjectsCache.addToCache newExpandedProjects
+                    ( { model
+                        | projects = projects
+                        , mainViewState = T.MainViewShowProjects
+                      }
+                    , Cmd.none
                     )
 
-                model2 ->
-                    ( model2, Cmd.none )
+                Err _ ->
+                    ( { model | mainViewState = T.MainViewShowFailure }, Cmd.none )
+
+        T.TaskCreated project result ->
+            case Debug.log "Task" result of
+                Ok task ->
+                    ( addTaskToProject model project task, Cmd.none )
+
+                Err _ ->
+                    ( model, Cmd.none )
+
+        T.TaskCreateRequest project ->
+            ( model, Requests.createNewTask project )
+
+        T.ToggleProjectExpand project ->
+            let
+                expandedProjects =
+                    model.expandedProjects
+
+                isExpanded =
+                    Utils.isProjectExpanded project expandedProjects
+
+                newExpandedProjects =
+                    Dict.insert (String.fromInt project.id) (not isExpanded) expandedProjects
+            in
+            ( { model | expandedProjects = newExpandedProjects }
+            , ExpandedProjectsCache.addToCache newExpandedProjects
+            )
+
+        T.TaskRemoveRequest task ->
+            ( model, Requests.removeTask task )
+
+        T.TaskRemoved task result ->
+            case result of
+                Ok delSucceed ->
+                    if delSucceed then
+                        ( removeTask task model, Cmd.none )
+
+                    else
+                        ( { model | mainViewState = T.MainViewShowFailure }, Cmd.none )
+
+                Err _ ->
+                    ( { model | mainViewState = T.MainViewShowFailure }, Cmd.none )
 
 
-addTaskToProject : Types.ModelValue -> Types.Project -> Types.Task -> Types.ModelValue
-addTaskToProject modelValue project task =
-    { modelValue | projects = List.map (addTaskIfMatch project task) modelValue.projects }
+addTaskToProject : T.Model -> T.Project -> T.Task -> T.Model
+addTaskToProject model project task =
+    modifyProjectById project.id model (\p -> { p | tasks = p.tasks ++ [ task ] })
 
 
-addTaskIfMatch : Types.Project -> Types.Task -> Types.Project -> Types.Project
-addTaskIfMatch p1 task p2 =
-    if p1.id == p2.id then
-        { p1 | tasks = p1.tasks ++ [ task ] }
+modifyProjectById : Int -> T.Model -> (T.Project -> T.Project) -> T.Model
+modifyProjectById projectId model func =
+    { model
+        | projects =
+            List.map
+                (\p ->
+                    if p.id == projectId then
+                        func p
 
-    else
-        p2
+                    else
+                        p
+                )
+                model.projects
+    }
+
+
+removeTask : T.Task -> T.Model -> T.Model
+removeTask task model =
+    modifyProjectById task.project_id model (removeTaskFromProject task)
+
+
+removeTaskFromProject : T.Task -> T.Project -> T.Project
+removeTaskFromProject task project =
+    { project | tasks = List.filter (\t -> t.id /= task.id) project.tasks }
