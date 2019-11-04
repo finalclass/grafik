@@ -9,14 +9,14 @@ defmodule Grafik.Projects do
   alias Grafik.Projects.Project
   alias Grafik.Projects.Task
 
-  def get_statuses() do
-    %{
-      "todo" => "Do wykonania",
-      "in_propress" => "W trakcie realizacji",
-      "made" => "Do odbioru",
-      "received" => "Odebrane",
-      "sent" => "Wysłane"
-    }
+  def list_statuses() do
+    [
+      %{id: "todo", name: "Do wykonania"},
+      %{id: "in_propress", name: "W trakcie realizacji"},
+      %{id: "made", name: "Do odbioru"},
+      %{id: "received", name: "Odebrane"},
+      %{id: "sent", name: "Wysłane"}
+    ]
   end
 
   @doc """
@@ -36,8 +36,23 @@ defmodule Grafik.Projects do
   end
 
   def list_full_projects do
-    Repo.all from project in Project,
-      preload: [{:tasks, :worker}, :client]
+    Repo.all(
+      from p in Project,
+      preload: [
+        tasks: (from t in Task, preload: [:worker]),
+        client: (from c in Grafik.Clients.Client)
+      ]
+    )
+      
+    # Project
+    # |> Repo.all()
+    # |> Repo.preload([
+      
+    # ])
+    # Repo.all(
+    #   from project in Project,
+    #     preload: [tasks: (from t in Task)]
+    # )
   end
 
   @doc """

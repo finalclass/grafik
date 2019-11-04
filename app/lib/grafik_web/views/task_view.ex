@@ -25,10 +25,12 @@ defmodule GrafikWeb.TaskView do
   end
 
   def task_status_to_human(status) do
-    Map.get(Grafik.Projects.get_statuses(), status)
+    Grafik.Projects.list_statuses()
+    |> Enum.find(nil, fn s -> s.id == status end)
+    |> Map.get(:name)
   end
 
   def task_statuses_select_options() do
-    Grafik.Projects.get_statuses() |> Enum.map(fn ({k,v}) -> {v, k} end)
+    Grafik.Projects.list_statuses() |> Enum.map(fn status -> {status.name, status.id} end)
   end
 end

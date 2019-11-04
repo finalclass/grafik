@@ -118,7 +118,12 @@ projectsDecoder =
             )
         )
         (D.field "statuses"
-            (D.dict D.string)
+            (D.list
+                (D.map2 T.Status
+                    (D.field "id" D.string)
+                    (D.field "name" D.string)
+                )
+            )
         )
 
 

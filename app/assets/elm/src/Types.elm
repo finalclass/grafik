@@ -40,7 +40,7 @@ type Modal
 type alias Model =
     { projects : List Project
     , workers : List Worker
-    , statuses : Statuses
+    , statuses : List Status
     , expandedProjects : ExpandedProjects
     , mainViewState : MainViewState
     , modal : Modal
@@ -80,9 +80,11 @@ type alias Project =
 type alias AllData =
     { projects : List Project
     , workers : List Worker
-    , statuses : Statuses
+    , statuses : List Status
     }
 
 
-type alias Statuses =
-    Dict String String
+type alias Status =
+    { id : String
+    , name : String
+    }

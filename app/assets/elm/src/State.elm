@@ -12,7 +12,7 @@ init : String -> ( T.Model, Cmd T.Msg )
 init flags =
     ( { projects = []
       , workers = []
-      , statuses = Dict.empty
+      , statuses = []
       , modal = T.ModalHidden
       , modalPromptValue = ""
       , expandedProjects = ExpandedProjectsCache.decodeExpandedProjectsCache flags

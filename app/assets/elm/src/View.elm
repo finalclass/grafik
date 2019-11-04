@@ -100,13 +100,11 @@ taskView model task =
 selectTaskStatusView : T.Model -> T.Task -> Html T.Msg
 selectTaskStatusView model task =
     select [ onInput (T.TaskChangeStatusRequest task) ]
-        (Dict.foldl
-            (\k v acc ->
-                option [ value k, selected (task.status == k) ]
-                    [ text v ]
-                    :: acc
+        (List.map
+            (\s ->
+                option [ value s.id, selected (task.status == s.id) ]
+                    [ text s.name ]
             )
-            []
             model.statuses
         )
 
