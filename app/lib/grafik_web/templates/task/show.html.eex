@@ -8,7 +8,7 @@
   </li>
 
   <li>
-    <strong>Projekt:</strong>
+    <strong>Zamówienie:</strong>
     <%= GrafikWeb.ProjectView.show_project_button(@conn, @task.project) %>
   </li>
   

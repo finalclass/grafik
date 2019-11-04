@@ -2,26 +2,58 @@
   <%= form_general_error(@changeset) %>
 
   <label>
-    Nazwa
+    Nazwa:
     <%= text_input f, :name %>    
   </label>
   <%= error_tag f, :name %>
 
   <label>
-    Deadline
+    Termin:
     <%= date_select f, :deadline %>
   </label>
   <%= error_tag f, :deadline %>
 
   <label>
-    Klient
+    Sztywny termin:
+    <%= checkbox f, :is_deadline_rigid %>
+  </label>
+  <%= error_tag f, :is_deadline_rigid %>
+
+  <label>
+    Data rozpoczęcia:
+    <%= date_select f, :start_at %>
+  </label>
+  <%= error_tag f, :start_at %>
+  
+  <label>
+    Klient:
     <%= select f, :client_id, @clients, class: "full" %>
   </label>
+  <%= error_tag f, :client_id %>
 
   <label>
     Zarchiwizowany?
     <%= checkbox f, :is_archived %>
   </label>
+  <%= error_tag f, :is_archived %>
+
+  <label>
+    Numer faktury / oferty:
+    <%= text_input f, :invoice_number %>
+  </label>
+  <%= error_tag f, :invoice_number %>
+
+  <label>
+    Kwota do zapłaty:
+    <%= text_input f, :price, type: "number", step: "0.01" %>
+  </label>
+  <%= error_tag f, :price %>
+
+  <label>
+    Zapłacono:
+    <%= text_input f, :paid, type: "number", step: "0.01" %>
+  </label>
+  <%= error_tag f, :paid %>
   
   <div>
     <%= save_button() %>

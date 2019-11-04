@@ -22,7 +22,7 @@ defmodule GrafikWeb.ProjectController do
     case Projects.create_project(project_params) do
       {:ok, project} ->
         conn
-        |> put_flash(:info, "Utworzono projekt.")
+        |> put_flash(:info, "Utworzono zamówienie.")
         |> redirect(to: Routes.project_path(conn, :show, project))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -59,7 +59,7 @@ defmodule GrafikWeb.ProjectController do
     case Projects.update_project(project, project_params) do
       {:ok, project} ->
         conn
-        |> put_flash(:info, "Zmodyfikowano projekt.")
+        |> put_flash(:info, "Zmodyfikowano zamówienie.")
         |> redirect(to: Routes.project_path(conn, :show, project))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -72,7 +72,7 @@ defmodule GrafikWeb.ProjectController do
     {:ok, _project} = Projects.delete_project(project)
 
     conn
-    |> put_flash(:info, "Projekt został usunięty.")
+    |> put_flash(:info, "Zamówienie zostało usunięte.")
     |> redirect(to: Routes.project_path(conn, :index))
   end
 end

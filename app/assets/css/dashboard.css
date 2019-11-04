@@ -28,3 +28,11 @@
 .dashboard .task-name {
     cursor: default;
 }
+
+.dashboard .task-received {
+    color: #008afc;
+}
+
+.dashboard .task-sent {
+    color: #bbb;
+}

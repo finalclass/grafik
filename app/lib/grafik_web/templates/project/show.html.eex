@@ -1,21 +1,51 @@
 <h1>
   <%= if @project.is_archived,
-  do: "Archiwalny projekt: ",
-  else: "Projekt: "
+  do: "Archiwalne zamówienie: ",
+  else: "Zamówienie: "
   %>
   <%= @project.name %>
 </h1>
 
+<span><%= list_projects_button(@conn) %></span>
+<span><%= add_project_task(@conn, @project) %></span>
+<span><%= edit_project_button(@conn, @project) %></span>
+
+
 <ul>
 
   <li>
-    <strong>Deadline:</strong>
+    <strong>Termin:</strong>
     <%= @project.deadline %>
   </li>
 
   <li>
+    <strong>Sztywny termin?:</strong>
+    <%= if @project.is_deadline_rigid do "Tak" else "Nie" end %>
+  </li>
+
+  <li>
+    <strong>Data rozpoczęcia:</strong>
+    <%= @project.start_at %>
+  </li>
+  
+  <li>
     <strong>Klient:</strong>
     <%= link @project.client.name, to: Routes.client_path(@conn, :show, @project.client) %>
+  </li>
+
+  <li>
+    <strong>Numer faktury / oferty:</strong>
+    <%= @project.invoice_number %>
+  </li>
+
+  <li>
+    <strong>Cena:</strong>
+    <%= @project.price %> zł
+  </li>
+
+  <li>
+    <strong>Zapłacono:</strong>
+    <%= @project.paid %> zł
   </li>
 </ul>
 
@@ -39,13 +69,12 @@
           <%= if task.worker do task.worker.name end %>
         </td>
         <td>
-          <%= GrafikWeb.TaskView.task_status_to_human(task.status) %>
+          <%= if task.status do %>
+            <%= GrafikWeb.TaskView.task_status_to_human(task.status) %>
+          <% end %>
         </td>
       </li>
     <% end %>
   </tbody>
 </table>
 
-<span><%= list_projects_button(@conn) %></span>
-<span><%= add_project_task(@conn, @project) %></span>
-<span><%= edit_project_button(@conn, @project) %></span>

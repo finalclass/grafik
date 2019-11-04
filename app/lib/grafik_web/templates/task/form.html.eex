@@ -19,7 +19,7 @@
   </label>
 
   <label for="">
-    Projekt
+    Zamówienie
     <%= select f, :project_id, @projects, class: "full" %>
   </label>
   

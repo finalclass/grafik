@@ -80,7 +80,7 @@ projectView model project =
 
 taskView : T.Model -> T.Task -> Html T.Msg
 taskView model task =
-    tr [ class "task" ]
+    tr [ class ("task task-" ++ task.status) ]
         [ td [] [ text "" ]
         , td [ class "task-name", onClick (T.TaskRenameModalShow task) ] [ text task.name ]
         , td [] [ selectWorkerView model task ]

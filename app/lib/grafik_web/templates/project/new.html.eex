@@ -1,5 +1,5 @@
 <h1>New Project</h1>
 
-<%= render "form.html", Map.put(assigns, :action, Routes.project_path(@conn, :create)) %>
-
 <span><%= list_projects_button(@conn) %></span>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.project_path(@conn, :create)) %>

@@ -2,24 +2,25 @@
 
 ## Todo
 
-- Projekt -> Zamówienia
-- Wywalamy "do odbioru"
-- kolory
-  - odebrane - niebieski
-  - wysłane - szary
-- klient
-  - adres do faktury (nazwa ulica kod miasto nip)
-  - adres do wysyłki (nazwa ulica kod miasto, telefon dla kuriera, nazwisko osoby kontaktowej, email)
-- projekty
-  - numer faktury
-  - numer oferty
-  - kwota za zamówienie
-  - ile zapłacono
-- deadline -> termin
-- data rozpoczęcia zlecenia
+- [DONE] Projekt -> Zamówienia
+- [DONE] Wywalamy "do odbioru"
+- [DONE] kolory
+  - [DONE] odebrane - niebieski
+  - [DONE] wysłane - szary
+- [DONE] klient
+  - [DONE] adres do faktury (nazwa ulica kod miasto nip)
+  - [DONE] adres do wysyłki (nazwa ulica kod miasto, telefon dla kuriera, nazwisko osoby kontaktowej, email)
+- [DONE] projekty
+  - [DONE] deadline -> termin
+  - [DONE] numer faktury/oferty
+  - [DONE] kwota za zamówienie
+  - [DONE] ile zapłacono
+  - [DONE] data rozpoczęcia zlecenia
+  - [DONE] sztywny termin
+  - [DONE] sztywny termin na czerwono
+- breadcrumbs
 - data wysłania zadania (produktu)
 - automatycznie ustawiana data zmiany statusu zadania na wysłane
-- możliwość określenia czy termin jest sztywny czy określony przez stroje.pl (na czerwono to sztywne terminy)
 - wydruk dla pracownika
  - nazwa zlecenia i klienta i termin
    - lista zadań do wykonania

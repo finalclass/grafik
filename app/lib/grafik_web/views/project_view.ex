@@ -6,11 +6,11 @@ defmodule GrafikWeb.ProjectView do
   end
 
   def new_project_button(conn) do
-    new_button(Routes.project_path(conn, :new), "Dodaj projekt")
+    new_button(Routes.project_path(conn, :new), "Dodaj zamówienie")
   end
 
   def list_projects_button(conn) do
-    list_button(Routes.client_path(conn, :index))
+    list_button(Routes.project_path(conn, :index))
   end
 
   def edit_project_button(conn, project) do

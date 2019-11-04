@@ -13,7 +13,6 @@ defmodule Grafik.Projects do
     [
       %{id: "todo", name: "Do wykonania"},
       %{id: "in_propress", name: "W trakcie realizacji"},
-      %{id: "made", name: "Do odbioru"},
       %{id: "received", name: "Odebrane"},
       %{id: "sent", name: "Wysłane"}
     ]

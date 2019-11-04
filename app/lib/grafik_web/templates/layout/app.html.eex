@@ -13,7 +13,7 @@
         <nav role="navigation" class="main-nav">
           <ul>
             <li>
-              <%= link "Projekty", to: Routes.project_path(@conn, :index) %>
+              <%= link "Zamówienia", to: Routes.project_path(@conn, :index) %>
             </li>
             <li>
               <%= link "Klienci", to: Routes.client_path(@conn, :index) %>

@@ -32,6 +32,10 @@ select.full {
     color: #aaf;
 }
 
+.projects-table .rigid-deadline {
+    color: #f00;
+}
+
 button span, .button span {
     margin-left: 7px;
 }

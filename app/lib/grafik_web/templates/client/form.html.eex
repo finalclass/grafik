@@ -7,10 +7,85 @@
   <%= error_tag f, :name %>
   
 
-  <label for="">
-    Wfirma ID: <%= text_input f, :wfirma_id %>
-  </label>
-  <%= error_tag f, :wfirma_id %>
+  <fieldset>
+    <legend>Dane do faktury</legend>
+
+    <label>
+      Nazwa firmy:
+      <%= text_input f, :invoice_name %>
+    </label>
+    <%= error_tag f, :invoice_name %>
+
+    <label>
+      Ulica:
+      <%= text_input f, :invoice_street %>
+    </label>
+    <%= error_tag f, :invoice_street %>
+
+    <label>
+      Kod pocztowy:
+      <%= text_input f, :invoice_postcode %>
+    </label>
+    <%= error_tag f, :invoice_postcode %>
+
+    <label>
+      Miasto:
+      <%= text_input f, :invoice_city %>
+    </label>
+    <%= error_tag f, :invoice_city %>
+
+    <label>
+      NIP:
+      <%= text_input f, :invoice_nip %>
+    </label>
+    <%= error_tag f, :invoice_nip %>
+  </fieldset>
+
+  <fieldset>
+    <legend>Dane dostawy</legend>
+
+    <label>
+      Nazwa odbiorcy:
+      <%= text_input f, :delivery_name %>
+    </label>
+    <%= error_tag f, :delivery_name %>
+
+    <label>
+      Ulica:
+      <%= text_input f, :delivery_street %>
+    </label>
+    <%= error_tag f, :delivery_street %>
+
+    <label>
+      Kod pocztowy:
+      <%= text_input f, :delivery_postcode %>
+    </label>
+    <%= error_tag f, :delivery_postcode %>
+
+    <label>
+      Miasto:
+      <%= text_input f, :delivery_city %>
+    </label>
+    <%= error_tag f, :delivery_city %>
+
+    <label>
+      Osoba kontaktowa:
+      <%= text_input f, :delivery_contact_person %>
+    </label>
+    <%= error_tag f, :delivery_contact_person %>
+
+    <label>
+      Telefon:
+      <%= text_input f, :phone_number %>
+    </label>
+    <%= error_tag f, :phone_number %>
+
+    <label>
+      Email:
+      <%= text_input f, :email %>
+    </label>
+    <%= error_tag f, :email %>
+  </fieldset>
 
   <div>
     <%= save_button() %>
