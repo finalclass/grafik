@@ -30,6 +30,6 @@
   <%= error_tag f, :description %>
 
   <div>
-    <%= submit "Zapisz" %>
+    <%= save_button() %>
   </div>
 <% end %>

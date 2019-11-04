@@ -14,18 +14,18 @@
   <tbody>
 <%= for task <- @tasks do %>
     <tr>
-      <td><%= show_button(@conn, task) %></td>
+      <td><%= show_task_button(@conn, task) %></td>
       <td><%= task_status_to_human(task.status) %></td>
-      <td><%= GrafikWeb.ProjectView.show_button(@conn, task.project) %></td>
-      <td><%= GrafikWeb.WorkerView.show_button(@conn, task.worker) %></td>
+      <td><%= GrafikWeb.ProjectView.show_project_button(@conn, task.project) %></td>
+      <td><%= GrafikWeb.WorkerView.show_worker_button(@conn, task.worker) %></td>
 
       <td>
-        <span><%= edit_button(@conn, task) %></span>
-        <span><%= delete_button(@conn, task) %></span>
+        <span><%= edit_task_button(@conn, task) %></span>
+        <span><%= delete_task_button(@conn, task) %></span>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
 
-<span><%= new_button(@conn) %></span>
+<span><%= new_task_button(@conn) %></span>

@@ -11,16 +11,16 @@
   <tbody>
 <%= for worker <- @workers do %>
     <tr>
-      <td><%= show_button(@conn, worker) %>
+      <td><%= show_worker_button(@conn, worker) %>
       </td>
       
       <td>
-        <span><%= edit_button(@conn, worker) %></span>
-        <span><%= delete_button(@conn, worker) %></span>
+        <span><%= edit_worker_button(@conn, worker) %></span>
+        <span><%= delete_worker_button(@conn, worker) %></span>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
 
-<span><%= new_button(@conn) %></span>
+<span><%= new_worker_button(@conn) %></span>

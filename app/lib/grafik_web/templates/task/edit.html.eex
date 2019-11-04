@@ -2,4 +2,4 @@
 
 <%= render "form.html", Map.put(assigns, :action, Routes.task_path(@conn, :update, @task)) %>
 
-<span><%= list_button(@conn) %></span>
+<span><%= list_tasks_button(@conn) %></span>

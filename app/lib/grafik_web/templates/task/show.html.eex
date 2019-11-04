@@ -9,13 +9,13 @@
 
   <li>
     <strong>Projekt:</strong>
-    <%= GrafikWeb.ProjectView.show_button(@conn, @task.project) %>
+    <%= GrafikWeb.ProjectView.show_project_button(@conn, @task.project) %>
   </li>
   
   <li>
     <strong>Pracownik:</strong>
     <%= if @task.worker !== nil do %>
-      <%= GrafikWeb.WorkerView.show_button(@conn, @task.worker) %>
+      <%= GrafikWeb.WorkerView.show_worker_button(@conn, @task.worker) %>
     <% end %>
   </li>
   
@@ -26,5 +26,5 @@
 
 </ul>
 
-<span><%= edit_button(@conn, @task) %></span>
-<span><%= list_button(@conn) %></span>
+<span><%= edit_task_button(@conn, @task) %></span>
+<span><%= list_tasks_button(@conn) %></span>

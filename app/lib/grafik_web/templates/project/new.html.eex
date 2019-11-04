@@ -2,4 +2,4 @@
 
 <%= render "form.html", Map.put(assigns, :action, Routes.project_path(@conn, :create)) %>
 
-<span><%= list_button(@conn) %></span>
+<span><%= list_projects_button(@conn) %></span>

@@ -33,7 +33,7 @@
     <%= for task <- @project.tasks do %>
       <tr>
         <td>
-          <%= GrafikWeb.TaskView.show_button(@conn, task) %>
+          <%= GrafikWeb.TaskView.show_task_button(@conn, task) %>
         </td>
         <td>
           <%= if task.worker do task.worker.name end %>
@@ -46,6 +46,6 @@
   </tbody>
 </table>
 
-<span><%= list_button(@conn) %></span>
-<span><%= add_task(@conn, @project) %></span>
-<span><%= edit_button(@conn, @project) %></span>
+<span><%= list_projects_button(@conn) %></span>
+<span><%= add_project_task(@conn, @project) %></span>
+<span><%= edit_project_button(@conn, @project) %></span>

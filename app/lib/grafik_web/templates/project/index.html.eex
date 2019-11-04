@@ -13,17 +13,17 @@
   <tbody>
 <%= for project <- @projects do %>
     <tr class="<%= if project.is_archived do "archived" end %>">
-      <td><%= show_button(@conn, project) %></td>
+      <td><%= show_project_button(@conn, project) %></td>
       <td><%= project.deadline %></td>
       <td><%= project.client.name %></td>
       
       <td>
-        <span><%= edit_button(@conn, project) %></span>
-        <span><%= delete_button(@conn, project) %></span>
+        <span><%= edit_project_button(@conn, project) %></span>
+        <span><%= delete_project_button(@conn, project) %></span>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
 
-<span><%= new_button(@conn) %></span>
+<span><%= new_project_button(@conn) %></span>

@@ -8,6 +8,6 @@
   <%= error_tag f, :name %>
 
   <div>
-    <%= submit "Zapisz" %>
+    <%= save_button %>
   </div>
 <% end %>

@@ -45,21 +45,58 @@ defmodule GrafikWeb do
 
       def form_general_error(changeset) do
         if (changeset.action) do
-          ~e"""
+          {:safe, """
           <div class="alert alert-danger">
             <p>Coś poszło nie tak, popraw błędy formularza</p>
           </div>
-          """
+          """}
         end
       end
 
       def save_button() do
-        ~e"""
+        {:safe, """
         <button type="submit">
             <i class="icon icon-check"></i>
             Zapisz
         </button>
-        """
+        """}
+      end
+
+      def new_button(path, text \\ "dodaj") do
+        {:safe, """
+        <a href="#{path}"
+           class="button">
+            <i class="icon icon-plus"></i>
+            #{text}
+        </a>
+        """}
+      end
+      
+      def list_button(path, text \\ "Lista") do
+	{:safe, """
+        <a href="#{path}"
+           class="button">
+            <i class="icon icon-laquo"></i>
+            #{text}
+        </a>
+        """}
+      end
+
+      def edit_button(path, text \\ "Edytuj") do
+        {:safe, """
+        <a href="#{path}"
+           class="button">
+            <i class="icon icon-recycle"></i>
+            #{text}
+        </a>
+        """}
+      end
+
+      def delete_button(path, item_name \\ "") do
+        link "Usuń",
+          to: path,
+          method: :delete,
+          data: [confirm: "Na pewno usunąć \"" <> item_name <> "\"?"]
       end
     end
   end

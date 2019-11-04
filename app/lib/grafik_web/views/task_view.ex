@@ -1,27 +1,24 @@
 defmodule GrafikWeb.TaskView do
   use GrafikWeb, :view
 
-  def show_button(conn, task) do
+  def show_task_button(conn, task) do
     link task.name, to: Routes.task_path(conn, :show, task)
   end
   
-  def new_button(conn) do
-    link "Nowe zadanie", to: Routes.task_path(conn, :new)
+  def new_task_button(conn) do
+    new_button Routes.task_path(conn, :new), "Dodaj zadanie"
   end
   
-  def list_button(conn) do
-    link "Powrót do listy", to: Routes.task_path(conn, :index)
+  def list_tasks_button(conn) do
+    list_button Routes.task_path(conn, :index)
   end
 
-  def edit_button(conn, task) do
-    link "Edytuj", to: Routes.task_path(conn, :edit, task)
+  def edit_task_button(conn, task) do
+    edit_button Routes.task_path(conn, :edit, task)
   end
 
-  def delete_button(conn, task) do
-    link "Usuń",
-      to: Routes.task_path(conn, :delete, task),
-      method: :delete,
-      data: [confirm: "Na pewno usunąć \"" <> task.name <> "\"?"]
+  def delete_task_button(conn, task) do
+    delete_button Routes.task_path(conn, :delete, task), task.name
   end
 
   def task_status_to_human(status) do

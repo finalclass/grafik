@@ -1,26 +1,23 @@
 defmodule GrafikWeb.WorkerView do
   use GrafikWeb, :view
 
-  def show_button(conn, worker) do
+  def show_worker_button(conn, worker) do
     link worker.name, to: Routes.worker_path(conn, :show, worker)
   end
   
-  def new_button(conn) do
-    link "Nowy pracownik", to: Routes.worker_path(conn, :new)
+  def new_worker_button(conn) do
+    new_button Routes.worker_path(conn, :new), "Dodaj pracownika" 
   end
   
-  def list_button(conn) do
-    link "Powrót do listy", to: Routes.worker_path(conn, :index)
+  def list_workers_button(conn) do
+    list_button Routes.worker_path(conn, :index)
   end
 
-  def edit_button(conn, worker) do
-    link "Edytuj", to: Routes.worker_path(conn, :edit, worker)
+  def edit_worker_button(conn, worker) do
+    edit_button Routes.worker_path(conn, :edit, worker)
   end
 
-  def delete_button(conn, worker) do
-    link "Usuń",
-      to: Routes.worker_path(conn, :delete, worker),
-      method: :delete,
-      data: [confirm: "Na pewno usunąć \"" <> worker.name <> "\"?"]
+  def delete_worker_button(conn, worker) do
+    delete_button Routes.worker_path(conn, :delete, worker), worker.name
   end
 end

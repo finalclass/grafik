@@ -12,15 +12,15 @@
 <%= for client <- @client do %>
     <tr>
       <td>
-        <%= show_button(@conn, client) %>
+        <%= show_client_button(@conn, client) %>
       </td>
       <td>
-        <span><%= edit_button(@conn, client) %></span>
-        <span><%= delete_button(@conn, client) %></span>
+        <span><%= edit_client_button(@conn, client) %></span>
+        <span><%= delete_client_button(@conn, client) %></span>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
 
-<span><%= new_button(@conn) %></span>
+<span><%= new_client_button(@conn) %></span>
