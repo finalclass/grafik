@@ -1,0 +1,30 @@
+.dashboard.loading {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: wait;
+}
+
+.dashboard .project-expander {
+    cursor: default;
+    width: 15px;
+    margin-right: 0;
+    padding-right: 0;
+}
+
+.dashboard .project-name {
+    margin-left: 0;
+    padding-left: 0;
+    cursor: default;
+}
+
+.dashboard .project-expander .icon {
+    margin-right: 5px;
+}
+
+.dashboard .add-task-button {
+    margin: 0;
+}
+
+.dashboard .task-name {
+    cursor: default;
+}

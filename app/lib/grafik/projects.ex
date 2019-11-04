@@ -29,32 +29,29 @@ defmodule Grafik.Projects do
 
   """
   def list_projects do
-    Project
-    |> Repo.all()
-    |> Repo.preload(:client)
-    |> Repo.preload(:tasks)
+    Repo.all query_all_projects()
   end
 
-  def list_full_projects do
-    Repo.all(
-      from p in Project,
+  def list_not_archived_projects do
+    query = query_all_projects()
+    
+    from(p in query, where: p.is_archived == false)
+      |> Repo.all
+  end
+  
+  def query_all_projects do
+    task_query = from t in Task, preload: [:worker], order_by: t.id
+    client_query = from c in Grafik.Clients.Client
+    
+    from p in Project,
+      order_by: [asc: p.is_archived, asc: p.deadline],
       preload: [
-        tasks: (from t in Task, preload: [:worker]),
-        client: (from c in Grafik.Clients.Client)
+        tasks: ^task_query,
+        client: ^client_query
       ]
-    )
-      
-    # Project
-    # |> Repo.all()
-    # |> Repo.preload([
-      
-    # ])
-    # Repo.all(
-    #   from project in Project,
-    #     preload: [tasks: (from t in Task)]
-    # )
+    
   end
-
+    
   @doc """
   Gets a single project.
 

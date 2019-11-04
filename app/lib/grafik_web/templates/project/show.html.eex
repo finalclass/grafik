@@ -1,4 +1,10 @@
-<h1>Projekt: <%= @project.name %></h1>
+<h1>
+  <%= if @project.is_archived,
+  do: "Archiwalny projekt: ",
+  else: "Projekt: "
+  %>
+  <%= @project.name %>
+</h1>
 
 <ul>
 

@@ -5,6 +5,7 @@ defmodule Grafik.Projects.Project do
   schema "projects" do
     field :deadline, :date
     field :name, :string
+    field :is_archived, :boolean
     belongs_to :client, Grafik.Clients.Client
     has_many :tasks, Grafik.Projects.Task
 
@@ -14,7 +15,7 @@ defmodule Grafik.Projects.Project do
   @doc false
   def changeset(project, attrs) do
     project
-    |> cast(attrs, [:name, :deadline, :client_id])
+    |> cast(attrs, [:name, :deadline, :client_id, :is_archived])
     |> validate_required([:name, :deadline, :client_id])
   end
 end

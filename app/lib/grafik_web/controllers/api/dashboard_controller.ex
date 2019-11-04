@@ -4,7 +4,7 @@ defmodule GrafikWeb.Api.DashboardController do
   alias Grafik.Projects
 
   def index(conn, _params) do
-    projects = Projects.list_full_projects()
+    projects = Projects.list_not_archived_projects()
     workers = Grafik.Workers.list_workers()
     statuses = Projects.list_statuses()
     render(conn, "index.json", projects: projects, workers: workers, statuses: statuses)

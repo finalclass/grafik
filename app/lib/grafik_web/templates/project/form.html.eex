@@ -1,21 +1,26 @@
 <%= form_for @changeset, @action, fn f -> %>
   <%= form_general_error(@changeset) %>
 
-  <label for="">
+  <label>
     Nazwa
     <%= text_input f, :name %>    
   </label>
   <%= error_tag f, :name %>
 
-  <label for="">
+  <label>
     Deadline
     <%= date_select f, :deadline %>
   </label>
   <%= error_tag f, :deadline %>
 
-  <label for="">
+  <label>
     Klient
-    <%= select f, :client_id, @clients %>
+    <%= select f, :client_id, @clients, class: "full" %>
+  </label>
+
+  <label>
+    Zarchiwizowany?
+    <%= checkbox f, :is_archived %>
   </label>
   
   <div>

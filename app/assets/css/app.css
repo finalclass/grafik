@@ -1,6 +1,7 @@
 /* This file is for your main application css. */
 
 @import "./phoenix.css";
+@import "./dashboard.css";
 @import "./modal.css";
 
 .hidden {
@@ -38,33 +39,10 @@ select.full {
     width: 100%;
 }
 
-.dashboard.loading {
-    opacity: 0.5;
-    pointer-events: none;
-    cursor: wait;
+.projects-table .archived {
+    color: #aaa;
 }
 
-.projects-list .project-expander {
-    cursor: default;
-    width: 15px;
-    margin-right: 0;
-    padding-right: 0;
-}
-
-.projects-list .project-name {
-    margin-left: 0;
-    padding-left: 0;
-    cursor: default;
-}
-
-.projects-list .project-expander .icon {
-    margin-right: 5px;
-}
-
-.projects-list .add-task-button {
-    margin: 0;
-}
-
-.projects-list .task-name {
-    cursor: default;
+.projects-table .archived a {
+    color: #aaf;
 }

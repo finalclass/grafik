@@ -1,6 +1,6 @@
 <h1>Projekty</h1>
 
-<table>
+<table class="projects-table">
   <thead>
     <tr>
       <th>Nazwa</th>
@@ -12,7 +12,7 @@
   </thead>
   <tbody>
 <%= for project <- @projects do %>
-    <tr>
+    <tr class="<%= if project.is_archived do "archived" end %>">
       <td><%= show_button(@conn, project) %></td>
       <td><%= project.deadline %></td>
       <td><%= project.client.name %></td>
