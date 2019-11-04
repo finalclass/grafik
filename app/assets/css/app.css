@@ -3,25 +3,10 @@
 @import "./phoenix.css";
 @import "./dashboard.css";
 @import "./modal.css";
+@import "./icons.css";
 
 .hidden {
     display: none;
-}
-
-i.icon {
-    font-style: normal;
-}
-
-.icon.caret-right::after {
-    content: '▸';
-}
-
-.icon.caret-down::after {
-    content: '▾';
-}
-
-.icon.remove::after {
-    content: '⊖';
 }
 
 .grafik-logo {
@@ -45,4 +30,8 @@ select.full {
 
 .projects-table .archived a {
     color: #aaf;
+}
+
+button span, .button span {
+    margin-left: 7px;
 }

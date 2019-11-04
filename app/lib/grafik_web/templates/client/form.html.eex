@@ -13,6 +13,6 @@
   <%= error_tag f, :wfirma_id %>
 
   <div>
-    <%= submit "Zapisz" %>
+    <%= save_button %>
   </div>
 <% end %>

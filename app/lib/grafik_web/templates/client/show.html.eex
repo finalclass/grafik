@@ -9,5 +9,5 @@
 
 </ul>
 
-<span><%= edit_button(@con, @client) %></span>
 <span><%= list_button(@conn) %></span>
+<span><%= edit_button(@conn, @client) %></span>

@@ -118,7 +118,9 @@ addTaskButtonView project =
                 [ class "add-task-button"
                 , onClick (T.TaskCreateRequest project)
                 ]
-                [ text "➕ nowe zadanie"
+                [ i [ class "icon icon-plus" ]
+                    []
+                , span [] [ text "nowe zadanie" ]
                 ]
             ]
         ]

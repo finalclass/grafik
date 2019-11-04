@@ -1,0 +1,39 @@
+.icon {
+    font-style: normal;
+}
+
+.icon.caret-right::after {
+    content: '▸';
+}
+
+.icon.caret-down::after {
+    content: '▾';
+}
+
+.icon.remove::after {
+    content: '⊖';
+}
+
+.icon.icon-plus::after {
+    content: '➕';
+}
+
+.icon.icon-left-arrow::after {
+    content: '⬅';
+}
+
+.icon.icon-laquo::after {
+    content: '«';
+}
+
+.icon.icon-raquo::after {
+    content: '»';
+}
+
+.icon.icon-recycle::after {
+    content: '♻';
+}
+
+.icon.icon-check::after {
+    content: '✓';
+}

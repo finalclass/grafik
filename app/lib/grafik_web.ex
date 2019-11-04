@@ -52,6 +52,15 @@ defmodule GrafikWeb do
           """
         end
       end
+
+      def save_button() do
+        ~e"""
+        <button type="submit">
+            <i class="icon icon-check"></i>
+            Zapisz
+        </button>
+        """
+      end
     end
   end
 

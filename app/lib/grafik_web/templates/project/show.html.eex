@@ -21,14 +21,31 @@
 
 <h2>Zadania</h2>
 
-<ul>
-  <%= for task <- @project.tasks do %>
-    <li>
-      <%= GrafikWeb.TaskView.show_button(@conn, task) %>
-    </li>
-  <% end %>
-</ul>
+<table>
+  <thead>
+    <tr>
+      <th>Nazwa</th>
+      <th>Pracownik</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for task <- @project.tasks do %>
+      <tr>
+        <td>
+          <%= GrafikWeb.TaskView.show_button(@conn, task) %>
+        </td>
+        <td>
+          <%= if task.worker do task.worker.name end %>
+        </td>
+        <td>
+          <%= GrafikWeb.TaskView.task_status_to_human(task.status) %>
+        </td>
+      </li>
+    <% end %>
+  </tbody>
+</table>
 
-<span><%= edit_button(@conn, @project) %></span>
 <span><%= list_button(@conn) %></span>
 <span><%= add_task(@conn, @project) %></span>
+<span><%= edit_button(@conn, @project) %></span>
