@@ -1,9 +1,9 @@
 module View exposing (mainView)
 
+import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Json.Decode as D
 import ModalView exposing (modalView)
 import Types as T
 import Utils
@@ -61,7 +61,7 @@ projectView model project =
                 []
             , th
                 [ class "project-name"
-                , colspan 3
+                , colspan 4
                 , onClick (T.ToggleProjectExpand project)
                 ]
                 [ text project.name ]
@@ -83,9 +83,8 @@ taskView model task =
     tr [ class "task" ]
         [ td [] [ text "" ]
         , td [ class "task-name", onClick (T.TaskRenameModalShow task) ] [ text task.name ]
-        , td []
-            [ selectWorkerView model task
-            ]
+        , td [] [ selectWorkerView model task ]
+        , td [] [ selectTaskStatusView model task ]
         , td []
             [ button
                 [ class "button-outline"
@@ -98,11 +97,25 @@ taskView model task =
         ]
 
 
+selectTaskStatusView : T.Model -> T.Task -> Html T.Msg
+selectTaskStatusView model task =
+    select [ onInput (T.TaskChangeStatusRequest task) ]
+        (Dict.foldl
+            (\k v acc ->
+                option [ value k, selected (task.status == k) ]
+                    [ text v ]
+                    :: acc
+            )
+            []
+            model.statuses
+        )
+
+
 addTaskButtonView : T.Project -> Html T.Msg
 addTaskButtonView project =
     tr []
         [ td [] [ text "" ]
-        , td [ colspan 3 ]
+        , td [ colspan 4 ]
             [ button
                 [ class "add-task-button"
                 , onClick (T.TaskCreateRequest project)

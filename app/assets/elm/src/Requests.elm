@@ -1,4 +1,4 @@
-module Requests exposing (changeTaskWorker, createNewTask, getAllData, removeTask, renameTask)
+module Requests exposing (changeTaskStatus, changeTaskWorker, createNewTask, getAllData, removeTask, renameTask)
 
 import Http
 import Json.Decode as D
@@ -36,12 +36,20 @@ createNewTask project =
         }
 
 
-modifyTask : T.Task -> E.Value -> Cmd T.Msg
+modifyTask : T.Task -> List ( String, E.Value ) -> Cmd T.Msg
 modifyTask task fields =
     Http.request
         { method = "PUT"
         , url = "/api/projects/" ++ String.fromInt task.project_id ++ "/tasks/" ++ String.fromInt task.id
-        , body = Http.jsonBody fields
+        , body =
+            Http.jsonBody
+                (E.object
+                    [ ( "task"
+                      , E.object
+                            fields
+                      )
+                    ]
+                )
         , headers = []
         , expect = Http.expectJson T.TaskUpdated taskDecoder
         , timeout = Nothing
@@ -49,28 +57,19 @@ modifyTask task fields =
         }
 
 
+changeTaskStatus : T.Task -> String -> Cmd T.Msg
+changeTaskStatus task status =
+    modifyTask task [ ( "status", E.string status ) ]
+
+
 changeTaskWorker : T.Task -> String -> Cmd T.Msg
 changeTaskWorker task workerId =
-    modifyTask task
-        (E.object
-            [ ( "task"
-              , E.object
-                    [ ( "worker_id", E.string workerId ) ]
-              )
-            ]
-        )
+    modifyTask task [ ( "worker_id", E.string workerId ) ]
 
 
 renameTask : T.Task -> String -> Cmd T.Msg
 renameTask task newName =
-    modifyTask task
-        (E.object
-            [ ( "task"
-              , E.object
-                    [ ( "name", E.string newName ) ]
-              )
-            ]
-        )
+    modifyTask task [ ( "name", E.string newName ) ]
 
 
 taskDecoder : D.Decoder T.Task
@@ -92,7 +91,7 @@ taskDecoder =
 
 projectsDecoder : D.Decoder T.AllData
 projectsDecoder =
-    D.map2 T.AllData
+    D.map3 T.AllData
         (D.field "projects"
             (D.list
                 (D.map4 T.Project
@@ -117,6 +116,9 @@ projectsDecoder =
                     (D.field "name" D.string)
                 )
             )
+        )
+        (D.field "statuses"
+            (D.dict D.string)
         )
 
 

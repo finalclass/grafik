@@ -16,6 +16,7 @@ type Msg
     | TaskRemoved Task (Result Http.Error Bool)
     | TaskRenameModalShow Task
     | TaskRenameRequest Task
+    | TaskChangeStatusRequest Task String
     | ModalUpdatePromptValue String
     | ModalClose
 
@@ -39,6 +40,7 @@ type Modal
 type alias Model =
     { projects : List Project
     , workers : List Worker
+    , statuses : Statuses
     , expandedProjects : ExpandedProjects
     , mainViewState : MainViewState
     , modal : Modal
@@ -78,4 +80,9 @@ type alias Project =
 type alias AllData =
     { projects : List Project
     , workers : List Worker
+    , statuses : Statuses
     }
+
+
+type alias Statuses =
+    Dict String String

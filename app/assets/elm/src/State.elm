@@ -12,6 +12,7 @@ init : String -> ( T.Model, Cmd T.Msg )
 init flags =
     ( { projects = []
       , workers = []
+      , statuses = Dict.empty
       , modal = T.ModalHidden
       , modalPromptValue = ""
       , expandedProjects = ExpandedProjectsCache.decodeExpandedProjectsCache flags
@@ -30,6 +31,7 @@ update msg model =
                     ( { model
                         | projects = allData.projects
                         , workers = allData.workers
+                        , statuses = allData.statuses
                         , mainViewState = T.SuccessState
                       }
                     , Cmd.none
@@ -130,6 +132,9 @@ update msg model =
               }
             , Requests.renameTask task taskName
             )
+
+        T.TaskChangeStatusRequest task state ->
+            ( { model | mainViewState = T.LoadingState }, Requests.changeTaskStatus task state )
 
         T.ModalClose ->
             ( { model | modal = T.ModalHidden, modalPromptValue = "" }, Cmd.none )
