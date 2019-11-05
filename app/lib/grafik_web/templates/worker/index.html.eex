@@ -1,4 +1,10 @@
-<h1>Pracownicy</h1>
+<ul class="breadcrumbs">
+  <li>Pracownicy</li>
+</ul>
+
+<ul class="buttons">
+  <li><%= new_worker_button(@conn) %></li>
+</ul>
 
 <table>
   <thead>
@@ -23,4 +29,3 @@
   </tbody>
 </table>
 
-<span><%= new_worker_button(@conn) %></span>

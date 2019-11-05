@@ -1,0 +1,9 @@
+.buttons {
+    list-style-type: none;
+    margin-bottom: 0;
+}
+.buttons li {
+    margin-right: 7px;
+    display: inline-block;
+    width: auto;
+}

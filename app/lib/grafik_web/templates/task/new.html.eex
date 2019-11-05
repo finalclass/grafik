@@ -1,5 +1,7 @@
-<h1>Nowe zadanie</h1>
+<ul class="breadcrumbs">
+  <li><%= link "Zamówienia", to: Routes.project_path(@conn,  :index) %></li>
+  <li><%= GrafikWeb.ProjectView.show_project_button(@conn, @project) %></li>
+  <li>Nowy produkt</li>
+</ul>
 
 <%= render "form.html", Map.put(assigns, :action, Routes.task_path(@conn, :create)) %>
-
-<span><%= list_tasks_button(@conn) %></span>

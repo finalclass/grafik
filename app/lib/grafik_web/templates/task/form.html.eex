@@ -1,34 +1,38 @@
 <%= form_for @changeset, @action, fn f -> %>
   <%= form_general_error(@changeset) %>
 
-  <label for="">
+  <label>
     Nazwa:
     <%= text_input f, :name %>
   </label>
   <%= error_tag f, :name %>
 
-  <label for="">
+  <label>
     Status:
     <%= select f, :status, task_statuses_select_options(), class: "full" %>
   </label>
   <%= error_tag f, :status %>
 
-  <label for="">
-    Pracownik
+  <%= if @task.status === "sent" do %>
+    <label>
+      Data wysłania:
+      <%= datetime_select f, :sent_at %>
+    </label>
+    <%= error_tag f, :sent_at %>
+  <% end %>
+
+  <label>
+    Pracownik:
     <%= select f, :worker_id, @workers, class: "full" %>
   </label>
+  <%= error_tag f, :worker_id %>
 
-  <label for="">
-    Zamówienie
+  <label>
+    Zamówienie:
     <%= select f, :project_id, @projects, class: "full" %>
   </label>
+  <%= error_tag f, :project_id %>
   
-  <label for="">
-    Opis:
-    <%= textarea f, :description %>
-  </label>
-  <%= error_tag f, :description %>
-
   <div>
     <%= save_button() %>
   </div>

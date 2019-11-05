@@ -1,17 +1,30 @@
-<h1>Zadanie: <%= @task.name %></h1>
+<ul class="breadcrumbs">
+  <li><%= link "Zamówienia", to: Routes.project_path(@conn,  :index) %></li>
+  <li><%= GrafikWeb.ProjectView.show_project_button(@conn, @project) %></li>
+  <li><%= @task.name %></li>
+</ul>
+
+<ul class="buttons">
+  <li><%= edit_task_button(@conn, @task) %></li>
+</ul>
 
 <ul>
-
+  <li>
+    <strong>Produkt:</strong>
+    <%= @task.name %>
+  </li>
   <li>
     <strong>Status:</strong>
     <%= task_status_to_human(@task.status) %>
   </li>
 
-  <li>
-    <strong>Zamówienie:</strong>
-    <%= GrafikWeb.ProjectView.show_project_button(@conn, @task.project) %>
-  </li>
-  
+  <%= if @task.status === "sent" do %>
+    <li>
+      <strong>Data wysłania:</strong>
+      <%= @task.sent_at %>
+    </li>
+  <% end %>
+
   <li>
     <strong>Pracownik:</strong>
     <%= if @task.worker !== nil do %>
@@ -19,12 +32,5 @@
     <% end %>
   </li>
   
-  <li>
-    <strong>Description:</strong>
-    <%= @task.description %>
-  </li>
-
 </ul>
 
-<span><%= edit_task_button(@conn, @task) %></span>
-<span><%= list_tasks_button(@conn) %></span>

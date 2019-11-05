@@ -1,6 +1,13 @@
-<h1>Pracownik: <%= @worker.name %></h1>
+<ul class="breadcrumbs">
+  <li><%= link "Zamówienia", to: Routes.project_path(@conn,  :index) %></li>
+  <li><%= @worker.name  %>
+</ul>
 
-<h2>Zadania</h2>
+<ul class="buttons">
+  <span><%= edit_worker_button(@conn, @worker) %></span>
+</ul>
+
+<h2>Produkty do wykonania</h2>
 
 <ul>
   <%= for task <- @worker.tasks do %>
@@ -11,5 +18,3 @@
   <% end %>
 </ul>
 
-<span><%= edit_worker_button(@conn, @worker) %></span>
-<span><%= list_workers_button(@conn) %></span>

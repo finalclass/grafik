@@ -1,5 +1,6 @@
-<h1>Nowy pracownik</h1>
+<ul class="breadcrumbs">
+  <li><%= link "Zamówienia", to: Routes.project_path(@conn,  :index) %></li>
+  <li>Nowy pracownik</li>
+</ul>
 
 <%= render "form.html", Map.put(assigns, :action, Routes.worker_path(@conn, :create)) %>
-
-<span><%= list_workers_button(@conn) %></span>

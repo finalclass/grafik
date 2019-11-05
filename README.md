@@ -10,6 +10,7 @@
 - [DONE] klient
   - [DONE] adres do faktury (nazwa ulica kod miasto nip)
   - [DONE] adres do wysyłki (nazwa ulica kod miasto, telefon dla kuriera, nazwisko osoby kontaktowej, email)
+  - dodać nazwę skróconą i nazwę długą
 - [DONE] projekty
   - [DONE] deadline -> termin
   - [DONE] numer faktury/oferty
@@ -18,9 +19,9 @@
   - [DONE] data rozpoczęcia zlecenia
   - [DONE] sztywny termin
   - [DONE] sztywny termin na czerwono
-- breadcrumbs
-- data wysłania zadania (produktu)
-- automatycznie ustawiana data zmiany statusu zadania na wysłane
+- [DONE] breadcrumbs
+- [DONE] data wysłania zadania (produktu)
+- [DONE] automatycznie ustawiana data zmiany statusu zadania na wysłane
 - wydruk dla pracownika
  - nazwa zlecenia i klienta i termin
    - lista zadań do wykonania
@@ -30,3 +31,4 @@
   - przejście do widoku klienta
   - szukanie po tekście / filtrowanie po tekście. po wpisaniu niech się pokaże cały projekt, który ma zadanie z wybranym tekstem. Projekty bez zdań z danym tekstem mają się nie wyświetlać
 - na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
+- wywalić "description" z produktów

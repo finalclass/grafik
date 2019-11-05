@@ -63,7 +63,9 @@ defmodule GrafikWeb.ProjectController do
         |> redirect(to: Routes.project_path(conn, :show, project))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", project: project, changeset: changeset)
+        conn
+        |> assign_clients()
+        |> render("edit.html", project: project, changeset: changeset)
     end
   end
 

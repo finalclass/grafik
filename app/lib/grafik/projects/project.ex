@@ -3,13 +3,13 @@ defmodule Grafik.Projects.Project do
   import Ecto.Changeset
   
   schema "projects" do
-    field :deadline, :date
+    field :deadline, :utc_datetime
     field :name, :string
     field :is_archived, :boolean
     field :invoice_number, :string
     field :price, :float
     field :paid, :float
-    field :start_at, :date
+    field :start_at, :utc_datetime
     field :is_deadline_rigid, :boolean
     
     belongs_to :client, Grafik.Clients.Client

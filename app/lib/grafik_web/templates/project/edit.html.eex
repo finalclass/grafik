@@ -1,6 +1,8 @@
-<h1>Edytuj project</h1>
-
-<span><%= list_projects_button(@conn) %></span>
+<ul class="breadcrumbs">
+  <li><%= link "Zamówienia", to: Routes.project_path(@conn,  :index) %></li>
+  <li><%= show_project_button(@conn, @project) %></li>
+  <li>Edycja</li>
+</ul>
 
 <%= render "form.html", Map.put(assigns, :action, Routes.project_path(@conn, :update, @project)) %>
 

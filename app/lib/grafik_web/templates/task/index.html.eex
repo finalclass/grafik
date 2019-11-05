@@ -1,4 +1,10 @@
-<h1>Zadania</h1>
+<ul class="breadcrumbs">
+  <li>Zadania</li>
+</ul>
+
+<ul class="buttons">
+  <li><%= new_task_button(@conn) %></li>
+</ul>
 
 <table>
   <thead>
@@ -27,5 +33,3 @@
 <% end %>
   </tbody>
 </table>
-
-<span><%= new_task_button(@conn) %></span>

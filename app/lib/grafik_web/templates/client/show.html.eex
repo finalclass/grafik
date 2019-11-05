@@ -1,4 +1,11 @@
-<h1>Klient: <%= @client.name %></h1>
+<ul class="breadcrumbs">
+  <li><%= link "Klienci", to: Routes.client_path(@conn,  :index) %></li>
+  <li><%= @client.name %></li>
+</ul>
+
+<ul class="buttons">
+  <li><%= edit_client_button(@conn, @client) %></li>
+</ul>
 
 <div class="row">
   <div class="column">
@@ -21,5 +28,4 @@
   </div>
 </div>
 
-<span><%= list_clients_button(@conn) %></span>
-<span><%= edit_client_button(@conn, @client) %></span>
+

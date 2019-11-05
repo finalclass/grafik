@@ -11,10 +11,10 @@ defmodule Grafik.Projects do
 
   def list_statuses() do
     [
-      %{id: "todo", name: "Do wykonania"},
-      %{id: "in_propress", name: "W trakcie realizacji"},
-      %{id: "received", name: "Odebrane"},
-      %{id: "sent", name: "Wysłane"}
+      %{id: "todo", name: "Nieruszony"},
+      %{id: "in_propress", name: "Realizowany"},
+      %{id: "received", name: "Odebrany"},
+      %{id: "sent", name: "Wysłany"}
     ]
   end
 
@@ -209,6 +209,22 @@ defmodule Grafik.Projects do
 
   """
   def update_task(%Task{} = task, attrs) do
+    # if we change to "sent" add "sent_at" with current time
+    attrs = if (task.status !== "sent" && attrs["status"] === "sent") do
+      now = DateTime.utc_now()
+      Map.put(attrs, "sent_at",
+        %{
+          "year" => Integer.to_string(now.year),
+          "month" => Integer.to_string(now.month),
+          "day" => Integer.to_string(now.day),
+          "hour" => Integer.to_string(now.hour),
+          "minute" => Integer.to_string(now.minute)
+        }
+      )
+    else
+      attrs
+    end
+
     task
     |> Task.changeset(attrs)
     |> Repo.update()

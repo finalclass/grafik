@@ -1,0 +1,22 @@
+.breadcrumbs {
+    list-style-type: none;
+    margin-bottom: 0;
+}
+
+.breadcrumbs li {
+    display: inline-block;
+    text-overflow: ellipsis;
+    max-width: 250px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.breadcrumbs li::after {
+    content: '/';
+    padding-left: 5px;
+    color: #aaa;
+}
+
+.breadcrumbs li:last-child::after {
+    content: '';
+}

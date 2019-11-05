@@ -1,7 +1,7 @@
 <%= form_for @changeset, @action, fn f -> %>
   <%= form_general_error(@changeset) %>
 
-  <label for="">
+  <label>
     Nazwa:
     <%= text_input f, :name %>
   </label>

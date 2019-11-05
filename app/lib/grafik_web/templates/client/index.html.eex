@@ -1,4 +1,10 @@
-<h1>Klienci</h1>
+<ul class="breadcrumbs">
+  <li>Klienci</li>
+</ul>
+
+<ul class="buttons">
+  <li><%= new_client_button(@conn) %></li>
+</ul>
 
 <table>
   <thead>
@@ -9,18 +15,18 @@
     </tr>
   </thead>
   <tbody>
-<%= for client <- @client do %>
-    <tr>
-      <td>
-        <%= show_client_button(@conn, client) %>
-      </td>
-      <td>
-        <span><%= edit_client_button(@conn, client) %></span>
-        <span><%= delete_client_button(@conn, client) %></span>
+    <%= for client <- @client do %>
+      <tr>
+        <td>
+          <%= show_client_button(@conn, client) %>
+        </td>
+        <td>
+          <span><%= edit_client_button(@conn, client) %></span>
+          <span><%= delete_client_button(@conn, client) %></span>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
 
-<span><%= new_client_button(@conn) %></span>
+

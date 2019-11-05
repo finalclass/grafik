@@ -4,6 +4,8 @@
 @import "./dashboard.css";
 @import "./modal.css";
 @import "./icons.css";
+@import "./breadcrumbs.css";
+@import "./buttons.css";
 
 .hidden {
     display: none;
@@ -36,6 +38,3 @@ select.full {
     color: #f00;
 }
 
-button span, .button span {
-    margin-left: 7px;
-}

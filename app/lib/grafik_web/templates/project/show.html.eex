@@ -1,15 +1,19 @@
+<ul class="breadcrumbs">
+  <li><%= link "Zamówienia", to: Routes.project_path(@conn,  :index) %></li>
+  <li>
+    <%= if @project.is_archived do "(Archiwalne) " end %>
+    <%= @project.name %>
+  </li>
+</ul>
+
 <h1>
-  <%= if @project.is_archived,
-  do: "Archiwalne zamówienie: ",
-  else: "Zamówienie: "
-  %>
-  <%= @project.name %>
+  
 </h1>
 
-<span><%= list_projects_button(@conn) %></span>
-<span><%= add_project_task(@conn, @project) %></span>
-<span><%= edit_project_button(@conn, @project) %></span>
-
+<ul class="buttons">
+  <li><%= edit_project_button(@conn, @project) %></li>
+  <li><%= add_project_task(@conn, @project) %></li>
+</ul>
 
 <ul>
 
@@ -49,7 +53,7 @@
   </li>
 </ul>
 
-<h2>Zadania</h2>
+<h2>Produkty</h2>
 
 <table>
   <thead>

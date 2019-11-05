@@ -1,6 +1,10 @@
-<h1>Zamówienia</h1>
+<ul class="breadcrumbs">
+  <li>Zamówienia</li>
+</ul>
 
-<span><%= new_project_button(@conn) %></span>
+<ul class="buttons">
+  <li><%= new_project_button(@conn) %></li>
+</ul>
 
 <table class="projects-table">
   <thead>
@@ -13,16 +17,16 @@
     </tr>
   </thead>
   <tbody>
-<%= for project <- @projects do %>
-    <tr class="<%= if project.is_archived do "archived" end %>">
-      <td><%= show_project_button(@conn, project) %></td>
-      <td class="<%= if project.is_deadline_rigid && !project.is_archived do "rigid-deadline" end %>">
-        <%= project.deadline %>
-      </td>
-      <td><%= project.client.name %></td>
-      
-      <td>
-        <span><%= edit_project_button(@conn, project) %></span>
+    <%= for project <- @projects do %>
+      <tr class="<%= if project.is_archived do "archived" end %>">
+        <td><%= show_project_button(@conn, project) %></td>
+        <td class="<%= if project.is_deadline_rigid && !project.is_archived do "rigid-deadline" end %>">
+          <%= project.deadline %>
+        </td>
+        <td><%= project.client.name %></td>
+        
+        <td>
+          <span><%= edit_project_button(@conn, project) %></span>
         <span><%= delete_project_button(@conn, project) %></span>
       </td>
     </tr>

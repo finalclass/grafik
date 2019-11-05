@@ -15,9 +15,10 @@ defmodule GrafikWeb.TaskController do
     |> render_new_page()
   end
 
-  def add_to_project(conn, %{"id" => id}) do
+  def add_task_to_project(conn, %{"id" => id}) do
     conn
     |> assign(:changeset, Projects.change_task(%Task{project_id: id}))
+    |> assign(:project, Projects.get_project!(id))
     |> render_new_page()
   end
 
@@ -55,21 +56,25 @@ defmodule GrafikWeb.TaskController do
 
   def show(conn, %{"id" => id}) do
     task = Projects.get_task!(id)
-    render(conn, "show.html", task: task)
+    project = Projects.get_project!(task.project_id)
+    render(conn, "show.html", task: task, project: project)
   end
 
   def edit(conn, %{"id" => id}) do
     task = Projects.get_task!(id)
+    project = Projects.get_project!(task.project_id)
     changeset = Projects.change_task(task)
 
     conn
     |> init_workers()
     |> init_projects()
+    |> assign(:project, project) 
     |> render("edit.html", task: task, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "task" => task_params}) do
     task = Projects.get_task!(id)
+    project = Projects.get_project!(task.project_id)
 
     case Projects.update_task(task, task_params) do
       {:ok, task} ->
@@ -81,6 +86,7 @@ defmodule GrafikWeb.TaskController do
         conn
         |> init_workers()
         |> init_projects()
+        |> assign(:project, project)
         |> render("edit.html", task: task, changeset: changeset)
     end
   end

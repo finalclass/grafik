@@ -22,6 +22,6 @@ defmodule GrafikWeb.ProjectView do
   end
 
   def add_project_task(conn, project) do
-    new_button(Routes.task_path(conn, :add_to_project, project), "Dodaj zadanie")
+    new_button(Routes.task_path(conn, :add_task_to_project, project), "Dodaj produkt")
   end
 end
