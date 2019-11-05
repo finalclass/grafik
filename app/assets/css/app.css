@@ -38,3 +38,6 @@ select.full {
     color: #f00;
 }
 
+.worker-tasks-list h3 {
+    margin: 10px 0;
+}

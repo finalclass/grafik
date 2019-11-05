@@ -3,6 +3,7 @@ defmodule GrafikWeb.WorkerController do
 
   alias Grafik.Workers
   alias Grafik.Workers.Worker
+  alias Grafik.Projects
 
   def index(conn, _params) do
     workers = Workers.list_workers()
@@ -27,8 +28,9 @@ defmodule GrafikWeb.WorkerController do
   end
 
   def show(conn, %{"id" => id}) do
-    worker = Workers.get_worker_with_tasks!(id)
-    render(conn, "show.html", worker: worker)
+    worker = Workers.get_worker!(id)
+    projects = Projects.get_worker_tasks!(id)
+    render(conn, "show.html", worker: worker, projects: projects)
   end
 
   def edit(conn, %{"id" => id}) do

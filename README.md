@@ -22,9 +22,9 @@
 - [DONE] breadcrumbs
 - [DONE] data wysłania zadania (produktu)
 - [DONE] automatycznie ustawiana data zmiany statusu zadania na wysłane
-- wydruk dla pracownika
- - nazwa zlecenia i klienta i termin
-   - lista zadań do wykonania
+- [DONE] wydruk dla pracownika
+ - [DONE] nazwa zlecenia i klienta i termin
+   - [DONE] lista zadań do wykonania
 - dashboard
   - dużo rekordów na raz w dashboard. wszystko ścieśnić
   - przejście na widoku projektu
@@ -32,3 +32,4 @@
   - szukanie po tekście / filtrowanie po tekście. po wpisaniu niech się pokaże cały projekt, który ma zadanie z wybranym tekstem. Projekty bez zdań z danym tekstem mają się nie wyświetlać
 - na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
 - wywalić "description" z produktów
+- guzik "print" na karcie pracownika, który by otwierał w nowym oknie wykaz zadań bez menu itp... no i odpalał window.print()

@@ -258,4 +258,20 @@ defmodule Grafik.Projects do
   def change_task(%Task{} = task) do
     Task.changeset(task, %{})
   end
+
+  def get_worker_tasks!(worker_id) do
+    tasks_q = from t in Task, where: t.worker_id == ^worker_id
+    client_q = from c in Grafik.Clients.Client
+    Repo.all(
+      from p in Project,
+      join: t in Task,
+      on: t.project_id == p.id,
+      where: t.worker_id == ^worker_id,
+      group_by: p.id,
+      preload: [
+        tasks: ^tasks_q,
+        client: ^client_q
+      ]
+    )
+  end
 end

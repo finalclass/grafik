@@ -9,12 +9,18 @@
 
 <h2>Produkty do wykonania</h2>
 
-<ul>
-  <%= for task <- @worker.tasks do %>
-    <li>
-      <%= GrafikWeb.TaskView.show_task_button(@conn, task) %>
-      [<%= GrafikWeb.TaskView.task_status_to_human(task.status) %>]
-    </li>
-  <% end %>
-</ul>
+<div class="worker-tasks-list">
+  <%= for project <- @projects do %>
+    <h3>
+      <%= project.name %>
+      (<%= project.client.name %>)
+      <%= Date.to_iso8601(project.deadline) %>
+    </h3>
 
+    <ol>
+      <%= for task <- project.tasks do %>
+        <li><%= task.name %></li>
+      <% end %>
+    </ol>
+  <% end %>
+</div>

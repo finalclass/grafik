@@ -37,10 +37,6 @@ defmodule Grafik.Workers do
   """
   def get_worker!(id), do: Repo.get!(Worker, id)
 
-  def get_worker_with_tasks!(id) do
-    id |> get_worker!() |> Repo.preload(:tasks)
-  end
-  
   @doc """
   Creates a worker.
 
