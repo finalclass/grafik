@@ -41,3 +41,4 @@
   - w edycji zadania jest nazwa zadania zamiast "edytuj", 
   - lub w widoku pracownika jest link do zlecen a nie do listy pracowników
   - przejrzeć resztę breadcrumbs
+- backupy
