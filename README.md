@@ -37,3 +37,7 @@
   - szukanie po tekście / filtrowanie po tekście. po wpisaniu niech się pokaże cały projekt, który ma zadanie z wybranym tekstem. Projekty bez zdań z danym tekstem mają się nie wyświetlać
   - wyłączyć cache przy pobieraniu projektów bo jest błąd: dodaj zadanie, przejdź na zlecenie i nacisnij wstecz. nowo dodane zadanie się nie wyświetli 
 - na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
+- breadcrumbs ma błędy. np: 
+  - w edycji zadania jest nazwa zadania zamiast "edytuj", 
+  - lub w widoku pracownika jest link do zlecen a nie do listy pracowników
+  - przejrzeć resztę breadcrumbs
