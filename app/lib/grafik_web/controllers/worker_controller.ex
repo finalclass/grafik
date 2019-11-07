@@ -29,10 +29,19 @@ defmodule GrafikWeb.WorkerController do
 
   def show(conn, %{"id" => id}) do
     worker = Workers.get_worker!(id)
-    projects = Projects.get_worker_tasks!(id)
+    projects = Projects.get_worker_tasks(id)
     render(conn, "show.html", worker: worker, projects: projects)
   end
 
+  def print(conn, %{"id" => id}) do
+    worker = Workers.get_worker!(id)
+    projects = Projects.get_worker_tasks(id)
+    render(conn, "print.html",
+      layout: {GrafikWeb.WorkerView, "print.html"},
+      worker: worker,
+      projects: projects)
+  end
+  
   def edit(conn, %{"id" => id}) do
     worker = Workers.get_worker!(id)
     changeset = Workers.change_worker(worker)

@@ -13,7 +13,7 @@
   </label>
   <%= error_tag f, :status %>
 
-  <%= if @task.status === "sent" do %>
+  <%= if @changeset.data.status === "sent" do %>
     <label>
       Data wysłania:
       <%= datetime_select f, :sent_at %>

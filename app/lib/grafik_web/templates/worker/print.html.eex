@@ -1,0 +1,7 @@
+<h1><%= @worker.name %></h1>
+
+<%= render(GrafikWeb.WorkerView, "tasks.html",  projects: @projects) %>
+
+<script>
+ window.print();
+</script>

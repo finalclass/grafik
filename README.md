@@ -25,11 +25,15 @@
 - [DONE] wydruk dla pracownika
  - [DONE] nazwa zlecenia i klienta i termin
    - [DONE] lista zadań do wykonania
+- [DONE] wywalić "description" z produktów
+- [DONE] na liście zadań pracownika:
+  - [DONE] guzik "print", który by otwierał w nowym oknie wykaz zadań bez menu itp... no i odpalał window.print()
+  - [DONE] upewnić się, że nie ma zadań z zarchiwizowanych projektów
+  - [DONE] sortowanie po dacie oddanie
 - dashboard
   - dużo rekordów na raz w dashboard. wszystko ścieśnić
-  - przejście na widoku projektu
+  - przejście do widoku projektu
   - przejście do widoku klienta
   - szukanie po tekście / filtrowanie po tekście. po wpisaniu niech się pokaże cały projekt, który ma zadanie z wybranym tekstem. Projekty bez zdań z danym tekstem mają się nie wyświetlać
+  - wyłączyć cache przy pobieraniu projektów bo jest błąd: dodaj zadanie, przejdź na zlecenie i nacisnij wstecz. nowo dodane zadanie się nie wyświetli 
 - na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
-- wywalić "description" z produktów
-- guzik "print" na karcie pracownika, który by otwierał w nowym oknie wykaz zadań bez menu itp... no i odpalał window.print()

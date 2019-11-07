@@ -37,3 +37,7 @@
 .icon.icon-check::after {
     content: '✓';
 }
+
+.icon.icon-print::after {
+    content: '⎙';
+}

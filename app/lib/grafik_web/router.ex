@@ -24,6 +24,7 @@ defmodule GrafikWeb.Router do
     resources "/tasks", TaskController
 
     get "/projects/:id/tasks/new", TaskController, :add_task_to_project
+    get "/workers/:id/print", WorkerController, :print
   end
 
   # Other scopes may use custom stacks.

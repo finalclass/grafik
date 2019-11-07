@@ -4,23 +4,17 @@
 </ul>
 
 <ul class="buttons">
-  <span><%= edit_worker_button(@conn, @worker) %></span>
+  <li><%= edit_worker_button(@conn, @worker) %></li>
+  <li>
+    <%= link to: Routes.worker_path(@conn, :print, @worker),
+             class: "button",
+             target: "_blank" do %>
+      <i class="icon icon-print"></i>
+      Drukuj
+    <% end %>
+  </li>
 </ul>
 
 <h2>Produkty do wykonania</h2>
 
-<div class="worker-tasks-list">
-  <%= for project <- @projects do %>
-    <h3>
-      <%= project.name %>
-      (<%= project.client.name %>)
-      <%= Date.to_iso8601(project.deadline) %>
-    </h3>
-
-    <ol>
-      <%= for task <- project.tasks do %>
-        <li><%= task.name %></li>
-      <% end %>
-    </ol>
-  <% end %>
-</div>
+<%= render(GrafikWeb.WorkerView, "tasks.html",  projects: @projects) %>

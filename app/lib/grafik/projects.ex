@@ -259,14 +259,21 @@ defmodule Grafik.Projects do
     Task.changeset(task, %{})
   end
 
-  def get_worker_tasks!(worker_id) do
-    tasks_q = from t in Task, where: t.worker_id == ^worker_id
+  def get_worker_tasks(worker_id) do
+    tasks_q = from t in Task,
+      where: t.worker_id == ^worker_id,
+      where: t.status != "received",
+      where: t.status != "sent"
     client_q = from c in Grafik.Clients.Client
     Repo.all(
       from p in Project,
       join: t in Task,
       on: t.project_id == p.id,
       where: t.worker_id == ^worker_id,
+      where: p.is_archived != true,
+      where: t.status != "received",
+      where: t.status != "sent",
+      order_by: [desc: p.deadline],
       group_by: p.id,
       preload: [
         tasks: ^tasks_q,

@@ -1,0 +1,15 @@
+<div class="worker-tasks-list">
+  <%= for project <- @projects do %>
+    <h3>
+      <%= project.client.name %>:
+      <%= project.name %>
+    </h3>
+    <h4>Termin: <%= Date.to_iso8601(project.deadline) %></h4>
+
+    <ol>
+      <%= for task <- project.tasks do %>
+        <li><%= task.name %></li>
+      <% end %>
+    </ol>
+  <% end %>
+</div>
