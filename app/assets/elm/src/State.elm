@@ -17,6 +17,7 @@ init flags =
       , modalPromptValue = ""
       , expandedProjects = ExpandedProjectsCache.decodeExpandedProjectsCache flags
       , mainViewState = T.LoadingState
+      , searchText = ""
       }
     , Requests.getAllData
     )

@@ -1,6 +1,5 @@
 module View exposing (mainView)
 
-import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -22,12 +21,23 @@ mainView model =
                    )
             )
         ]
-        [ modalView model
-        , if model.mainViewState == T.FailureState then
-            text "problem z połączeniem"
+        (modalView model
+            :: (if model.mainViewState == T.FailureState then
+                    [ text "problem z połączeniem" ]
 
-          else
-            projectsView model
+                else
+                    [ searchBoxView model
+                    , projectsView model
+                    ]
+               )
+        )
+
+
+searchBoxView : T.Model -> Html T.Msg
+searchBoxView model =
+    Html.form [ class "search-box" ]
+        [ input [ type_ "text", value model.searchText ] []
+        , button [ type_ "submit" ] [ text "Szukaj" ]
         ]
 
 

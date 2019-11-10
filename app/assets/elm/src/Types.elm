@@ -45,6 +45,7 @@ type alias Model =
     , mainViewState : MainViewState
     , modal : Modal
     , modalPromptValue : String
+    , searchText : String
     }
 
 
