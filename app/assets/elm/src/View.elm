@@ -113,7 +113,7 @@ addTaskButtonView : T.Project -> Html T.Msg
 addTaskButtonView project =
     tr []
         [ td [] [ text "" ]
-        , td [ colspan 4 ]
+        , td [ colspan 4, class "add-task-button-container" ]
             [ button
                 [ class "add-task-button"
                 , onClick (T.TaskCreateRequest project)

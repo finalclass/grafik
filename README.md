@@ -31,7 +31,7 @@
   - [DONE] upewnić się, że nie ma zadań z zarchiwizowanych projektów
   - [DONE] sortowanie po dacie oddanie
 - dashboard
-  - dużo rekordów na raz w dashboard. wszystko ścieśnić
+  - [DONE] dużo rekordów na raz w dashboard. wszystko ścieśnić
   - przejście do widoku projektu
   - przejście do widoku klienta
   - szukanie po tekście / filtrowanie po tekście. po wpisaniu niech się pokaże cały projekt, który ma zadanie z wybranym tekstem. Projekty bez zdań z danym tekstem mają się nie wyświetlać
@@ -41,4 +41,5 @@
   - w edycji zadania jest nazwa zadania zamiast "edytuj", 
   - lub w widoku pracownika jest link do zlecen a nie do listy pracowników
   - przejrzeć resztę breadcrumbs
+  - single source of trueth for clients and for workers assigned to tasks
 - backupy

@@ -41,3 +41,11 @@ select.full {
 .worker-tasks-list h3 {
     margin: 10px 0;
 }
+
+.container {
+    max-width: 112.0rem;
+}
+
+td:last-child, th:last-child {
+    text-align: right;
+}
