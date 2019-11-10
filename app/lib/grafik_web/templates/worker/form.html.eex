@@ -8,6 +8,6 @@
   <%= error_tag f, :name %>
 
   <div>
-    <%= save_button %>
+    <%= save_button() %>
   </div>
 <% end %>

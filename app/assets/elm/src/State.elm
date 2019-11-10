@@ -31,7 +31,7 @@ update : T.Msg -> T.Model -> ( T.Model, Cmd T.Msg )
 update msg model =
     case msg of
         T.AllDataReceived result ->
-            case Debug.log "allData" result of
+            case result of
                 Ok allData ->
                     ( { model
                         | projects = allData.projects
@@ -68,7 +68,7 @@ update msg model =
                 update T.ModalClose model
 
         T.TaskCreated project result ->
-            case Debug.log "Task" result of
+            case result of
                 Ok task ->
                     let
                         newModel =

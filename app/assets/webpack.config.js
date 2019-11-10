@@ -5,8 +5,6 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const elmSource = __dirname + "/elm";
-
 module.exports = (env, options) => ({
     optimization: {
         minimizer: [
@@ -39,7 +37,8 @@ module.exports = (env, options) => ({
                 exclude: ["/elm-stuff/", "/node_modules"],
                 loader: "elm-webpack-loader",
                 options: {
-                    debug: true,
+                    debug: process.env.MIX_ENV !== 'prod',
+                    optimize: process.env.MIX_ENV === 'prod',
                     // NOTE: `warn` option was removed in Elm 0.19.
                     // Re-enable if desired for use in Elm 0.18.
                     // warn: true,

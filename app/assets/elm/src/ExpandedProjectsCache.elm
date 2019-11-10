@@ -21,8 +21,4 @@ decodeExpandedProjectsCache value =
             Dict.fromList decoded
 
         Err error ->
-            let
-                a =
-                    Debug.log "error" error
-            in
             Dict.empty
