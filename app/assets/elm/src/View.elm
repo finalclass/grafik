@@ -4,8 +4,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import ModalView exposing (modalView)
+import Model as M
 import Types as T
-import Utils
 
 
 mainView : T.Model -> Html T.Msg
@@ -35,16 +35,35 @@ mainView model =
 
 searchBoxView : T.Model -> Html T.Msg
 searchBoxView model =
-    Html.form [ class "search-box" ]
-        [ input [ type_ "text", value model.searchText ] []
-        , button [ type_ "submit" ] [ text "Szukaj" ]
+    div [ class "search-box" ]
+        [ input
+            [ type_ "text"
+            , placeholder "szukaj"
+            , value model.searchText
+            , onInput T.SearchEnterText
+            , class
+                (if String.length model.searchText > 0 then
+                    "filtering-is-on"
+
+                 else
+                    ""
+                )
+            ]
+            []
+        , if M.nofHiddenProjects model > 0 then
+            i [ class "hidden-projects-info" ]
+                [ text ("(ukrytych: " ++ String.fromInt (M.nofHiddenProjects model) ++ ")")
+                ]
+
+          else
+            text ""
         ]
 
 
 projectsView : T.Model -> Html T.Msg
 projectsView model =
     table [ class "projects-list" ]
-        (List.foldr (mergeProjects model) [] model.projects)
+        (List.foldr (mergeProjects model) [] (M.getVisibleProjects model))
 
 
 mergeProjects : T.Model -> T.Project -> List (Html T.Msg) -> List (Html T.Msg)
@@ -60,7 +79,7 @@ projectView model project =
                 [ onClick (T.ToggleProjectExpand project)
                 , class
                     ("project-expander "
-                        ++ (if Utils.isProjectExpanded project model.expandedProjects then
+                        ++ (if M.isProjectExpanded project model.expandedProjects then
                                 "icon caret-down"
 
                             else
@@ -91,7 +110,7 @@ projectView model project =
                 ]
             ]
         ]
-    , if Utils.isProjectExpanded project model.expandedProjects then
+    , if M.isProjectExpanded project model.expandedProjects then
         tbody []
             (List.map (taskView model) project.tasks
                 ++ [ addTaskButtonView project ]

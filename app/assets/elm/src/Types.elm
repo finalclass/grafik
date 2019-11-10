@@ -19,6 +19,7 @@ type Msg
     | TaskChangeStatusRequest Task String
     | ModalUpdatePromptValue String
     | ModalClose
+    | SearchEnterText String
 
 
 type alias ExpandedProjects =
@@ -46,6 +47,7 @@ type alias Model =
     , modal : Modal
     , modalPromptValue : String
     , searchText : String
+    , visibleProjects : List Int
     }
 
 

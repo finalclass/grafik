@@ -1,3 +1,6 @@
+.dashboard {
+    text-align: center;
+}
 .dashboard.loading {
     opacity: 0.5;
     pointer-events: none;
@@ -81,3 +84,21 @@
     width: 20px;
     padding: 0 0.2rem;
 }
+
+.dashboard .search-box {
+    margin: 0 auto;
+}
+
+.dashboard .search-box input {
+    width: 250px;
+    height: 2.5rem;
+}
+
+.dashboard .search-box input.filtering-is-on {
+    border-color: #f00;
+}
+
+.dashboard .search-box .hidden-projects-info {
+    color: #bbb;
+}
+

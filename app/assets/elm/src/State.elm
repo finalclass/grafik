@@ -3,9 +3,9 @@ module State exposing (init, update)
 import Debug exposing (log)
 import Dict
 import ExpandedProjectsCache
-import Requests
+import Model as M
+import Requests as R
 import Types as T
-import Utils
 
 
 init : String -> ( T.Model, Cmd T.Msg )
@@ -18,8 +18,9 @@ init flags =
       , expandedProjects = ExpandedProjectsCache.decodeExpandedProjectsCache flags
       , mainViewState = T.LoadingState
       , searchText = ""
+      , visibleProjects = []
       }
-    , Requests.getAllData
+    , R.getAllData
     )
 
 
@@ -34,6 +35,7 @@ update msg model =
                         , workers = allData.workers
                         , statuses = allData.statuses
                         , mainViewState = T.SuccessState
+                        , visibleProjects = M.buildVisibleProjects allData.projects ""
                       }
                     , Cmd.none
                     )
@@ -42,7 +44,7 @@ update msg model =
                     ( { model | mainViewState = T.FailureState }, Cmd.none )
 
         T.TaskCreateRequest project ->
-            ( { model | mainViewState = T.LoadingState }, Requests.createNewTask project )
+            ( { model | mainViewState = T.LoadingState }, R.createNewTask project )
 
         T.TaskCreated project result ->
             case Debug.log "Task" result of
@@ -52,7 +54,7 @@ update msg model =
                             { model | mainViewState = T.SuccessState }
 
                         newModelWithTask =
-                            addTaskToProject newModel project task
+                            M.addTaskToProject newModel project task
                     in
                     ( newModelWithTask, Cmd.none )
 
@@ -65,7 +67,7 @@ update msg model =
                     model.expandedProjects
 
                 isExpanded =
-                    Utils.isProjectExpanded project expandedProjects
+                    M.isProjectExpanded project expandedProjects
 
                 newExpandedProjects =
                     Dict.insert (String.fromInt project.id) (not isExpanded) expandedProjects
@@ -80,7 +82,7 @@ update msg model =
             )
 
         T.TaskRemoveConfirmed task ->
-            ( { model | mainViewState = T.LoadingState, modal = T.ModalHidden }, Requests.removeTask task )
+            ( { model | mainViewState = T.LoadingState, modal = T.ModalHidden }, R.removeTask task )
 
         T.TaskRemoved task result ->
             case result of
@@ -90,7 +92,7 @@ update msg model =
                             newModel =
                                 { model | mainViewState = T.SuccessState }
                         in
-                        ( removeTask task newModel, Cmd.none )
+                        ( M.removeTask task newModel, Cmd.none )
 
                     else
                         ( { model | mainViewState = T.FailureState }, Cmd.none )
@@ -99,14 +101,14 @@ update msg model =
                     ( { model | mainViewState = T.FailureState }, Cmd.none )
 
         T.TaskSetWorkerRequest task workerId ->
-            ( { model | mainViewState = T.LoadingState }, Requests.changeTaskWorker task workerId )
+            ( { model | mainViewState = T.LoadingState }, R.changeTaskWorker task workerId )
 
         T.TaskUpdated result ->
             case result of
                 Ok task ->
                     let
                         newModel =
-                            updateTask model task
+                            M.updateTask model task
                     in
                     ( { newModel | mainViewState = T.SuccessState }, Cmd.none )
 
@@ -131,11 +133,11 @@ update msg model =
                 , modal = T.ModalHidden
                 , mainViewState = T.LoadingState
               }
-            , Requests.renameTask task taskName
+            , R.renameTask task taskName
             )
 
         T.TaskChangeStatusRequest task state ->
-            ( { model | mainViewState = T.LoadingState }, Requests.changeTaskStatus task state )
+            ( { model | mainViewState = T.LoadingState }, R.changeTaskStatus task state )
 
         T.ModalClose ->
             ( { model | modal = T.ModalHidden, modalPromptValue = "" }, Cmd.none )
@@ -143,54 +145,5 @@ update msg model =
         T.ModalUpdatePromptValue value ->
             ( { model | modalPromptValue = value }, Cmd.none )
 
-
-addTaskToProject : T.Model -> T.Project -> T.Task -> T.Model
-addTaskToProject model project task =
-    modifyProjectById project.id model (\p -> { p | tasks = p.tasks ++ [ task ] })
-
-
-modifyProjectById : Int -> T.Model -> (T.Project -> T.Project) -> T.Model
-modifyProjectById projectId model func =
-    { model
-        | projects =
-            List.map
-                (\p ->
-                    if p.id == projectId then
-                        func p
-
-                    else
-                        p
-                )
-                model.projects
-    }
-
-
-removeTask : T.Task -> T.Model -> T.Model
-removeTask task model =
-    modifyProjectById task.project_id model (removeTaskFromProject task)
-
-
-removeTaskFromProject : T.Task -> T.Project -> T.Project
-removeTaskFromProject task project =
-    { project | tasks = List.filter (\t -> t.id /= task.id) project.tasks }
-
-
-updateTask : T.Model -> T.Task -> T.Model
-updateTask model task =
-    modifyProjectById task.project_id model (modifyTaskInProject task)
-
-
-modifyTaskInProject : T.Task -> T.Project -> T.Project
-modifyTaskInProject task project =
-    { project
-        | tasks =
-            List.map
-                (\t ->
-                    if t.id == task.id then
-                        task
-
-                    else
-                        t
-                )
-                project.tasks
-    }
+        T.SearchEnterText value ->
+            ( { model | searchText = value, visibleProjects = M.buildVisibleProjects model.projects value }, Cmd.none )
