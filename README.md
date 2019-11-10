@@ -44,3 +44,4 @@
 - backupy
 - na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
 - wywalić duplikaty z modelu w dashboard - single source of trueth for clients and for workers assigned to tasks
+- przejść na korzystanie z erlang release

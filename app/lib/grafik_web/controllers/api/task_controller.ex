@@ -3,11 +3,11 @@ defmodule GrafikWeb.Api.TaskController do
 
   alias Grafik.Projects
 
-  def create_empty(conn, %{"project_id" => project_id}) do
+  def create_empty(conn, %{"project_id" => project_id, "name" => name}) do
     {:ok, task} =
       Projects.create_task(%{
         project_id: project_id,
-        name: "Nowe zadanie",
+        name: name,
         status: "todo"
       })
 

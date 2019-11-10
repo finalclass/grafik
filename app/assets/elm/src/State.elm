@@ -47,7 +47,25 @@ update msg model =
                     ( { model | mainViewState = T.FailureState }, Cmd.none )
 
         T.TaskCreateRequest project ->
-            ( { model | mainViewState = T.LoadingState }, R.createNewTask project )
+            ( { model
+                | modal = T.ModalPrompt "Nazwa zadania" (T.TaskCreateSave project)
+                , modalPromptValue = ""
+              }
+            , Task.attempt (\_ -> T.Focus "modal-prompt-input") (Process.sleep 200)
+            )
+
+        T.TaskCreateSave project ->
+            if String.length model.modalPromptValue > 0 then
+                ( { model
+                    | mainViewState = T.LoadingState
+                    , modal = T.ModalHidden
+                    , modalPromptValue = ""
+                  }
+                , R.createNewTask project model.modalPromptValue
+                )
+
+            else
+                update T.ModalClose model
 
         T.TaskCreated project result ->
             case Debug.log "Task" result of

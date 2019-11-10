@@ -10,6 +10,7 @@ type Msg
     | AllDataReceived (Result Http.Error AllData)
     | TaskCreated Project (Result Http.Error Task)
     | TaskCreateRequest Project
+    | TaskCreateSave Project
     | TaskRemoveRequest Task
     | TaskRemoveConfirmed Task
     | TaskSetWorkerRequest Task String

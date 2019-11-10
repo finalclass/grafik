@@ -35,7 +35,7 @@ buildVisibleProjects projects searchText =
                     == 0
                 )
                     || (p.tasks
-                            |> List.any (\t -> String.contains searchText t.name)
+                            |> List.any (\t -> String.contains (String.toLower searchText) (String.toLower t.name))
                        )
             )
         |> List.map (\p -> p.id)

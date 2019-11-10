@@ -27,11 +27,16 @@ removeTask task =
         }
 
 
-createNewTask : T.Project -> Cmd T.Msg
-createNewTask project =
+createNewTask : T.Project -> String -> Cmd T.Msg
+createNewTask project name =
     Http.post
         { url = "/api/projects/" ++ String.fromInt project.id ++ "/tasks"
-        , body = Http.emptyBody
+        , body =
+            Http.jsonBody
+                (E.object
+                    [ ( "name", E.string name )
+                    ]
+                )
         , expect = Http.expectJson (T.TaskCreated project) taskDecoder
         }
 
