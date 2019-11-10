@@ -38,7 +38,7 @@ searchBoxView model =
     div [ class "search-box" ]
         [ input
             [ type_ "text"
-            , placeholder "szukaj"
+            , placeholder "szukaj..."
             , value model.searchText
             , onInput T.SearchEnterText
             , class

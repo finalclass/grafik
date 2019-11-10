@@ -29,7 +29,14 @@ buildVisibleProjects projects searchText =
     projects
         |> List.filter
             (\p ->
-                p.tasks |> List.any (\t -> String.contains searchText t.name)
+                (List.length p.tasks
+                    == 0
+                    && String.length searchText
+                    == 0
+                )
+                    || (p.tasks
+                            |> List.any (\t -> String.contains searchText t.name)
+                       )
             )
         |> List.map (\p -> p.id)
 

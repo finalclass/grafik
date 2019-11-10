@@ -7,7 +7,7 @@
   <li><%= edit_worker_button(@conn, @worker) %></li>
   <li>
     <%= link to: Routes.worker_path(@conn, :print, @worker),
-             class: "button",
+             class: "button button-outline",
              target: "_blank" do %>
       <i class="icon icon-print"></i>
       Drukuj
