@@ -3,9 +3,9 @@ defmodule GrafikWeb.ClientControllerTest do
 
   alias Grafik.Clients
 
-  @create_attrs %{name: "some name", wfirma_id: "some wfirma_id"}
-  @update_attrs %{name: "some updated name", wfirma_id: "some updated wfirma_id"}
-  @invalid_attrs %{name: nil, wfirma_id: nil}
+  @create_attrs %{name: "some name"}
+  @update_attrs %{name: "some updated name"}
+  @invalid_attrs %{name: nil}
 
   def fixture(:client) do
     {:ok, client} = Clients.create_client(@create_attrs)

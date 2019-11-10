@@ -1,4 +1,4 @@
-defmodule Grafik.Repo.Migrations.ClientAddresses do
+defmodule Grafik.Repo.Migrations.TaskAddSentAt do
   use Ecto.Migration
 
   def change do

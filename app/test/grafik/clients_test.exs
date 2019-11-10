@@ -67,9 +67,9 @@ defmodule Grafik.ClientsTest do
   describe "client" do
     alias Grafik.Clients.Client
 
-    @valid_attrs %{name: "some name", wfirma_id: "some wfirma_id"}
-    @update_attrs %{name: "some updated name", wfirma_id: "some updated wfirma_id"}
-    @invalid_attrs %{name: nil, wfirma_id: nil}
+    @valid_attrs %{name: "some name"}
+    @update_attrs %{name: "some updated name"}
+    @invalid_attrs %{name: nil}
 
     def client_fixture(attrs \\ %{}) do
       {:ok, client} =
@@ -93,7 +93,6 @@ defmodule Grafik.ClientsTest do
     test "create_client/1 with valid data creates a client" do
       assert {:ok, %Client{} = client} = Clients.create_client(@valid_attrs)
       assert client.name == "some name"
-      assert client.wfirma_id == "some wfirma_id"
     end
 
     test "create_client/1 with invalid data returns error changeset" do
@@ -104,7 +103,6 @@ defmodule Grafik.ClientsTest do
       client = client_fixture()
       assert {:ok, %Client{} = client} = Clients.update_client(client, @update_attrs)
       assert client.name == "some updated name"
-      assert client.wfirma_id == "some updated wfirma_id"
     end
 
     test "update_client/2 with invalid data returns error changeset" do

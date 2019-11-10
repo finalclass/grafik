@@ -3,7 +3,6 @@ defmodule Grafik.Repo.Migrations.ClientAddresses do
 
   def change do
     alter table(:clients) do
-      remove :wfirma_id
       add :invoice_name, :string
       add :invoice_street, :string
       add :invoice_postcode, :string
