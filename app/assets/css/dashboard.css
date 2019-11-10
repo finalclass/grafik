@@ -5,8 +5,8 @@
 }
 
 .dashboard .project-expander {
+    width: 31px;
     cursor: default;
-    width: 15px;
     margin-right: 0;
     padding-right: 0;
 }
@@ -44,7 +44,7 @@
     height: 2rem;
 }
 
-.dashboard button {
+.dashboard button, .dashboard .button {
     height: 2rem;
     line-height: 2rem;
     padding: 0 1rem;
@@ -61,4 +61,23 @@
 
 .dashboard .add-task-button-container {
     text-align: left;
+}
+
+.dashboard .project-buttons {
+    padding: 0 0.2rem;
+}
+
+.dashboard .project-buttons .button {
+    margin-left: 0.2rem;
+}
+
+.dashboard .task-worker-select-container,
+.dashboard .task-status-select-container {
+    width: 40px;
+    padding: 0 0.2rem;
+}
+
+.dashboard .task-remove-button-container {
+    width: 20px;
+    padding: 0 0.2rem;
 }

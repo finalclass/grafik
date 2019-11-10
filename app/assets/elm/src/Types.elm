@@ -71,6 +71,7 @@ type alias Client =
 
 type alias Project =
     { id : Int
+    , client_id : Int
     , name : String
     , client : Client
     , tasks : List Task

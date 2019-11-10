@@ -4,6 +4,7 @@ defmodule GrafikWeb.Api.ProjectView do
   def render("project.json", %{project: project}) do
     %{
       id: project.id,
+      client_id: project.client_id,
       name: project.name,
       client: render_one(project.client, GrafikWeb.Api.ClientView, "client.json"),
       tasks: render_many(project.tasks, GrafikWeb.Api.TaskView, "task.json")

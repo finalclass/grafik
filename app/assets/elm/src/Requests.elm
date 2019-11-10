@@ -94,8 +94,9 @@ projectsDecoder =
     D.map3 T.AllData
         (D.field "projects"
             (D.list
-                (D.map4 T.Project
+                (D.map5 T.Project
                     (D.field "id" D.int)
+                    (D.field "client_id" D.int)
                     (D.field "name" D.string)
                     (D.field "client"
                         (D.map2 T.Client

@@ -45,7 +45,7 @@ mergeProjects model project all =
 projectView : T.Model -> T.Project -> List (Html T.Msg)
 projectView model project =
     [ thead []
-        [ tr []
+        [ tr [ class "project-row" ]
             [ th
                 [ onClick (T.ToggleProjectExpand project)
                 , class
@@ -61,10 +61,16 @@ projectView model project =
                 []
             , th
                 [ class "project-name"
-                , colspan 4
                 , onClick (T.ToggleProjectExpand project)
                 ]
                 [ text project.name ]
+            , th [ colspan 3, class "project-buttons" ]
+                [ a [ class "button", href ("/clients/" ++ String.fromInt project.client_id) ]
+                    [ text "klient" ]
+                , a [ class "button", href ("/projects/" ++ String.fromInt project.id) ]
+                    [ text "zlecenie"
+                    ]
+                ]
             ]
         ]
     , if Utils.isProjectExpanded project model.expandedProjects then
@@ -83,9 +89,9 @@ taskView model task =
     tr [ class ("task task-" ++ task.status) ]
         [ td [] [ text "" ]
         , td [ class "task-name", onClick (T.TaskRenameModalShow task) ] [ text task.name ]
-        , td [] [ selectWorkerView model task ]
-        , td [] [ selectTaskStatusView model task ]
-        , td []
+        , td [ class "task-worker-select-container" ] [ selectWorkerView model task ]
+        , td [ class "task-status-select-container" ] [ selectTaskStatusView model task ]
+        , td [ class "task-remove-button-container" ]
             [ button
                 [ class "button-outline"
                 , title "Usuń"
