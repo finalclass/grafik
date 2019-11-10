@@ -1,5 +1,5 @@
 <ul class="breadcrumbs">
-  <li><%= link "Zamówienia", to: Routes.project_path(@conn,  :index) %></li>
+  <li><%= link "Pracownicy", to: Routes.worker_path(@conn,  :index) %></li>
   <li>Nowy pracownik</li>
 </ul>
 

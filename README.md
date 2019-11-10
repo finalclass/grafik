@@ -30,16 +30,17 @@
   - [DONE] guzik "print", który by otwierał w nowym oknie wykaz zadań bez menu itp... no i odpalał window.print()
   - [DONE] upewnić się, że nie ma zadań z zarchiwizowanych projektów
   - [DONE] sortowanie po dacie oddanie
-- dashboard
+- [DONE] dashboard
   - [DONE] dużo rekordów na raz w dashboard. wszystko ścieśnić
   - [DONE] przejście do widoku projektu
   - [DONE] przejście do widoku klienta
-  - szukanie po tekście / filtrowanie po tekście. po wpisaniu niech się pokaże cały projekt, który ma zadanie z wybranym tekstem. Projekty bez zdań z danym tekstem mają się nie wyświetlać
-  - wyłączyć cache przy pobieraniu projektów bo jest błąd: dodaj zadanie, przejdź na zlecenie i nacisnij wstecz. nowo dodane zadanie się nie wyświetli 
-- na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
-- breadcrumbs ma błędy. np: 
-  - w edycji zadania jest nazwa zadania zamiast "edytuj", 
-  - lub w widoku pracownika jest link do zlecen a nie do listy pracowników
-  - przejrzeć resztę breadcrumbs
-  - single source of trueth for clients and for workers assigned to tasks
+  - [DONE] szukanie po tekście / filtrowanie po tekście. po wpisaniu niech się pokaże cały projekt, który ma zadanie z wybranym tekstem. Projekty bez zdań z danym tekstem mają się nie wyświetlać
+  - [DONE] wyłączyć cache przy pobieraniu projektów bo jest błąd: dodaj zadanie, przejdź na zlecenie i nacisnij wstecz. nowo dodane zadanie się nie wyświetli 
+  - [DONE] focus w modal i submit w modal prompt
+- [DONE] breadcrumbs ma błędy. np: 
+  - [DONE] w edycji pracownika jest nazwa zadania zamiast "edytuj", 
+  - [DONE] lub w widoku pracownika jest link do zlecen a nie do listy pracowników
+  - [DONE] przejrzeć resztę breadcrumbs
 - backupy
+- na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
+- wywalić duplikaty z modelu w dashboard - single source of trueth for clients and for workers assigned to tasks

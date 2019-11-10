@@ -1,10 +1,13 @@
 module State exposing (init, update)
 
+import Browser.Dom
 import Debug exposing (log)
 import Dict
 import ExpandedProjectsCache
 import Model as M
+import Process
 import Requests as R
+import Task
 import Types as T
 
 
@@ -120,7 +123,7 @@ update msg model =
                 | modal = T.ModalPrompt "Nazwa zadania" (T.TaskRenameRequest task)
                 , modalPromptValue = task.name
               }
-            , Cmd.none
+            , Task.attempt (\_ -> T.Focus "modal-prompt-input") (Process.sleep 200)
             )
 
         T.TaskRenameRequest task ->
@@ -147,3 +150,9 @@ update msg model =
 
         T.SearchEnterText value ->
             ( { model | searchText = value, visibleProjects = M.buildVisibleProjects model.projects value }, Cmd.none )
+
+        T.Focus id ->
+            ( model, Task.attempt (\_ -> T.NoOp) (Browser.Dom.focus id) )
+
+        T.NoOp ->
+            ( model, Cmd.none )

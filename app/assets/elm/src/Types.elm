@@ -1,5 +1,6 @@
 module Types exposing (..)
 
+import Browser.Dom
 import Dict exposing (Dict)
 import Http
 
@@ -20,6 +21,8 @@ type Msg
     | ModalUpdatePromptValue String
     | ModalClose
     | SearchEnterText String
+    | NoOp
+    | Focus String
 
 
 type alias ExpandedProjects =

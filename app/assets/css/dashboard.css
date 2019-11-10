@@ -47,7 +47,7 @@
     height: 2rem;
 }
 
-.dashboard button, .dashboard .button {
+.dashboard .projects-list button, .dashboard .projects-list .button {
     height: 2rem;
     line-height: 2rem;
     padding: 0 1rem;
