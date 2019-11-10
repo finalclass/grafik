@@ -65,9 +65,17 @@ projectView model project =
                 ]
                 [ text project.name ]
             , th [ colspan 3, class "project-buttons" ]
-                [ a [ class "button", href ("/clients/" ++ String.fromInt project.client_id) ]
+                [ a
+                    [ class "button button-outline"
+                    , href ("/clients/" ++ String.fromInt project.client_id)
+                    , title "Szczegóły klienta"
+                    ]
                     [ text "klient" ]
-                , a [ class "button", href ("/projects/" ++ String.fromInt project.id) ]
+                , a
+                    [ class "button button-outline"
+                    , href ("/projects/" ++ String.fromInt project.id)
+                    , title "Szczegóły zlecenia"
+                    ]
                     [ text "zlecenie"
                     ]
                 ]
@@ -126,7 +134,7 @@ addTaskButtonView project =
                 ]
                 [ i [ class "icon icon-plus" ]
                     []
-                , span [] [ text "nowe zadanie" ]
+                , span [] [ text "dodaj zadanie" ]
                 ]
             ]
         ]

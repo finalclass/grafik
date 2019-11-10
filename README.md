@@ -32,8 +32,8 @@
   - [DONE] sortowanie po dacie oddanie
 - dashboard
   - [DONE] dużo rekordów na raz w dashboard. wszystko ścieśnić
-  - przejście do widoku projektu
-  - przejście do widoku klienta
+  - [DONE] przejście do widoku projektu
+  - [DONE] przejście do widoku klienta
   - szukanie po tekście / filtrowanie po tekście. po wpisaniu niech się pokaże cały projekt, który ma zadanie z wybranym tekstem. Projekty bez zdań z danym tekstem mają się nie wyświetlać
   - wyłączyć cache przy pobieraniu projektów bo jest błąd: dodaj zadanie, przejdź na zlecenie i nacisnij wstecz. nowo dodane zadanie się nie wyświetli 
 - na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)

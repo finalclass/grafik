@@ -11,7 +11,7 @@ defmodule Grafik.Projects do
 
   def list_statuses() do
     [
-      %{id: "todo", name: "Nieruszony"},
+      %{id: "todo", name: "Do zrobienia"},
       %{id: "in_propress", name: "Realizowany"},
       %{id: "received", name: "Odebrany"},
       %{id: "sent", name: "Wysłany"}
