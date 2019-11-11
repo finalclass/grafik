@@ -1,43 +1,38 @@
-# Latest version of Erlang-based Elixir installation: https://hub.docker.com/_/elixir/
-FROM elixir:1.9-alpine
+FROM elixir:1.9.4-alpine
 
-# Create and set home directory
-ENV HOME /opt/backend
-WORKDIR $HOME
+RUN mix local.hex --force && \
+    mix local.rebar --force
 
-# Configure required environment
-ENV MIX_ENV prod
+RUN apk add --update nodejs nodejs-npm gzip curl
 
-# Set and expose PORT environmental variable
-ENV PORT ${PORT:-4000}
-EXPOSE $PORT
+RUN curl -L -o elm.gz "https://github.com/elm/compiler/releases/download/0.19.1/binary-for-linux-64-bit.gz" \
+        && gunzip elm.gz \
+        && chmod +x elm \
+        && mv elm /usr/local/bin/
 
-# Install hex (Elixir package manager)
-RUN mix local.hex --force
-
-# Install rebar (Erlang build tool)
-RUN mix local.rebar --force
-
-# Copy all dependencies files
-COPY mix.* ./
-
-# Install all production dependencies
-RUN mix deps.get --only prod
-
-# Compile all dependencies
-RUN mix deps.compile
-
-# Copy all application files
-COPY . .
-
+ENV MIX_ENV=prod
 ARG SECRET_KEY_BASE
 ARG DATABASE_URL
 
-# ENV SECRET_KEY_BASE abc
-# ENV DATABASE_URL ecto://postgres:e3i29rse20-r\!@localhost/postgres
+WORKDIR /srv/app
+COPY ./ /srv/app/
 
-# Compile the entire project
+# install dependencies (production only)
+RUN mix local.rebar --force
+RUN mix deps.get --only prod
+
 RUN mix compile
 
-# Run Ecto migrations and Phoenix server as an initial command
-CMD mix do ecto.migrate, phx.server
+# RUN npm install --global webpack
+RUN cd assets && npm install && npm run deploy
+RUN mix phx.digest
+
+RUN mix distillery.release
+
+# alpine version should be the same as build
+FROM alpine:3.10
+RUN apk add --update bash
+ENV REPLACE_OS_VARS=true
+WORKDIR /srv/app
+COPY --from=0  /srv/app/_build/prod/ .
+CMD rel/grafik/bin/grafik foreground
