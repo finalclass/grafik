@@ -21,7 +21,7 @@
   <%= if @task.status === "sent" do %>
     <li>
       <strong>Data wysłania:</strong>
-      <%= @task.sent_at %>
+      <%= Date.to_iso8601(@task.sent_at) %>
     </li>
   <% end %>
 
