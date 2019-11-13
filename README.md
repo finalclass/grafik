@@ -47,3 +47,7 @@
 - przejść na korzystanie z erlang release
 - daty nie powinny mieć godzin
 - na czerwono projekty ze sztywnym terminem również w dashboard
+- upewnić się, ze w dashboard projekty są posortowane po terminach
+- Dodaj zadanie -> Dodaj produkt
+- dodawanie zlecenia z jednego formularza to znaczy wszystko: klienta i produkty
+- pole uwagi do zlecenia
