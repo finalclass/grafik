@@ -18,14 +18,20 @@ update msg model =
             ( model, Cmd.none )
 
         T.ProjectsOnInputName str ->
-            let
-                editedProject =
-                    model.editedProject
+            ( modifyEditedProject model (\p -> { p | name = str }), Cmd.none )
 
-                newEditedProject =
-                    { editedProject | name = str }
-            in
-            ( { model | editedProject = newEditedProject }, Cmd.none )
+        T.ProjectsOnInputIsDeadlineRigid onOff ->
+            ( modifyEditedProject model
+                (\p ->
+                    { p | is_deadline_rigid = not model.editedProject.is_deadline_rigid }
+                )
+            , Cmd.none
+            )
+
+
+modifyEditedProject : T.Model -> (T.Project -> T.Project) -> T.Model
+modifyEditedProject model func =
+    { model | editedProject = func model.editedProject }
 
 
 formView : T.Model -> Html T.ProjectsMsg
@@ -33,11 +39,21 @@ formView model =
     div []
         [ label []
             [ span [] [ text "Nazwa" ]
-            , input [ type_ "text", value model.editedProject.name, onInput T.ProjectsOnInputName ] []
+            , input
+                [ type_ "text"
+                , value model.editedProject.name
+                , onInput T.ProjectsOnInputName
+                ]
+                []
             ]
         , label []
             [ span [] [ text "Sztywny termin" ]
-            , input [ type_ "checkbox", checked model.editedProject.is_deadline_rigid ] []
+            , input
+                [ type_ "checkbox"
+                , checked model.editedProject.is_deadline_rigid
+                , onInput T.ProjectsOnInputIsDeadlineRigid
+                ]
+                []
             ]
         , label []
             [ span [] [ text "Termin" ]

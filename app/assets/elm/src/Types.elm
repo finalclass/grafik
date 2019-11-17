@@ -9,6 +9,7 @@ type ProjectsMsg
     = ProjectsStartEdit Project
     | ProjectsSaveRequest Project
     | ProjectsOnInputName String
+    | ProjectsOnInputIsDeadlineRigid String
 
 
 type Msg
@@ -26,7 +27,6 @@ type Msg
     | TaskRenameRequest Task
     | TaskChangeStatusRequest Task String
     | ModalUpdatePromptValue String
-      -- ProjectsMsg
     | ProjectsAction ProjectsMsg
     | ModalClose
     | SearchEnterText String
