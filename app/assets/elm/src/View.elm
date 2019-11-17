@@ -1,5 +1,6 @@
 module View exposing (mainView)
 
+import Dates
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -93,20 +94,26 @@ projectView model project =
                 , onClick (T.ToggleProjectExpand project)
                 ]
                 [ text project.name ]
-            , th [ colspan 3, class "project-buttons" ]
+            , th
+                [ class
+                    ("project-deadline "
+                        ++ (if project.is_deadline_rigid then
+                                "rigid-deadline"
+
+                            else
+                                ""
+                           )
+                    )
+                , title "Termin"
+                ]
+                [ text (Dates.displayDate model project.deadline) ]
+            , th [ colspan 2, class "project-buttons" ]
                 [ a
                     [ class "button button-outline"
-                    , href ("/clients/" ++ String.fromInt project.client_id)
-                    , title "Szczegóły klienta"
+                    , title "Edycja zlecenia"
+                    , onClick (T.ProjectsAction (T.ProjectsStartEdit project))
                     ]
-                    [ text "klient" ]
-                , a
-                    [ class "button button-outline"
-                    , href ("/projects/" ++ String.fromInt project.id)
-                    , title "Szczegóły zlecenia"
-                    ]
-                    [ text "zlecenie"
-                    ]
+                    [ text "edytuj" ]
                 ]
             ]
         ]
@@ -177,14 +184,7 @@ selectWorkerView model task =
                 (\w ->
                     option
                         [ value (String.fromInt w.id)
-                        , selected
-                            (case task.worker of
-                                Just worker ->
-                                    worker.id == w.id
-
-                                Nothing ->
-                                    False
-                            )
+                        , selected (task.worker_id == w.id)
                         ]
                         [ text w.name ]
                 )

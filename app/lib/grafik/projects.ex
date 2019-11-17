@@ -28,25 +28,23 @@ defmodule Grafik.Projects do
 
   """
   def list_projects do
-    Repo.all query_full_projects()
+    Repo.all query_projects()
   end
 
   def list_not_archived_projects do
-    query = query_full_projects()
+    query = query_projects()
     
     from(p in query, where: p.is_archived == false)
       |> Repo.all
   end
   
-  def query_full_projects do
-    task_query = from t in Task, preload: [:worker], order_by: t.id
-    client_query = from c in Grafik.Clients.Client
+  def query_projects do
+    task_query = from t in Task, order_by: t.id
     
     from p in Project,
       order_by: [asc: p.is_archived, asc: p.deadline],
       preload: [
-        tasks: ^task_query,
-        client: ^client_query
+        tasks: ^task_query
       ]
     
   end
@@ -72,7 +70,7 @@ defmodule Grafik.Projects do
   end
 
   def get_project_with_tasks!(id) do
-    query = query_full_projects()
+    query = query_projects()
     Repo.one(from(p in query, where: (p.id == ^id)))
   end
 

@@ -7,7 +7,8 @@ defmodule GrafikWeb.Api.TaskView do
       project_id: task.project_id,
       name: task.name,
       status: task.status,
-      worker: render_one(task.worker, GrafikWeb.Api.WorkerView, "worker.json")
+      worker_id: task.worker_id || 0,
+      sent_at: if task.sent_at do DateTime.to_unix(task.sent_at) * 1000 else 0 end
     }
   end
 
@@ -17,10 +18,7 @@ defmodule GrafikWeb.Api.TaskView do
       project_id: task.project_id,
       name: task.name,
       status: task.status,
-      worker: %{
-        id: 0,
-        name: ""
-      }
+      worker_id: 0
     }
   end
 

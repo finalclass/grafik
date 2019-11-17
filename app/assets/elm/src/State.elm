@@ -6,8 +6,10 @@ import Dict
 import ExpandedProjectsCache
 import Model as M
 import Process
+import Projects
 import Requests as R
 import Task
+import Time
 import Types as T
 
 
@@ -16,12 +18,15 @@ init flags =
     ( { projects = []
       , workers = []
       , statuses = []
+      , clients = []
+      , zone = Time.utc
       , modal = T.ModalHidden
       , modalPromptValue = ""
       , expandedProjects = ExpandedProjectsCache.decodeExpandedProjectsCache flags
       , mainViewState = T.LoadingState
       , searchText = ""
       , visibleProjects = []
+      , editedProject = Projects.emptyProject
       }
     , R.getAllData
     )
@@ -37,14 +42,22 @@ update msg model =
                         | projects = allData.projects
                         , workers = allData.workers
                         , statuses = allData.statuses
+                        , clients = allData.clients
                         , mainViewState = T.SuccessState
                         , visibleProjects = M.buildVisibleProjects allData.projects ""
                       }
-                    , Cmd.none
+                    , Task.perform T.GotZone Time.here
                     )
 
-                Err _ ->
+                Err err ->
+                    let
+                        err2 =
+                            Debug.log "error" err
+                    in
                     ( { model | mainViewState = T.FailureState }, Cmd.none )
+
+        T.GotZone zone1 ->
+            ( { model | zone = zone1 }, Cmd.none )
 
         T.TaskCreateRequest project ->
             ( { model
@@ -168,6 +181,9 @@ update msg model =
 
         T.SearchEnterText value ->
             ( { model | searchText = value, visibleProjects = M.buildVisibleProjects model.projects value }, Cmd.none )
+
+        T.ProjectsAction subMsg ->
+            Projects.update subMsg model
 
         T.Focus id ->
             ( model, Task.attempt (\_ -> T.NoOp) (Browser.Dom.focus id) )

@@ -18,6 +18,15 @@
     text-align: left;
 }
 
+.dashboard .project-deadline {
+    font-weight: normal;
+    width: 110px;
+}
+
+.dashboard .project-deadline.rigid-deadline {
+    color: #f00;
+}
+
 .dashboard .project-expander .icon {
     margin-right: 5px;
 }

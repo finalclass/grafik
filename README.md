@@ -41,13 +41,14 @@
   - [DONE] w edycji pracownika jest nazwa zadania zamiast "edytuj", 
   - [DONE] lub w widoku pracownika jest link do zlecen a nie do listy pracowników
   - [DONE] przejrzeć resztę breadcrumbs
+- [DONE] wywalić duplikaty z modelu w dashboard - single source of trueth for clients and for workers assigned to tasks
+- [DONE] przejść na korzystanie z erlang release
 - backupy
 - na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
-- wywalić duplikaty z modelu w dashboard - single source of trueth for clients and for workers assigned to tasks
-- przejść na korzystanie z erlang release
 - daty nie powinny mieć godzin
 - na czerwono projekty ze sztywnym terminem również w dashboard
 - upewnić się, ze w dashboard projekty są posortowane po terminach
 - Dodaj zadanie -> Dodaj produkt
 - dodawanie zlecenia z jednego formularza to znaczy wszystko: klienta i produkty
 - pole uwagi do zlecenia
+- w wydruku termin w tej samej lini co klient ale dać do prawego marginesu przytulone

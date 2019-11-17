@@ -6,8 +6,12 @@ defmodule GrafikWeb.Api.ProjectView do
       id: project.id,
       client_id: project.client_id,
       name: project.name,
-      client: render_one(project.client, GrafikWeb.Api.ClientView, "client.json"),
-      tasks: render_many(project.tasks, GrafikWeb.Api.TaskView, "task.json")
+      tasks: render_many(project.tasks, GrafikWeb.Api.TaskView, "task.json"),
+      is_deadline_rigid: project.is_deadline_rigid,
+      deadline: if project.deadline do DateTime.to_unix(project.deadline) * 1000 else 0 end,
+      invoice_number: project.invoice_number,
+      price: project.price,
+      paid: project.paid
     }
   end
 end
