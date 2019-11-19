@@ -104,3 +104,7 @@
     color: #bbb;
 }
 
+.dashboard .error-message {
+    font-weight: normal;
+    color: #f00;
+}

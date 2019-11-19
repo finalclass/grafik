@@ -10,6 +10,10 @@ type ProjectsMsg
     | ProjectsSaveRequest Project
     | ProjectsOnInputName String
     | ProjectsOnInputIsDeadlineRigid String
+    | ProjectsOnInputDeadlineString String
+    | ProjectsOnInputInvoiceNumber String
+    | ProjectsOnInputPrice String
+    | ProjectsOnInputPaid String
 
 
 type Msg
@@ -59,6 +63,8 @@ type alias Model =
     , clients : List Client
     , zone : Time.Zone
     , expandedProjects : ExpandedProjects
+    , editedProjectDeadlineString : String
+    , editedProjectDeadlineError : String
     , mainViewState : MainViewState
     , modal : Modal
     , modalPromptValue : String
