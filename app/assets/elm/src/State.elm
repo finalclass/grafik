@@ -23,12 +23,14 @@ init flags =
       , modal = T.ModalHidden
       , modalPromptValue = ""
       , expandedProjects = ExpandedProjectsCache.decodeExpandedProjectsCache flags
-      , editedProjectDeadlineString = ""
-      , editedProjectDeadlineError = ""
       , mainViewState = T.LoadingState
       , searchText = ""
       , visibleProjects = []
-      , editedProject = Projects.emptyProject
+      , editedProject =
+            { data = Projects.emptyProject
+            , deadlineString = ""
+            , deadlineErr = Nothing
+            }
       }
     , R.getAllData
     )

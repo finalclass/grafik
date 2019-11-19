@@ -63,14 +63,19 @@ type alias Model =
     , clients : List Client
     , zone : Time.Zone
     , expandedProjects : ExpandedProjects
-    , editedProjectDeadlineString : String
-    , editedProjectDeadlineError : String
+    , editedProject : EditedProject
     , mainViewState : MainViewState
     , modal : Modal
     , modalPromptValue : String
     , searchText : String
     , visibleProjects : List Int
-    , editedProject : Project
+    }
+
+
+type alias EditedProject =
+    { data : Project
+    , deadlineString : String
+    , deadlineErr : Maybe String
     }
 
 

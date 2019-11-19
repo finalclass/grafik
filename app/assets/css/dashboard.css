@@ -108,3 +108,7 @@
     font-weight: normal;
     color: #f00;
 }
+
+.dashboard .invalid-date {
+    color: #f00;
+}

@@ -12,23 +12,28 @@ update : T.ProjectsMsg -> T.Model -> ( T.Model, Cmd T.Msg )
 update msg model =
     case msg of
         T.ProjectsStartEdit project ->
-            ( { model
-                | modal = T.ModalEditProject project
-                , editedProject = project
-                , editedProjectDeadlineString = Dates.displayDate model project.deadline
-              }
-            , Cmd.none
-            )
+            let
+                edProj =
+                    model.editedProject
+
+                newEdProj =
+                    { edProj
+                        | data = project
+                        , deadlineString = Dates.displayDate model project.deadline
+                        , deadlineErr = Nothing
+                    }
+            in
+            ( { model | modal = T.ModalEditProject project, editedProject = newEdProj }, Cmd.none )
 
         T.ProjectsSaveRequest project ->
             ( model, Cmd.none )
 
         T.ProjectsOnInputName str ->
-            ( modifyEditedProject model (\p -> { p | name = str }), Cmd.none )
+            ( modifyEditedProjectData model (\p -> { p | name = str }), Cmd.none )
 
         T.ProjectsOnInputIsDeadlineRigid _ ->
-            ( modifyEditedProject model
-                (\p -> { p | is_deadline_rigid = not model.editedProject.is_deadline_rigid })
+            ( modifyEditedProjectData model
+                (\p -> { p | is_deadline_rigid = not p.is_deadline_rigid })
             , Cmd.none
             )
 
@@ -36,54 +41,68 @@ update msg model =
             case Dates.stringToTime newDeadline of
                 Ok time ->
                     let
-                        editedProject =
-                            model.editedProject
-
-                        newEditedProject =
-                            { editedProject | deadline = time }
+                        newModel =
+                            modifyEditedProjectData model (\d -> { d | deadline = time })
                     in
-                    ( { model
-                        | editedProject = newEditedProject
-                        , editedProjectDeadlineString = newDeadline
-                        , editedProjectDeadlineError = ""
-                      }
+                    ( modifyEditedProject newModel
+                        (\edProj ->
+                            { edProj
+                                | deadlineString = newDeadline
+                                , deadlineErr = Nothing
+                            }
+                        )
                     , Cmd.none
                     )
 
                 Err err ->
-                    ( { model
-                        | editedProjectDeadlineError = err
-                        , editedProjectDeadlineString = newDeadline
-                      }
+                    ( modifyEditedProject model
+                        (\edProj ->
+                            { edProj
+                                | deadlineErr = Just err
+                                , deadlineString = newDeadline
+                            }
+                        )
                     , Cmd.none
                     )
 
         T.ProjectsOnInputInvoiceNumber newInvoiceNumber ->
-            ( modifyEditedProject model (\p -> { p | invoice_number = newInvoiceNumber }), Cmd.none )
+            ( modifyEditedProjectData model (\p -> { p | invoice_number = newInvoiceNumber }), Cmd.none )
 
         T.ProjectsOnInputPrice newPriceString ->
-            ( modifyEditedProject model (\p -> { p | price = Maybe.withDefault 0.0 (String.toFloat newPriceString) }), Cmd.none )
+            ( modifyEditedProjectData model (\p -> { p | price = Maybe.withDefault 0.0 (String.toFloat newPriceString) }), Cmd.none )
 
         T.ProjectsOnInputPaid newPaidString ->
-            ( modifyEditedProject model (\p -> { p | paid = Maybe.withDefault 0.0 (String.toFloat newPaidString) }), Cmd.none )
+            ( modifyEditedProjectData model (\p -> { p | paid = Maybe.withDefault 0.0 (String.toFloat newPaidString) }), Cmd.none )
 
 
-modifyEditedProject : T.Model -> (T.Project -> T.Project) -> T.Model
+modifyEditedProject : T.Model -> (T.EditedProject -> T.EditedProject) -> T.Model
 modifyEditedProject model func =
-    { model
-        | editedProject = func model.editedProject
-        , editedProjectDeadlineError = ""
-    }
+    { model | editedProject = func model.editedProject }
+
+
+modifyEditedProjectData : T.Model -> (T.Project -> T.Project) -> T.Model
+modifyEditedProjectData model func =
+    modifyEditedProject model
+        (\edProj ->
+            { edProj
+                | data = func edProj.data
+                , deadlineErr = Nothing
+            }
+        )
 
 
 formView : T.Model -> Html T.ProjectsMsg
 formView model =
+    let
+        data =
+            model.editedProject.data
+    in
     div []
         [ label []
             [ span [] [ text "Nazwa" ]
             , input
                 [ type_ "text"
-                , value model.editedProject.name
+                , value data.name
                 , onInput T.ProjectsOnInputName
                 ]
                 []
@@ -92,40 +111,45 @@ formView model =
             [ span [] [ text "Sztywny termin" ]
             , input
                 [ type_ "checkbox"
-                , checked model.editedProject.is_deadline_rigid
+                , checked data.is_deadline_rigid
                 , onInput T.ProjectsOnInputIsDeadlineRigid
                 ]
                 []
             ]
         , label []
             [ span []
-                [ text
-                    ("Termin"
-                        ++ (if String.length model.editedProjectDeadlineError == 0 then
-                                " (" ++ Dates.displayDate model model.editedProject.deadline ++ ")"
+                [ text "Termin"
+                , span
+                    [ class
+                        (case model.editedProject.deadlineErr of
+                            Just _ ->
+                                "invalid-date"
 
-                            else
+                            Nothing ->
                                 ""
-                           )
-                    )
+                        )
+                    ]
+                    [ text (" (" ++ Dates.displayDate model data.deadline ++ ")")
+                    ]
                 ]
             , input
                 [ type_ "text"
-                , value model.editedProjectDeadlineString
+                , value model.editedProject.deadlineString
                 , onInput T.ProjectsOnInputDeadlineString
                 ]
                 []
-            , if String.length model.editedProjectDeadlineError > 0 then
-                div [ class "error-message" ] [ text model.editedProjectDeadlineError ]
+            , case model.editedProject.deadlineErr of
+                Just err ->
+                    div [ class "error-message" ] [ text err ]
 
-              else
-                text ""
+                Nothing ->
+                    text ""
             ]
         , label []
             [ span [] [ text "Numer faktury / oferty" ]
             , input
                 [ type_ "text"
-                , value model.editedProject.invoice_number
+                , value data.invoice_number
                 , onInput T.ProjectsOnInputInvoiceNumber
                 ]
                 []
@@ -135,7 +159,7 @@ formView model =
             , input
                 [ type_ "number"
                 , step "0.01"
-                , value (String.fromFloat model.editedProject.paid)
+                , value (String.fromFloat data.price)
                 , onInput T.ProjectsOnInputPrice
                 ]
                 []
@@ -145,7 +169,7 @@ formView model =
             , input
                 [ type_ "number"
                 , step "0.01"
-                , value (String.fromFloat model.editedProject.paid)
+                , value (String.fromFloat data.paid)
                 , onInput T.ProjectsOnInputPaid
                 ]
                 []

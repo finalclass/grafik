@@ -52,3 +52,4 @@
 - dodawanie zlecenia z jednego formularza to znaczy wszystko: klienta i produkty
 - pole uwagi do zlecenia
 - w wydruku termin w tej samej lini co klient ale dać do prawego marginesu przytulone
+- w edycji zamówienia zrobić aby "Termin (DD-MM-YYYY)" zawsze się wyświetlał a gdy jest błąd aby był na czerwono
