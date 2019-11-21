@@ -54,7 +54,8 @@
 - w wydruku termin w tej samej lini co klient ale dać do prawego marginesu przytulone
 - w edycji zamówienia zrobić aby "Termin (DD-MM-YYYY)" zawsze się wyświetlał a gdy jest błąd aby był na czerwono
 
-    Możliwość tworzenia przyciskiem kopii zapasowej - w razie czego
+    Możliwość tworzenia przyciskiem kopii zapasowej - w razie czego (robimy codzienne backupy (pgdump) na inny serwer)
+    raz dziennie wysyłać ewie maila ze zrzutem nie archiwalnych zleceń i wszystkimi zadaniami
     Możliwość wprowadzania całości zamówienia pracując w jednym formularzu
     MOżliwość skopiowania wprowadzonych danych do faktury w pola ADRES DOSTAWY jeżeli oba będą takie same
     Jeżeli wybierzemy status "wysłane" to przyda się pole gdzie można by było wpisać np. kurier DHL dnia 10 lipca
@@ -66,3 +67,4 @@
     W GRAFIKU dobrze by było aby był widoczny: TERMIN, NR FAKTURY, CENA, ILE ZAPŁACONO
     W GRAFIKU przyda się opcja rozwijania całości (wszystkich zamówień jednocześnie aby były widoczne produkty)
     Grubszą czcionką nazwy klientów i zamówień a cieńszą nazwy pól czyli np. Klient. Jest teraz odwrotnie.
+    po wpisaniu numeru oferty lub faktury wypełniają się całe zamówienie i zadania
