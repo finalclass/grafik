@@ -32,7 +32,11 @@ init flags =
             , deadlineString = ""
             , deadlineErr = Nothing
             }
-      , editedClient = { data = Clients.emptyClient, state = T.EditedClientSelect }
+      , editedClient =
+            { data = Clients.emptyClient
+            , state = T.EditedClientSelect
+            , saveErr = Nothing
+            }
       }
     , R.getAllData
     )

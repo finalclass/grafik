@@ -29,8 +29,9 @@ update msg model =
 
                 newEdCli =
                     { edCli
-                        | data = Maybe.withDefault Clients.emptyClient (Clients.findClient model project.client_id)
+                        | data = Clients.emptyClient
                         , state = T.EditedClientSelected
+                        , saveErr = Nothing
                     }
             in
             ( { model

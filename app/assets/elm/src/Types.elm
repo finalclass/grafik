@@ -21,7 +21,8 @@ type ClientsMsg
     | ClientsOnInputDeliveryContactPerson String
     | ClientsOnInputPhoneNumber String
     | ClientsOnInputEmail String
-    | ClientsSave (Int -> Msg)
+    | ClientsSaveRequest (Int -> Msg)
+    | ClientsCreated (Int -> Msg) (Result Http.Error Client)
 
 
 type ProjectsMsg
@@ -110,6 +111,7 @@ type EditedClientState
 type alias EditedClient =
     { data : Client
     , state : EditedClientState
+    , saveErr : Maybe String
     }
 
 

@@ -3,6 +3,7 @@ module Clients exposing (emptyClient, findClient, selectOrCreateView, update)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Requests as R
 import Task
 import Types as T
 
@@ -23,9 +24,24 @@ update msg model =
             , sendMsg (makeMsg clientId)
             )
 
-        T.ClientsSave makeMsg ->
-            -- TODO continue here, save the client and select it
-            ( model, Cmd.none )
+        T.ClientsSaveRequest makeMsg ->
+            ( updateEditedClient model (\edCli -> { edCli | saveErr = Nothing })
+            , R.createNewClient model.editedClient.data makeMsg
+            )
+
+        T.ClientsCreated makeMsg result ->
+            case result of
+                Ok client ->
+                    let
+                        newModel =
+                            updateEditedClient model (\edCli -> { edCli | state = T.EditedClientSelected })
+                    in
+                    ( { newModel | clients = client :: model.clients }
+                    , sendMsg (makeMsg client.id)
+                    )
+
+                Err _ ->
+                    ( updateEditedClient model (\edCli -> { edCli | saveErr = Just "Nie udało się zapisać klienta" }), Cmd.none )
 
         T.ClientsOnInputName str ->
             ( updateEditedClientData model (\c -> { c | name = str }), Cmd.none )
@@ -165,7 +181,13 @@ newClientFormView model selectClientMsg =
         , inputView "Dostawa: osoba kontaktowa" data.delivery_contact_person T.ClientsOnInputDeliveryContactPerson
         , inputView "Dostawa: numer telefonu" data.phone_number T.ClientsOnInputPhoneNumber
         , inputView "Dostawa: email" data.email T.ClientsOnInputEmail
-        , button [ class "float-right button-small", onClick (T.ClientsSave selectClientMsg) ] [ text "Utwórz klienta" ]
+        , case model.editedClient.saveErr of
+            Just err ->
+                text err
+
+            Nothing ->
+                text ""
+        , button [ class "float-right button-small", onClick (T.ClientsSaveRequest selectClientMsg) ] [ text "Utwórz klienta" ]
         ]
 
 

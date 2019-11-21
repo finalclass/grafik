@@ -35,5 +35,6 @@ defmodule GrafikWeb.Router do
     post "/projects/:project_id/tasks/", TaskController, :create_empty
     delete "/projects/:project_id/tasks/:task_id", TaskController, :delete
     put "/projects/:project_id/tasks/:task_id", TaskController, :update
+    post "/clients", ClientController, :create
   end
 end

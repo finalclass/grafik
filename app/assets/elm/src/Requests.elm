@@ -1,4 +1,4 @@
-module Requests exposing (changeTaskStatus, changeTaskWorker, createNewTask, getAllData, removeTask, renameTask)
+module Requests exposing (changeTaskStatus, changeTaskWorker, createNewClient, createNewTask, getAllData, removeTask, renameTask)
 
 import Http
 import Json.Decode as D
@@ -22,6 +22,32 @@ getAllData =
     Http.get
         { url = "/api/all"
         , expect = Http.expectJson T.AllDataReceived projectsDecoder
+        }
+
+
+createNewClient : T.Client -> (Int -> T.Msg) -> Cmd T.Msg
+createNewClient client makeMsg =
+    Http.post
+        { url = "/api/clients/"
+        , body =
+            Http.jsonBody
+                (E.object
+                    [ ( "name", E.string client.name )
+                    , ( "invoice_name", E.string client.invoice_name )
+                    , ( "invoice_street", E.string client.invoice_street )
+                    , ( "invoice_postcode", E.string client.invoice_postcode )
+                    , ( "invoice_city", E.string client.invoice_city )
+                    , ( "invoice_nip", E.string client.invoice_nip )
+                    , ( "delivery_name", E.string client.delivery_name )
+                    , ( "delivery_street", E.string client.delivery_street )
+                    , ( "delivery_postcode", E.string client.delivery_postcode )
+                    , ( "delivery_city", E.string client.delivery_city )
+                    , ( "delivery_contact_person", E.string client.delivery_contact_person )
+                    , ( "phone_number", E.string client.phone_number )
+                    , ( "email", E.string client.email )
+                    ]
+                )
+        , expect = Http.expectJson (\res -> T.ProjectsAction (T.ProjectsEditClient (T.ClientsCreated makeMsg res))) clientDecoder
         }
 
 
@@ -99,6 +125,25 @@ taskDecoder =
         (D.field "sent_at" decodeTime)
 
 
+clientDecoder : D.Decoder T.Client
+clientDecoder =
+    D.succeed T.Client
+        |> required "id" D.int
+        |> required "name" D.string
+        |> optional "invoice_name" D.string ""
+        |> optional "invoice_street" D.string ""
+        |> optional "invoice_postcode" D.string ""
+        |> optional "invoice_city" D.string ""
+        |> optional "invoice_nip" D.string ""
+        |> optional "delivery_name" D.string ""
+        |> optional "delivery_street" D.string ""
+        |> optional "delivery_postcode" D.string ""
+        |> optional "delivery_city" D.string ""
+        |> optional "delivery_contact_person" D.string ""
+        |> optional "phone_number" D.string ""
+        |> optional "email" D.string ""
+
+
 projectsDecoder : D.Decoder T.AllData
 projectsDecoder =
     D.map4 T.AllData
@@ -135,22 +180,7 @@ projectsDecoder =
         )
         (D.field "clients"
             (D.list
-                (D.succeed T.Client
-                    |> required "id" D.int
-                    |> required "name" D.string
-                    |> optional "invoice_name" D.string ""
-                    |> optional "invoice_street" D.string ""
-                    |> optional "invoice_postcode" D.string ""
-                    |> optional "invoice_city" D.string ""
-                    |> optional "invoice_nip" D.string ""
-                    |> optional "delivery_name" D.string ""
-                    |> optional "delivery_street" D.string ""
-                    |> optional "delivery_postcode" D.string ""
-                    |> optional "delivery_city" D.string ""
-                    |> optional "delivery_contact_person" D.string ""
-                    |> optional "phone_number" D.string ""
-                    |> optional "email" D.string ""
-                )
+                clientDecoder
             )
         )
 
