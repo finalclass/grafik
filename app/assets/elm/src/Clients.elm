@@ -7,6 +7,11 @@ import Task
 import Types as T
 
 
+sendMsg : T.Msg -> Cmd T.Msg
+sendMsg msg =
+    Task.succeed msg |> Task.perform identity
+
+
 update : T.ClientsMsg -> T.Model -> ( T.Model, Cmd T.Msg )
 update msg model =
     case msg of
@@ -15,8 +20,12 @@ update msg model =
 
         T.ClientsClientSelected makeMsg clientId ->
             ( updateEditedClient model (\edCli -> { edCli | state = T.EditedClientSelected })
-            , Task.succeed (makeMsg clientId) |> Task.perform identity
+            , sendMsg (makeMsg clientId)
             )
+
+        T.ClientsSave makeMsg ->
+            -- TODO continue here, save the client and select it
+            ( model, Cmd.none )
 
         T.ClientsOnInputName str ->
             ( updateEditedClientData model (\c -> { c | name = str }), Cmd.none )
@@ -133,7 +142,7 @@ cancelButtonView =
 
 
 newClientFormView : T.Model -> (Int -> T.Msg) -> Html T.ClientsMsg
-newClientFormView model makeMsg =
+newClientFormView model selectClientMsg =
     let
         data =
             model.editedClient.data
@@ -156,6 +165,7 @@ newClientFormView model makeMsg =
         , inputView "Dostawa: osoba kontaktowa" data.delivery_contact_person T.ClientsOnInputDeliveryContactPerson
         , inputView "Dostawa: numer telefonu" data.phone_number T.ClientsOnInputPhoneNumber
         , inputView "Dostawa: email" data.email T.ClientsOnInputEmail
+        , button [ class "float-right button-small", onClick (T.ClientsSave selectClientMsg) ] [ text "Utwórz klienta" ]
         ]
 
 

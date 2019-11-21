@@ -21,6 +21,7 @@ type ClientsMsg
     | ClientsOnInputDeliveryContactPerson String
     | ClientsOnInputPhoneNumber String
     | ClientsOnInputEmail String
+    | ClientsSave (Int -> Msg)
 
 
 type ProjectsMsg
