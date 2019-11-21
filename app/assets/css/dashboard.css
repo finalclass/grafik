@@ -53,7 +53,7 @@
     height: 2rem;
 }
 
-.dashboard .projects-list button, .dashboard .projects-list .button {
+.dashboard .projects-list button, .dashboard .projects-list .button, .dashboard .button-small {
     height: 2rem;
     line-height: 2rem;
     padding: 0 1rem;
@@ -111,4 +111,26 @@
 
 .dashboard .invalid-date {
     color: #f00;
+}
+
+.dashboard fieldset {
+    border: solid 1px;
+    border-radius: 3px;
+    border-color: #ccc;
+    padding: 0 5px;
+}
+
+.dashboard legend {
+    text-transform: uppercase;
+}
+
+.dashboard .client-button {
+    width: 90%;
+    margin: 0 5%;
+    box-sizing: border-box;
+}
+
+.dashboard .clients-selection-container {
+    max-height: 100px;
+    overflow: auto;
 }

@@ -1,6 +1,7 @@
 module State exposing (init, update)
 
 import Browser.Dom
+import Clients
 import Debug exposing (log)
 import Dict
 import ExpandedProjectsCache
@@ -31,6 +32,7 @@ init flags =
             , deadlineString = ""
             , deadlineErr = Nothing
             }
+      , editedClient = { data = Clients.emptyClient, state = T.EditedClientSelect }
       }
     , R.getAllData
     )

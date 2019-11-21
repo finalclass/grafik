@@ -1,5 +1,6 @@
 module Projects exposing (emptyProject, formView, update)
 
+import Clients
 import Dates
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -22,8 +23,23 @@ update msg model =
                         , deadlineString = Dates.displayDate model project.deadline
                         , deadlineErr = Nothing
                     }
+
+                edCli =
+                    model.editedClient
+
+                newEdCli =
+                    { edCli
+                        | data = Maybe.withDefault Clients.emptyClient (Clients.findClient model project.client_id)
+                        , state = T.EditedClientSelected
+                    }
             in
-            ( { model | modal = T.ModalEditProject project, editedProject = newEdProj }, Cmd.none )
+            ( { model
+                | modal = T.ModalEditProject project
+                , editedProject = newEdProj
+                , editedClient = newEdCli
+              }
+            , Cmd.none
+            )
 
         T.ProjectsSaveRequest project ->
             ( model, Cmd.none )
@@ -74,6 +90,12 @@ update msg model =
         T.ProjectsOnInputPaid newPaidString ->
             ( modifyEditedProjectData model (\p -> { p | paid = Maybe.withDefault 0.0 (String.toFloat newPaidString) }), Cmd.none )
 
+        T.ProjectsEditClient clientMsg ->
+            Clients.update clientMsg model
+
+        T.ProjectsOnClientIdSelected clientId ->
+            ( modifyEditedProjectData model (\p -> { p | client_id = clientId }), Cmd.none )
+
 
 modifyEditedProject : T.Model -> (T.EditedProject -> T.EditedProject) -> T.Model
 modifyEditedProject model func =
@@ -108,15 +130,6 @@ formView model =
                 []
             ]
         , label []
-            [ span [] [ text "Sztywny termin" ]
-            , input
-                [ type_ "checkbox"
-                , checked data.is_deadline_rigid
-                , onInput T.ProjectsOnInputIsDeadlineRigid
-                ]
-                []
-            ]
-        , label []
             [ span []
                 [ text "Termin"
                 , span
@@ -144,6 +157,25 @@ formView model =
 
                 Nothing ->
                     text ""
+            ]
+        , label []
+            [ span [] [ text "Sztywny termin" ]
+            , input
+                [ type_ "checkbox"
+                , checked data.is_deadline_rigid
+                , onInput T.ProjectsOnInputIsDeadlineRigid
+                ]
+                []
+            ]
+        , fieldset []
+            [ legend [] [ text "Klient" ]
+            , Html.map
+                (\msg -> T.ProjectsEditClient msg)
+                (Clients.selectOrCreateView
+                    model
+                    model.editedProject.data.client_id
+                    (\clientId -> T.ProjectsAction (T.ProjectsOnClientIdSelected clientId))
+                )
             ]
         , label []
             [ span [] [ text "Numer faktury / oferty" ]

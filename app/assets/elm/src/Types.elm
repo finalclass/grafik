@@ -5,6 +5,24 @@ import Http
 import Time
 
 
+type ClientsMsg
+    = ClientsSelectState EditedClientState
+    | ClientsClientSelected (Int -> Msg) Int
+    | ClientsOnInputName String
+    | ClientsOnInputInvoiceName String
+    | ClientsOnInputInvoiceStreet String
+    | ClientsOnInputInvoicePostcode String
+    | ClientsOnInputInvoiceCity String
+    | ClientsOnInputInvoiceNip String
+    | ClientsOnInputDeliveryName String
+    | ClientsOnInputDeliveryStreet String
+    | ClientsOnInputDeliveryPostcode String
+    | ClientsOnInputDeliveryCity String
+    | ClientsOnInputDeliveryContactPerson String
+    | ClientsOnInputPhoneNumber String
+    | ClientsOnInputEmail String
+
+
 type ProjectsMsg
     = ProjectsStartEdit Project
     | ProjectsSaveRequest Project
@@ -14,6 +32,8 @@ type ProjectsMsg
     | ProjectsOnInputInvoiceNumber String
     | ProjectsOnInputPrice String
     | ProjectsOnInputPaid String
+    | ProjectsOnClientIdSelected Int
+    | ProjectsEditClient ClientsMsg
 
 
 type Msg
@@ -64,6 +84,7 @@ type alias Model =
     , zone : Time.Zone
     , expandedProjects : ExpandedProjects
     , editedProject : EditedProject
+    , editedClient : EditedClient
     , mainViewState : MainViewState
     , modal : Modal
     , modalPromptValue : String
@@ -76,6 +97,18 @@ type alias EditedProject =
     { data : Project
     , deadlineString : String
     , deadlineErr : Maybe String
+    }
+
+
+type EditedClientState
+    = EditedClientSelect
+    | EditedClientSelected
+    | EditedClientNew
+
+
+type alias EditedClient =
+    { data : Client
+    , state : EditedClientState
     }
 
 
