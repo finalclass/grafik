@@ -53,3 +53,16 @@
 - pole uwagi do zlecenia
 - w wydruku termin w tej samej lini co klient ale dać do prawego marginesu przytulone
 - w edycji zamówienia zrobić aby "Termin (DD-MM-YYYY)" zawsze się wyświetlał a gdy jest błąd aby był na czerwono
+
+    Możliwość tworzenia przyciskiem kopii zapasowej - w razie czego
+    Możliwość wprowadzania całości zamówienia pracując w jednym formularzu
+    MOżliwość skopiowania wprowadzonych danych do faktury w pola ADRES DOSTAWY jeżeli oba będą takie same
+    Jeżeli wybierzemy status "wysłane" to przyda się pole gdzie można by było wpisać np. kurier DHL dnia 10 lipca
+    W zakładce zamówienia niech się wyświetla jedynie nazwa zadania bez nazwy klienta
+    Czy na wydruku dla pracowników sztywne daty zaznaczone na czerwono będą drukowały się też na czerwono?
+    Jeżeli całe zlecenie będzie miało wszystkie zadania o statusie WYSŁANO to nie powinno być już widoczne na liście bo z czasem będzie za dużo przewijania w poszukiwaniu zleceń będących w trakcie. Powinno takie zlecenie trafić do jakiegoś ARCHIWUM 
+    W terminach wyrzucić godziny i minuty bo zamydlają obraz
+    Szukanie działa wpisując wyrób ale często szukamy nazw zamówień lub klienta
+    W GRAFIKU dobrze by było aby był widoczny: TERMIN, NR FAKTURY, CENA, ILE ZAPŁACONO
+    W GRAFIKU przyda się opcja rozwijania całości (wszystkich zamówień jednocześnie aby były widoczne produkty)
+    Grubszą czcionką nazwy klientów i zamówień a cieńszą nazwy pól czyli np. Klient. Jest teraz odwrotnie.
