@@ -32,6 +32,7 @@ update msg model =
                         | data = Clients.emptyClient
                         , state = T.EditedClientSelected
                         , saveErr = Nothing
+                        , searchText = ""
                     }
             in
             ( { model

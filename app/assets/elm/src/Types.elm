@@ -20,6 +20,7 @@ type ClientsMsg
     | ClientsOnInputDeliveryCity String
     | ClientsOnInputDeliveryContactPerson String
     | ClientsOnInputPhoneNumber String
+    | ClientsOnInputSearchText String
     | ClientsOnInputEmail String
     | ClientsSaveRequest (Int -> Msg)
     | ClientsCreated (Int -> Msg) (Result Http.Error Client)
@@ -112,6 +113,7 @@ type alias EditedClient =
     { data : Client
     , state : EditedClientState
     , saveErr : Maybe String
+    , searchText : String
     }
 
 

@@ -1,10 +1,9 @@
 .modal {
     left: 50%;
-    margin: 0 0 0 -200px;
+    margin: 0 0 0 -400px;
     position: fixed;
     top: 5vh;
-    width: 400px;
-
+    width: 800px;
     box-sizing: border-box;
 }
 

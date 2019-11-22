@@ -19,6 +19,9 @@ update msg model =
         T.ClientsSelectState state ->
             ( updateEditedClient model (\edCli -> { edCli | state = state }), Cmd.none )
 
+        T.ClientsOnInputSearchText str ->
+            ( updateEditedClient model (\edCli -> { edCli | searchText = str }), Cmd.none )
+
         T.ClientsClientSelected makeMsg clientId ->
             ( updateEditedClient model (\edCli -> { edCli | state = T.EditedClientSelected })
             , sendMsg (makeMsg clientId)
@@ -119,7 +122,7 @@ selectOrCreateView model clientId makeMsg =
             Just client ->
                 case model.editedClient.state of
                     T.EditedClientSelected ->
-                        [ text client.name
+                        [ clientView client
                         , button
                             [ class "float-right button button-outline button-small"
                             , onClick (T.ClientsSelectState T.EditedClientSelect)
@@ -203,20 +206,82 @@ selectView : T.Model -> (Int -> T.Msg) -> Html T.ClientsMsg
 selectView model makeMsg =
     div [ class "client-selection" ]
         [ div [ class "clearfix" ]
-            [ div [ class "float-left" ] [ text "Wybierz:" ]
+            [ div [ class "float-left" ]
+                [ text "Wybierz klienta:"
+                ]
             , cancelButtonView
             , newButtonView
+            , input
+                [ type_ "text"
+                , placeholder "Szukaj..."
+                , class "client-search-input"
+                , onInput T.ClientsOnInputSearchText
+                , value model.editedClient.searchText
+                ]
+                []
             ]
         , div [ class "clients-selection-container clearfix" ]
             (List.map
                 (\client ->
-                    button
-                        [ class "client-button button-small"
+                    div
+                        [ class "client-button"
                         , onClick (T.ClientsClientSelected makeMsg client.id)
                         ]
-                        [ text client.name ]
+                        [ clientView client ]
                 )
-                model.clients
+                (filterClients model.editedClient.searchText model.clients)
+            )
+        ]
+
+
+clientView : T.Client -> Html T.ClientsMsg
+clientView client =
+    div [ class "client-view" ]
+        [ strong [] [ text (client.name ++ " ") ]
+        , text
+            (String.join " "
+                [ if not (isStringEmpty client.phone_number) then
+                    "tel: " ++ client.phone_number
+
+                  else
+                    ""
+                , client.email
+                , if
+                    not (isStringEmpty client.invoice_name)
+                        || not (isStringEmpty client.invoice_street)
+                        || not (isStringEmpty client.invoice_postcode)
+                        || not (isStringEmpty client.invoice_city)
+                        || not (isStringEmpty client.invoice_nip)
+                  then
+                    "; FAKTURA: "
+                        ++ String.join ", "
+                            [ client.invoice_name
+                            , client.invoice_street
+                            , client.invoice_postcode ++ " " ++ client.invoice_city
+                            ]
+                        ++ " NIP: "
+                        ++ client.invoice_nip
+
+                  else
+                    ""
+                , if
+                    not (isStringEmpty client.delivery_name)
+                        || not (isStringEmpty client.delivery_street)
+                        || not (isStringEmpty client.delivery_postcode)
+                        || not (isStringEmpty client.delivery_city)
+                        || not (isStringEmpty client.delivery_contact_person)
+                  then
+                    "; DOSTAWA:"
+                        ++ String.join ", "
+                            [ client.delivery_name
+                            , client.delivery_street
+                            , client.delivery_postcode ++ " " ++ client.delivery_city
+                            , "os. kontaktowa: " ++ client.delivery_contact_person
+                            ]
+
+                  else
+                    ""
+                ]
             )
         ]
 
@@ -225,3 +290,40 @@ findClient : T.Model -> Int -> Maybe T.Client
 findClient model clientId =
     List.filter (\c -> c.id == clientId) model.clients
         |> List.head
+
+
+filterClients : String -> List T.Client -> List T.Client
+filterClients searchText clients =
+    List.filter
+        (\c ->
+            if String.length searchText == 0 then
+                True
+
+            else
+                String.contains (String.toLower searchText) (String.toLower (clientToString c))
+        )
+        clients
+
+
+clientToString : T.Client -> String
+clientToString client =
+    String.join ";"
+        [ client.name
+        , client.invoice_name
+        , client.invoice_street
+        , client.invoice_postcode
+        , client.invoice_city
+        , client.invoice_nip
+        , client.delivery_name
+        , client.delivery_street
+        , client.delivery_postcode
+        , client.delivery_city
+        , client.delivery_contact_person
+        , client.phone_number
+        , client.email
+        ]
+
+
+isStringEmpty : String -> Bool
+isStringEmpty str =
+    String.length str == 0

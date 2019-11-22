@@ -36,6 +36,7 @@ init flags =
             { data = Clients.emptyClient
             , state = T.EditedClientSelect
             , saveErr = Nothing
+            , searchText = ""
             }
       }
     , R.getAllData
