@@ -192,7 +192,7 @@ update msg model =
             ( { model | modalPromptValue = value }, Cmd.none )
 
         T.SearchEnterText value ->
-            ( { model | searchText = value, visibleProjects = M.buildVisibleProjects model.projects value }, Cmd.none )
+            ( { model | searchText = value } |> M.initVisibleProjects, Cmd.none )
 
         T.ProjectsAction subMsg ->
             Projects.update subMsg model

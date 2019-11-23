@@ -6,11 +6,7 @@ import Html.Events exposing (..)
 import Requests as R
 import Task
 import Types as T
-
-
-sendMsg : T.Msg -> Cmd T.Msg
-sendMsg msg =
-    Task.succeed msg |> Task.perform identity
+import Utils as U
 
 
 update : T.ClientsMsg -> T.Model -> ( T.Model, Cmd T.Msg )
@@ -24,7 +20,7 @@ update msg model =
 
         T.ClientsClientSelected makeMsg clientId ->
             ( updateEditedClient model (\edCli -> { edCli | state = T.EditedClientSelected })
-            , sendMsg (makeMsg clientId)
+            , U.sendMsg (makeMsg clientId)
             )
 
         T.ClientsEdit client ->
@@ -51,7 +47,7 @@ update msg model =
                             updateEditedClient model (\edCli -> { edCli | state = T.EditedClientSelected })
                     in
                     ( { newModel | clients = client :: model.clients }
-                    , sendMsg (makeMsg client.id)
+                    , U.sendMsg (makeMsg client.id)
                     )
 
                 Err _ ->
@@ -65,7 +61,7 @@ update msg model =
                             updateEditedClient model (\edCli -> { edCli | state = T.EditedClientSelected })
                     in
                     ( { newModel | clients = replaceClient client model.clients }
-                    , sendMsg (makeMsg client.id)
+                    , U.sendMsg (makeMsg client.id)
                     )
 
                 Err _ ->
@@ -172,13 +168,21 @@ selectOrCreateView model clientId makeMsg =
                         ]
 
                     T.EditedClientSelect ->
-                        [ selectView model makeMsg ]
+                        [ selectView model makeMsg True ]
 
                     T.EditedClientEdit ->
                         [ newClientFormView model makeMsg ]
 
             Nothing ->
-                [ selectView model makeMsg ]
+                case model.editedClient.state of
+                    T.EditedClientSelected ->
+                        [ selectView model makeMsg False ]
+
+                    T.EditedClientSelect ->
+                        [ selectView model makeMsg False ]
+
+                    T.EditedClientEdit ->
+                        [ newClientFormView model makeMsg ]
         )
 
 
@@ -250,14 +254,18 @@ inputView labelText inputValue msg =
         ]
 
 
-selectView : T.Model -> (Int -> T.Msg) -> Html T.ClientsMsg
-selectView model makeMsg =
+selectView : T.Model -> (Int -> T.Msg) -> Bool -> Html T.ClientsMsg
+selectView model makeMsg showCancel =
     div [ class "client-selection" ]
         [ div [ class "clearfix" ]
             [ div [ class "float-left" ]
                 [ text "Wybierz klienta:"
                 ]
-            , cancelButtonView
+            , if showCancel then
+                cancelButtonView
+
+              else
+                text ""
             , newButtonView
             , input
                 [ type_ "text"

@@ -28,6 +28,13 @@ mainView model =
 
                 else
                     [ searchBoxView model
+                    , button
+                        [ class "button-small button-outline"
+                        , onClick (T.ProjectsAction T.ProjectsNewProject)
+                        ]
+                        [ i [ class "icon icon-plus" ] []
+                        , text "dodaj zlecenie"
+                        ]
                     , projectsView model
                     ]
                )

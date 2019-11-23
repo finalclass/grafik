@@ -5,44 +5,29 @@ import Dates
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import ModalViewUtils
+import Model as M
 import Requests as R
 import Time
 import Types as T
+import Utils as U
 
 
 update : T.ProjectsMsg -> T.Model -> ( T.Model, Cmd T.Msg )
 update msg model =
     case msg of
         T.ProjectsStartEdit project ->
-            let
-                edProj =
-                    model.editedProject
+            ( model
+                |> initEditedProject project
+                |> showEditProjectModal
+                |> initEditedClient
+            , Cmd.none
+            )
 
-                newEdProj =
-                    { edProj
-                        | data = project
-                        , deadlineString = Dates.displayDate model project.deadline
-                        , deadlineErr = Nothing
-                        , saveErr = Nothing
-                    }
-
-                edCli =
-                    model.editedClient
-
-                newEdCli =
-                    { edCli
-                        | data = Clients.emptyClient
-                        , state = T.EditedClientSelected
-                        , saveErr = Nothing
-                        , searchText = ""
-                    }
-            in
-            ( { model
-                | modal = T.ModalEditProject project
-                , editedProject = newEdProj
-                , editedClient = newEdCli
-              }
+        T.ProjectsNewProject ->
+            ( model
+                |> initEditedProject emptyProject
+                |> showEditProjectModal
+                |> initEditedClient
             , Cmd.none
             )
 
@@ -52,7 +37,12 @@ update msg model =
         T.ProjectsCreated project ->
             case project of
                 Ok p ->
-                    ( model |> addNewProject p |> ModalViewUtils.hideModal, Cmd.none )
+                    ( { model | mainViewState = T.SuccessState }
+                        |> addNewProject p
+                        |> U.hideModal
+                        |> M.initVisibleProjects
+                    , U.sendMsg (T.ToggleProjectExpand p)
+                    )
 
                 Err err ->
                     let
@@ -67,7 +57,7 @@ update msg model =
                     ( model
                         |> replaceProjectById p
                         |> stopLoading T.SuccessState
-                        |> ModalViewUtils.hideModal
+                        |> U.hideModal
                     , Cmd.none
                     )
 
@@ -130,6 +120,36 @@ update msg model =
 
         T.ProjectsOnClientIdSelected clientId ->
             ( model |> updateEditedProjectData (\p -> { p | client_id = clientId }), Cmd.none )
+
+
+showEditProjectModal : T.Model -> T.Model
+showEditProjectModal model =
+    { model | modal = T.ModalEditProject }
+
+
+initEditedProject : T.Project -> T.Model -> T.Model
+initEditedProject project model =
+    model
+        |> updateEditedProject
+            (\_ ->
+                { data = project
+                , deadlineString = Dates.displayDate model project.deadline
+                , deadlineErr = Nothing
+                , saveErr = Nothing
+                }
+            )
+
+
+initEditedClient : T.Model -> T.Model
+initEditedClient model =
+    { model
+        | editedClient =
+            { data = Clients.emptyClient
+            , state = T.EditedClientSelected
+            , saveErr = Nothing
+            , searchText = ""
+            }
+    }
 
 
 saveError : T.Model -> T.Model

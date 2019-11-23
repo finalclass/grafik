@@ -145,3 +145,12 @@
     max-height: 200px;
     overflow: auto;
 }
+
+.dashboard button .icon,
+.dashboard .button .icon {
+    margin-right: 5px;
+}
+
+.dashboard .project-save-errors {
+    color: #f00;
+}

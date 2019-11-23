@@ -14,6 +14,11 @@ isProjectExpanded project expandedProjects =
             False
 
 
+initVisibleProjects : T.Model -> T.Model
+initVisibleProjects model =
+    { model | visibleProjects = buildVisibleProjects model.projects model.searchText }
+
+
 nofHiddenProjects : T.Model -> Int
 nofHiddenProjects model =
     List.length model.projects - List.length model.visibleProjects

@@ -52,6 +52,7 @@ createOrUpdateProject project =
             Http.jsonBody
                 (E.object
                     [ ( "name", E.string project.name )
+                    , ( "client_id", E.int project.client_id )
                     , ( "deadline", E.int (Time.posixToMillis project.deadline) )
                     , ( "start_at", E.int (Time.posixToMillis project.start_at) )
                     , ( "name", E.string project.name )

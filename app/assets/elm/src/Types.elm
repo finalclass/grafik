@@ -30,6 +30,7 @@ type ClientsMsg
 
 type ProjectsMsg
     = ProjectsStartEdit Project
+    | ProjectsNewProject
     | ProjectsSaveRequest
     | ProjectsOnInputName String
     | ProjectsOnInputIsDeadlineRigid String
@@ -80,7 +81,7 @@ type Modal
     = ModalHidden
     | ModalConfirm String String Msg
     | ModalPrompt String Msg
-    | ModalEditProject Project
+    | ModalEditProject
 
 
 type alias Model =
