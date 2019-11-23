@@ -31,6 +31,7 @@ init flags =
             { data = Projects.emptyProject
             , deadlineString = ""
             , deadlineErr = Nothing
+            , saveErr = Nothing
             }
       , editedClient =
             { data = Clients.emptyClient

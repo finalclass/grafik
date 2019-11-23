@@ -1,4 +1,4 @@
-module Requests exposing (changeTaskStatus, changeTaskWorker, createNewClient, createNewTask, getAllData, removeTask, renameTask)
+module Requests exposing (changeTaskStatus, changeTaskWorker, createNewTask, createOrUpdateClient, createOrUpdateProject, getAllData, removeTask, renameTask)
 
 import Http
 import Json.Decode as D
@@ -25,10 +25,65 @@ getAllData =
         }
 
 
-createNewClient : T.Client -> (Int -> T.Msg) -> Cmd T.Msg
-createNewClient client makeMsg =
-    Http.post
-        { url = "/api/clients/"
+createOrUpdateProject : T.Project -> Cmd T.Msg
+createOrUpdateProject project =
+    let
+        data =
+            if project.id /= 0 then
+                { url = "/api/projects/" ++ String.fromInt project.id
+                , method = "put"
+                , msg = T.ProjectsUpdated
+                }
+
+            else
+                { url = "/api/projects"
+                , method = "post"
+                , msg = T.ProjectsCreated
+                }
+    in
+    Http.request
+        { method = data.method
+        , url = data.url
+        , headers = []
+        , timeout = Nothing
+        , tracker = Nothing
+        , expect = Http.expectJson (\res -> T.ProjectsAction (data.msg res)) projectDecoder
+        , body =
+            Http.jsonBody
+                (E.object
+                    [ ( "name", E.string project.name )
+                    , ( "deadline", E.int (Time.posixToMillis project.deadline) )
+                    , ( "start_at", E.int (Time.posixToMillis project.start_at) )
+                    , ( "name", E.string project.name )
+                    , ( "is_archived", E.bool project.is_archived )
+                    , ( "invoice_number", E.string project.invoice_number )
+                    , ( "price", E.float project.price )
+                    , ( "paid", E.float project.paid )
+                    , ( "is_deadline_rigid", E.bool project.is_deadline_rigid )
+                    ]
+                )
+        }
+
+
+createOrUpdateClient : T.Client -> (Int -> T.Msg) -> Cmd T.Msg
+createOrUpdateClient client makeMsg =
+    let
+        data =
+            if client.id /= 0 then
+                { url = "/api/clients/" ++ String.fromInt client.id
+                , method = "put"
+                , msg = T.ClientsUpdated
+                }
+
+            else
+                { url = "/api/clients"
+                , method = "post"
+                , msg = T.ClientsCreated
+                }
+    in
+    Http.request
+        { method = data.method
+        , url = data.url
         , body =
             Http.jsonBody
                 (E.object
@@ -47,7 +102,10 @@ createNewClient client makeMsg =
                     , ( "email", E.string client.email )
                     ]
                 )
-        , expect = Http.expectJson (\res -> T.ProjectsAction (T.ProjectsEditClient (T.ClientsCreated makeMsg res))) clientDecoder
+        , expect = Http.expectJson (\res -> T.ProjectsAction (T.ProjectsEditClient (data.msg makeMsg res))) clientDecoder
+        , headers = []
+        , timeout = Nothing
+        , tracker = Nothing
         }
 
 
@@ -144,23 +202,27 @@ clientDecoder =
         |> optional "email" D.string ""
 
 
+projectDecoder : D.Decoder T.Project
+projectDecoder =
+    D.succeed T.Project
+        |> required "id" D.int
+        |> required "client_id" D.int
+        |> required "name" D.string
+        |> required "is_deadline_rigid" D.bool
+        |> required "deadline" decodeTime
+        |> optional "invoice_number" D.string ""
+        |> optional "price" D.float 0
+        |> optional "paid" D.float 0
+        |> required "tasks" (D.list taskDecoder)
+        |> required "is_archived" D.bool
+        |> required "start_at" decodeTime
+
+
 projectsDecoder : D.Decoder T.AllData
 projectsDecoder =
     D.map4 T.AllData
         (D.field "projects"
-            (D.list
-                (D.succeed T.Project
-                    |> required "id" D.int
-                    |> required "client_id" D.int
-                    |> required "name" D.string
-                    |> required "is_deadline_rigid" D.bool
-                    |> required "deadline" decodeTime
-                    |> optional "invoice_number" D.string ""
-                    |> optional "price" D.float 0
-                    |> optional "paid" D.float 0
-                    |> required "tasks" (D.list taskDecoder)
-                )
-            )
+            (D.list projectDecoder)
         )
         (D.field "workers"
             (D.list

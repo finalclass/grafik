@@ -68,3 +68,4 @@
     W GRAFIKU przyda się opcja rozwijania całości (wszystkich zamówień jednocześnie aby były widoczne produkty)
     Grubszą czcionką nazwy klientów i zamówień a cieńszą nazwy pól czyli np. Klient. Jest teraz odwrotnie.
     po wpisaniu numeru oferty lub faktury wypełniają się całe zamówienie i zadania
+- dodaj "start_at" w dashboard do projektów

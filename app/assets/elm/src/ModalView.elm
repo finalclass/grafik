@@ -40,7 +40,7 @@ modalView model =
 editProjectView : T.Model -> T.Project -> Html T.Msg
 editProjectView model project =
     okCancelModal project.name
-        (T.ProjectsAction (T.ProjectsSaveRequest project))
+        (T.ProjectsAction T.ProjectsSaveRequest)
         [ Html.map (\msg -> T.ProjectsAction msg) (Projects.formView model)
         ]
 

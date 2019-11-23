@@ -7,6 +7,7 @@ import Time
 
 type ClientsMsg
     = ClientsSelectState EditedClientState
+    | ClientsEdit Client
     | ClientsClientSelected (Int -> Msg) Int
     | ClientsOnInputName String
     | ClientsOnInputInvoiceName String
@@ -24,11 +25,12 @@ type ClientsMsg
     | ClientsOnInputEmail String
     | ClientsSaveRequest (Int -> Msg)
     | ClientsCreated (Int -> Msg) (Result Http.Error Client)
+    | ClientsUpdated (Int -> Msg) (Result Http.Error Client)
 
 
 type ProjectsMsg
     = ProjectsStartEdit Project
-    | ProjectsSaveRequest Project
+    | ProjectsSaveRequest
     | ProjectsOnInputName String
     | ProjectsOnInputIsDeadlineRigid String
     | ProjectsOnInputDeadlineString String
@@ -37,6 +39,8 @@ type ProjectsMsg
     | ProjectsOnInputPaid String
     | ProjectsOnClientIdSelected Int
     | ProjectsEditClient ClientsMsg
+    | ProjectsCreated (Result Http.Error Project)
+    | ProjectsUpdated (Result Http.Error Project)
 
 
 type Msg
@@ -100,13 +104,14 @@ type alias EditedProject =
     { data : Project
     , deadlineString : String
     , deadlineErr : Maybe String
+    , saveErr : Maybe String
     }
 
 
 type EditedClientState
     = EditedClientSelect
     | EditedClientSelected
-    | EditedClientNew
+    | EditedClientEdit
 
 
 type alias EditedClient =
@@ -161,6 +166,8 @@ type alias Project =
     , price : Float
     , paid : Float
     , tasks : List Task
+    , is_archived : Bool
+    , start_at : Time.Posix
     }
 
 

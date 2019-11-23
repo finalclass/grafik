@@ -27,9 +27,20 @@ update msg model =
             , sendMsg (makeMsg clientId)
             )
 
+        T.ClientsEdit client ->
+            ( updateEditedClient model
+                (\edCli ->
+                    { edCli
+                        | state = T.EditedClientEdit
+                        , data = client
+                    }
+                )
+            , Cmd.none
+            )
+
         T.ClientsSaveRequest makeMsg ->
             ( updateEditedClient model (\edCli -> { edCli | saveErr = Nothing })
-            , R.createNewClient model.editedClient.data makeMsg
+            , R.createOrUpdateClient model.editedClient.data makeMsg
             )
 
         T.ClientsCreated makeMsg result ->
@@ -40,6 +51,20 @@ update msg model =
                             updateEditedClient model (\edCli -> { edCli | state = T.EditedClientSelected })
                     in
                     ( { newModel | clients = client :: model.clients }
+                    , sendMsg (makeMsg client.id)
+                    )
+
+                Err _ ->
+                    ( updateEditedClient model (\edCli -> { edCli | saveErr = Just "Nie udało się zapisać klienta" }), Cmd.none )
+
+        T.ClientsUpdated makeMsg result ->
+            case result of
+                Ok client ->
+                    let
+                        newModel =
+                            updateEditedClient model (\edCli -> { edCli | state = T.EditedClientSelected })
+                    in
+                    ( { newModel | clients = replaceClient client model.clients }
                     , sendMsg (makeMsg client.id)
                     )
 
@@ -86,6 +111,19 @@ update msg model =
             ( updateEditedClientData model (\c -> { c | email = str }), Cmd.none )
 
 
+replaceClient : T.Client -> List T.Client -> List T.Client
+replaceClient client clients =
+    List.map
+        (\c ->
+            if c.id == client.id then
+                client
+
+            else
+                c
+        )
+        clients
+
+
 updateEditedClient : T.Model -> (T.EditedClient -> T.EditedClient) -> T.Model
 updateEditedClient model func =
     { model | editedClient = func model.editedClient }
@@ -122,7 +160,9 @@ selectOrCreateView model clientId makeMsg =
             Just client ->
                 case model.editedClient.state of
                     T.EditedClientSelected ->
-                        [ clientView client
+                        [ div [ onClick (T.ClientsEdit client), title "Edytuj" ]
+                            [ clientView client
+                            ]
                         , button
                             [ class "float-right button button-outline button-small"
                             , onClick (T.ClientsSelectState T.EditedClientSelect)
@@ -134,7 +174,7 @@ selectOrCreateView model clientId makeMsg =
                     T.EditedClientSelect ->
                         [ selectView model makeMsg ]
 
-                    T.EditedClientNew ->
+                    T.EditedClientEdit ->
                         [ newClientFormView model makeMsg ]
 
             Nothing ->
@@ -146,7 +186,7 @@ newButtonView : Html T.ClientsMsg
 newButtonView =
     button
         [ class "float-right button button-outline button-small"
-        , onClick (T.ClientsSelectState T.EditedClientNew)
+        , onClick (T.ClientsSelectState T.EditedClientEdit)
         ]
         [ text "nowy" ]
 
@@ -168,7 +208,15 @@ newClientFormView model selectClientMsg =
     in
     div []
         [ div [ class "clearfix" ]
-            [ h4 [ class "float-left" ] [ text "Nowy klient" ]
+            [ h4 [ class "float-left" ]
+                [ text
+                    (if data.id /= 0 then
+                        "Edytuj klienta"
+
+                     else
+                        "Nowy klient"
+                    )
+                ]
             , cancelButtonView
             ]
         , inputView "Nazwa skrócona" data.name T.ClientsOnInputName

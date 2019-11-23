@@ -5,6 +5,8 @@ import Dates
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import ModalViewUtils
+import Requests as R
 import Time
 import Types as T
 
@@ -22,6 +24,7 @@ update msg model =
                         | data = project
                         , deadlineString = Dates.displayDate model project.deadline
                         , deadlineErr = Nothing
+                        , saveErr = Nothing
                     }
 
                 edCli =
@@ -43,76 +46,156 @@ update msg model =
             , Cmd.none
             )
 
-        T.ProjectsSaveRequest project ->
-            ( model, Cmd.none )
+        T.ProjectsSaveRequest ->
+            ( { model | mainViewState = T.LoadingState }, R.createOrUpdateProject model.editedProject.data )
+
+        T.ProjectsCreated project ->
+            case project of
+                Ok p ->
+                    ( model |> addNewProject p |> ModalViewUtils.hideModal, Cmd.none )
+
+                Err err ->
+                    let
+                        e =
+                            Debug.log "created" err
+                    in
+                    ( model |> saveError, Cmd.none )
+
+        T.ProjectsUpdated project ->
+            case project of
+                Ok p ->
+                    ( model
+                        |> replaceProjectById p
+                        |> stopLoading T.SuccessState
+                        |> ModalViewUtils.hideModal
+                    , Cmd.none
+                    )
+
+                Err err ->
+                    let
+                        e =
+                            Debug.log "updated" err
+                    in
+                    ( model |> saveError, Cmd.none )
 
         T.ProjectsOnInputName str ->
-            ( modifyEditedProjectData model (\p -> { p | name = str }), Cmd.none )
+            ( model |> updateEditedProjectData (\p -> { p | name = str }), Cmd.none )
 
         T.ProjectsOnInputIsDeadlineRigid _ ->
-            ( modifyEditedProjectData model
-                (\p -> { p | is_deadline_rigid = not p.is_deadline_rigid })
+            ( model
+                |> updateEditedProjectData
+                    (\p -> { p | is_deadline_rigid = not p.is_deadline_rigid })
             , Cmd.none
             )
 
         T.ProjectsOnInputDeadlineString newDeadline ->
             case Dates.stringToTime newDeadline of
                 Ok time ->
-                    let
-                        newModel =
-                            modifyEditedProjectData model (\d -> { d | deadline = time })
-                    in
-                    ( modifyEditedProject newModel
-                        (\edProj ->
-                            { edProj
-                                | deadlineString = newDeadline
-                                , deadlineErr = Nothing
-                            }
-                        )
+                    ( model
+                        |> updateEditedProjectData (\d -> { d | deadline = time })
+                        |> updateEditedProject
+                            (\edProj ->
+                                { edProj
+                                    | deadlineString = newDeadline
+                                    , deadlineErr = Nothing
+                                    , saveErr = Nothing
+                                }
+                            )
                     , Cmd.none
                     )
 
                 Err err ->
-                    ( modifyEditedProject model
-                        (\edProj ->
-                            { edProj
-                                | deadlineErr = Just err
-                                , deadlineString = newDeadline
-                            }
-                        )
+                    ( model
+                        |> updateEditedProject
+                            (\edProj ->
+                                { edProj
+                                    | deadlineErr = Just err
+                                    , deadlineString = newDeadline
+                                }
+                            )
                     , Cmd.none
                     )
 
         T.ProjectsOnInputInvoiceNumber newInvoiceNumber ->
-            ( modifyEditedProjectData model (\p -> { p | invoice_number = newInvoiceNumber }), Cmd.none )
+            ( model |> updateEditedProjectData (\p -> { p | invoice_number = newInvoiceNumber }), Cmd.none )
 
         T.ProjectsOnInputPrice newPriceString ->
-            ( modifyEditedProjectData model (\p -> { p | price = Maybe.withDefault 0.0 (String.toFloat newPriceString) }), Cmd.none )
+            ( model |> updateEditedProjectData (\p -> { p | price = Maybe.withDefault 0.0 (String.toFloat newPriceString) }), Cmd.none )
 
         T.ProjectsOnInputPaid newPaidString ->
-            ( modifyEditedProjectData model (\p -> { p | paid = Maybe.withDefault 0.0 (String.toFloat newPaidString) }), Cmd.none )
+            ( model |> updateEditedProjectData (\p -> { p | paid = Maybe.withDefault 0.0 (String.toFloat newPaidString) }), Cmd.none )
 
         T.ProjectsEditClient clientMsg ->
             Clients.update clientMsg model
 
         T.ProjectsOnClientIdSelected clientId ->
-            ( modifyEditedProjectData model (\p -> { p | client_id = clientId }), Cmd.none )
+            ( model |> updateEditedProjectData (\p -> { p | client_id = clientId }), Cmd.none )
 
 
-modifyEditedProject : T.Model -> (T.EditedProject -> T.EditedProject) -> T.Model
-modifyEditedProject model func =
+saveError : T.Model -> T.Model
+saveError model =
+    model
+        |> updateEditedProject (\edProj -> { edProj | saveErr = Just "Zapisywanie zamówienia nie powiodło się" })
+        |> stopLoading T.FailureState
+
+
+stopLoading : T.MainViewState -> T.Model -> T.Model
+stopLoading state model =
+    { model | mainViewState = state }
+
+
+replaceProjectById : T.Project -> T.Model -> T.Model
+replaceProjectById project model =
+    { model
+        | projects =
+            model.projects
+                |> List.map
+                    (\p ->
+                        if p.id == project.id then
+                            project
+
+                        else
+                            p
+                    )
+                |> sortProjects
+    }
+
+
+sortProjects : List T.Project -> List T.Project
+sortProjects projects =
+    projects
+        |> List.sortWith
+            (\a b ->
+                compare (Time.posixToMillis a.deadline) (Time.posixToMillis b.deadline)
+            )
+
+
+addNewProject : T.Project -> T.Model -> T.Model
+addNewProject project model =
+    let
+        projects =
+            (project :: model.projects)
+                |> sortProjects
+    in
+    { model | projects = projects }
+
+
+updateEditedProject : (T.EditedProject -> T.EditedProject) -> T.Model -> T.Model
+updateEditedProject func model =
     { model | editedProject = func model.editedProject }
 
 
-modifyEditedProjectData : T.Model -> (T.Project -> T.Project) -> T.Model
-modifyEditedProjectData model func =
-    modifyEditedProject model
-        (\edProj ->
-            { edProj
-                | data = func edProj.data
-                , deadlineErr = Nothing
-            }
-        )
+updateEditedProjectData : (T.Project -> T.Project) -> T.Model -> T.Model
+updateEditedProjectData func model =
+    model
+        |> updateEditedProject
+            (\edProj ->
+                { edProj
+                    | data = func edProj.data
+                    , deadlineErr = Nothing
+                    , saveErr = Nothing
+                }
+            )
 
 
 formView : T.Model -> Html T.ProjectsMsg
@@ -222,4 +305,6 @@ emptyProject =
     , price = 0
     , paid = 0
     , tasks = []
+    , is_archived = False
+    , start_at = Time.millisToPosix 0
     }
