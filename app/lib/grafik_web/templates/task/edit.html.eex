@@ -1,8 +1,0 @@
-<ul class="breadcrumbs">
-  <li><%= link "Zamówienia", to: Routes.project_path(@conn,  :index) %></li>
-  <li><%= GrafikWeb.ProjectView.show_project_button(@conn, @project) %></li>
-  <li><%= show_task_button(@conn, @task) %></li>
-  <li>Edycja</li>
-</ul>
-
-<%= render "form.html", Map.put(assigns, :action, Routes.task_path(@conn, :update, @task)) %>

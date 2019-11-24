@@ -49,6 +49,7 @@
 - [DONE] dodawanie zlecenia z jednego formularza to znaczy wszystko: klienta i produkty
 - [DONE] pole uwagi do zlecenia
 - [DONE] wywalić zakładkę "zlecenia" i cały kod z tym związany
+- [DONE] wywalić zakładkę "kielnci" i cały kod z tym związany
 - backupy
 - na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
 - daty nie powinny mieć godzin

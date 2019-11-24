@@ -18,7 +18,6 @@ defmodule GrafikWeb.Router do
     pipe_through :browser
 
     get "/", DashboardController, :index
-    resources "/clients", ClientController
     resources "/workers", WorkerController
     resources "/tasks", TaskController
 

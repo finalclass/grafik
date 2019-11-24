@@ -1,7 +1,0 @@
-<ul class="breadcrumbs">
-  <li><%= link "Klienci", to: Routes.client_path(@conn,  :index) %></li>
-  <li><%= show_client_button(@conn, @client) %></li>
-  <li>Edycja</li>
-</ul>
-
-<%= render "form.html", Map.put(assigns, :action, Routes.client_path(@conn, :update, @client)) %>

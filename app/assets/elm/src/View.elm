@@ -33,7 +33,7 @@ mainView model =
                         , onClick (T.ProjectsAction T.ProjectsNewProject)
                         ]
                         [ i [ class "icon icon-plus" ] []
-                        , text "dodaj zlecenie"
+                        , text "dodaj zamówienie"
                         ]
                     , button
                         [ class ("button-small float-right " ++ U.caseProjectsType model.projectsType "button-outline" "")
@@ -180,7 +180,7 @@ addTaskButtonView project =
         [ td [] [ text "" ]
         , td [ colspan 4, class "add-task-button-container" ]
             [ button
-                [ class "add-task-button"
+                [ class "add-task-button button-outline"
                 , onClick (T.TaskCreateRequest project)
                 ]
                 [ i [ class "icon icon-plus" ]
