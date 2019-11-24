@@ -61,6 +61,7 @@ createOrUpdateProject project =
             Http.jsonBody
                 (E.object
                     [ ( "name", E.string project.name )
+                    , ( "description", E.string project.description )
                     , ( "client_id", E.int project.client_id )
                     , ( "deadline", E.int (Time.posixToMillis project.deadline) )
                     , ( "start_at", E.int (Time.posixToMillis project.start_at) )
@@ -218,6 +219,7 @@ projectDecoder =
         |> required "id" D.int
         |> required "client_id" D.int
         |> required "name" D.string
+        |> required "description" D.string
         |> required "is_deadline_rigid" D.bool
         |> required "deadline" decodeTime
         |> optional "invoice_number" D.string ""

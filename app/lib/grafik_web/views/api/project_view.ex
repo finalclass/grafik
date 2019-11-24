@@ -6,6 +6,7 @@ defmodule GrafikWeb.Api.ProjectView do
       id: project.id,
       client_id: project.client_id,
       name: project.name,
+      description: project.description || "",
       tasks:
         if Ecto.assoc_loaded?(project.tasks) do
           render_many(project.tasks, GrafikWeb.Api.TaskView, "task.json")

@@ -43,14 +43,17 @@
   - [DONE] przejrzeć resztę breadcrumbs
 - [DONE] wywalić duplikaty z modelu w dashboard - single source of trueth for clients and for workers assigned to tasks
 - [DONE] przejść na korzystanie z erlang release
+- [DONE] na czerwono projekty ze sztywnym terminem również w dashboard
+- [DONE] upewnić się, ze w dashboard projekty są posortowane po terminach
+- [DONE] Dodaj zadanie -> Dodaj produkt
+- [DONE] dodawanie zlecenia z jednego formularza to znaczy wszystko: klienta i produkty
+- [DONE] pole uwagi do zlecenia
+- wywalić zakładkę "zlecenia" i cały kod z tym związany
 - backupy
 - na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
 - daty nie powinny mieć godzin
-- na czerwono projekty ze sztywnym terminem również w dashboard
-- upewnić się, ze w dashboard projekty są posortowane po terminach
-- Dodaj zadanie -> Dodaj produkt
-- dodawanie zlecenia z jednego formularza to znaczy wszystko: klienta i produkty
-- pole uwagi do zlecenia
+- wyświetlać gdzieś date wysłania
+
 - w wydruku termin w tej samej lini co klient ale dać do prawego marginesu przytulone
 - w edycji zamówienia zrobić aby "Termin (DD-MM-YYYY)" zawsze się wyświetlał a gdy jest błąd aby był na czerwono
 

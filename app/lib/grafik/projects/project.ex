@@ -5,6 +5,7 @@ defmodule Grafik.Projects.Project do
   schema "projects" do
     field :deadline, :utc_datetime
     field :name, :string
+    field :description, :string
     field :is_archived, :boolean
     field :invoice_number, :string
     field :price, :float
@@ -36,6 +37,7 @@ defmodule Grafik.Projects.Project do
     project
     |> cast(attrs, [
       :name,
+      :description,
       :deadline,
       :client_id,
       :is_archived,

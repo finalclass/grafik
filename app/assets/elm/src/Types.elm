@@ -33,6 +33,7 @@ type ProjectsMsg
     | ProjectsNewProject
     | ProjectsSaveRequest
     | ProjectsOnInputName String
+    | ProjectsOnInputDescription String
     | ProjectsOnInputIsDeadlineRigid String
     | ProjectsOnInputDeadlineString String
     | ProjectsOnInputInvoiceNumber String
@@ -174,6 +175,7 @@ type alias Project =
     { id : Int
     , client_id : Int
     , name : String
+    , description : String
     , is_deadline_rigid : Bool
     , deadline : Time.Posix
     , invoice_number : String

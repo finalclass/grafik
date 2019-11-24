@@ -84,6 +84,9 @@ update msg model =
         T.ProjectsOnInputName str ->
             ( model |> updateEditedProjectData (\p -> { p | name = str }), Cmd.none )
 
+        T.ProjectsOnInputDescription str ->
+            ( model |> updateEditedProjectData (\p -> { p | description = str }), Cmd.none )
+
         T.ProjectsOnInputIsDeadlineRigid _ ->
             ( model
                 |> updateEditedProjectData
@@ -284,14 +287,22 @@ formView model =
                 ]
                 []
             ]
-        , model
-            |> Dates.dateInputView
-                { label = "Termin"
-                , time = data.deadline
-                , timeString = model.editedProject.deadlineString
-                , timeErr = model.editedProject.deadlineErr
-                , msg = T.ProjectsOnInputDeadlineString
-                }
+        , label []
+            [ span [] [ text "Notatka" ]
+            , textarea
+                [ onInput T.ProjectsOnInputDescription
+                , value data.description
+                ]
+                []
+            ]
+        , Dates.dateInputView
+            { label = "Termin"
+            , time = data.deadline
+            , timeString = model.editedProject.deadlineString
+            , timeErr = model.editedProject.deadlineErr
+            , msg = T.ProjectsOnInputDeadlineString
+            }
+            model
         , label []
             [ span [] [ text "Sztywny termin" ]
             , input
@@ -301,14 +312,14 @@ formView model =
                 ]
                 []
             ]
-        , model
-            |> Dates.dateInputView
-                { label = "Data rozpoczęcia"
-                , time = data.start_at
-                , timeString = model.editedProject.startAtString
-                , timeErr = model.editedProject.startAtErr
-                , msg = T.ProjectsOnInputStartAtString
-                }
+        , Dates.dateInputView
+            { label = "Data rozpoczęcia"
+            , time = data.start_at
+            , timeString = model.editedProject.startAtString
+            , timeErr = model.editedProject.startAtErr
+            , msg = T.ProjectsOnInputStartAtString
+            }
+            model
         , fieldset []
             [ legend [] [ text "Klient" ]
             , Html.map
@@ -411,6 +422,7 @@ emptyProject initialTime =
     { id = 0
     , client_id = 0
     , name = ""
+    , description = ""
     , is_deadline_rigid = False
     , deadline = initialTime
     , invoice_number = ""
