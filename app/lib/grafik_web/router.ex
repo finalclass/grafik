@@ -19,7 +19,6 @@ defmodule GrafikWeb.Router do
 
     get "/", DashboardController, :index
     resources "/clients", ClientController
-    resources "/projects", ProjectController
     resources "/workers", WorkerController
     resources "/tasks", TaskController
 

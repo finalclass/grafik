@@ -1,6 +1,0 @@
-</ul><ul class="breadcrumbs">
-  <li><%= link "Zamówienia", to: Routes.project_path(@conn,  :index) %></li>
-  <li>Nowe zamówienie</li>
-</ul>
-
-<%= render "form.html", Map.put(assigns, :action, Routes.project_path(@conn, :create)) %>

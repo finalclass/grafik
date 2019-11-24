@@ -48,7 +48,7 @@
 - [DONE] Dodaj zadanie -> Dodaj produkt
 - [DONE] dodawanie zlecenia z jednego formularza to znaczy wszystko: klienta i produkty
 - [DONE] pole uwagi do zlecenia
-- wywalić zakładkę "zlecenia" i cały kod z tym związany
+- [DONE] wywalić zakładkę "zlecenia" i cały kod z tym związany
 - backupy
 - na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
 - daty nie powinny mieć godzin

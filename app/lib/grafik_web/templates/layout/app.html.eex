@@ -13,7 +13,9 @@
         <nav role="navigation" class="main-nav">
           <ul>
             <li>
-              <%= link "Zamówienia", to: Routes.project_path(@conn, :index) %>
+              <a href="/">
+                Zamówienia
+              </a>
             </li>
             <li>
               <%= link "Klienci", to: Routes.client_path(@conn, :index) %>
