@@ -19,9 +19,7 @@ defmodule GrafikWeb.Router do
 
     get "/", DashboardController, :index
     resources "/workers", WorkerController
-    resources "/tasks", TaskController
 
-    get "/projects/:id/tasks/new", TaskController, :add_task_to_project
     get "/workers/:id/print", WorkerController, :print
   end
 

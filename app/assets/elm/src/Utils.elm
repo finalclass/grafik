@@ -1,6 +1,7 @@
 module Utils exposing (..)
 
 import Dict
+import Process
 import Task
 import Types as T
 
@@ -78,8 +79,8 @@ removeTaskFromProject task project =
     { project | tasks = List.filter (\t -> t.id /= task.id) project.tasks }
 
 
-updateTask : T.Model -> T.Task -> T.Model
-updateTask model task =
+updateTask : T.Task -> T.Model -> T.Model
+updateTask task model =
     modifyProjectById task.project_id model (modifyTaskInProject task)
 
 
@@ -126,3 +127,8 @@ ternary condition trueValue falseValue =
 
     else
         falseValue
+
+
+focus : String -> Cmd T.Msg
+focus domElementId =
+    Task.attempt (\_ -> T.Focus domElementId) (Process.sleep 200)

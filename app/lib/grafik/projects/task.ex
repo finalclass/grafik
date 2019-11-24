@@ -5,7 +5,7 @@ defmodule Grafik.Projects.Task do
   schema "tasks" do
     field :name, :string
     field :status, :string
-    field :sent_at, :utc_datetime
+    field :sent_note, :string
     belongs_to :project, Grafik.Projects.Project
     belongs_to :worker, Grafik.Workers.Worker
 
@@ -15,7 +15,7 @@ defmodule Grafik.Projects.Task do
   @doc false
   def changeset(task, attrs) do
     task
-    |> cast(attrs, [:name, :status, :worker_id, :project_id, :sent_at])
+    |> cast(attrs, [:name, :status, :worker_id, :project_id, :sent_note])
     |> validate_required([:name, :status, :project_id])
   end
 end

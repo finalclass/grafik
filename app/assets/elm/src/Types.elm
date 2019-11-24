@@ -62,6 +62,8 @@ type Msg
     | TaskRemoved Task (Result Http.Error Bool)
     | TaskRenameModalShow Task
     | TaskRenameRequest Task
+    | TaskSetSentNote Task
+    | TaskFixStatus String Task
     | TaskChangeStatusRequest Task String
     | ModalUpdatePromptValue String
     | ProjectsAction ProjectsMsg
@@ -150,7 +152,7 @@ type alias Task =
     , worker_id : Int
     , name : String
     , status : String
-    , sent_at : Time.Posix
+    , sent_note : String
     }
 
 

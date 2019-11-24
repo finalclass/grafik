@@ -8,7 +8,7 @@ defmodule GrafikWeb.Api.TaskView do
       name: task.name,
       status: task.status,
       worker_id: task.worker_id || 0,
-      sent_at: if task.sent_at do DateTime.to_unix(task.sent_at) * 1000 else 0 end
+      sent_note: task.sent_note || ""
     }
   end
 

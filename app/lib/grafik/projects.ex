@@ -207,22 +207,6 @@ defmodule Grafik.Projects do
 
   """
   def update_task(%Task{} = task, attrs) do
-    # if we change to "sent" add "sent_at" with current time
-    attrs = if (task.status !== "sent" && attrs["status"] === "sent") do
-      now = DateTime.utc_now()
-      Map.put(attrs, "sent_at",
-        %{
-          "year" => Integer.to_string(now.year),
-          "month" => Integer.to_string(now.month),
-          "day" => Integer.to_string(now.day),
-          "hour" => Integer.to_string(now.hour),
-          "minute" => Integer.to_string(now.minute)
-        }
-      )
-    else
-      attrs
-    end
-
     task
     |> Task.changeset(attrs)
     |> Repo.update()

@@ -2,6 +2,7 @@ module State exposing (init, update)
 
 import Browser.Dom
 import Clients
+import Dates
 import Debug exposing (log)
 import Dict
 import ExpandedProjectsCache
@@ -89,7 +90,7 @@ update msg model =
                 | modal = T.ModalPrompt "Nazwa zadania" (T.TaskCreateSave project)
                 , modalPromptValue = ""
               }
-            , Task.attempt (\_ -> T.Focus "modal-prompt-input") (Process.sleep 200)
+            , U.focus "modal-prompt-input"
             )
 
         T.TaskCreateSave project ->
@@ -165,11 +166,10 @@ update msg model =
         T.TaskUpdated result ->
             case result of
                 Ok task ->
-                    let
-                        newModel =
-                            U.updateTask model task
-                    in
-                    ( { newModel | mainViewState = T.SuccessState }, Cmd.none )
+                    ( { model | mainViewState = T.SuccessState }
+                        |> U.updateTask task
+                    , Cmd.none
+                    )
 
                 Err _ ->
                     ( { model | mainViewState = T.FailureState }, Cmd.none )
@@ -179,7 +179,7 @@ update msg model =
                 | modal = T.ModalPrompt "Nazwa zadania" (T.TaskRenameRequest task)
                 , modalPromptValue = task.name
               }
-            , Task.attempt (\_ -> T.Focus "modal-prompt-input") (Process.sleep 200)
+            , U.focus "modal-prompt-input"
             )
 
         T.TaskRenameRequest task ->
@@ -195,8 +195,51 @@ update msg model =
             , R.renameTask task taskName
             )
 
-        T.TaskChangeStatusRequest task state ->
-            ( { model | mainViewState = T.LoadingState }, R.changeTaskStatus task state )
+        T.TaskChangeStatusRequest task status ->
+            if status == "sent" then
+                let
+                    previousStatus =
+                        task.status
+
+                    newTask =
+                        { task | status = "sent" }
+                in
+                ( { model
+                    | modalPromptValue =
+                        if String.length newTask.sent_note > 0 then
+                            newTask.sent_note
+
+                        else
+                            "Nadano dnia " ++ Dates.displayDate model model.timeNow
+                    , modal = T.ModalPrompt "Notka z nadania paczki" (T.TaskSetSentNote task)
+                  }
+                    |> U.updateTask newTask
+                , -- there is some nasty bug in elm that's why we have to do that:
+                  U.sendMsg (T.TaskFixStatus previousStatus task)
+                )
+
+            else
+                ( { model | mainViewState = T.LoadingState }, R.changeTaskStatus task status Nothing )
+
+        T.TaskFixStatus status task ->
+            let
+                newTask =
+                    { task | status = status }
+            in
+            ( model |> U.updateTask newTask, U.focus "modal-prompt-input" )
+
+        T.TaskSetSentNote task ->
+            let
+                modalPromptValue =
+                    model.modalPromptValue
+            in
+            ( { model
+                | mainViewState = T.LoadingState
+                , modal = T.ModalHidden
+                , modalPromptValue = ""
+              }
+            , R.changeTaskStatus task "sent" (Just modalPromptValue)
+            )
 
         T.ModalClose ->
             ( { model | modal = T.ModalHidden, modalPromptValue = "" }, Cmd.none )

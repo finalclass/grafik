@@ -168,9 +168,21 @@ modifyTask task fields =
         }
 
 
-changeTaskStatus : T.Task -> String -> Cmd T.Msg
-changeTaskStatus task status =
-    modifyTask task [ ( "status", E.string status ) ]
+changeTaskStatus : T.Task -> String -> Maybe String -> Cmd T.Msg
+changeTaskStatus task status maybeSentNote =
+    let
+        changes =
+            [ ( "status", E.string status ) ]
+
+        newChanges =
+            case maybeSentNote of
+                Just sentNote ->
+                    ( "sent_note", E.string sentNote ) :: changes
+
+                Nothing ->
+                    changes
+    in
+    modifyTask task newChanges
 
 
 changeTaskWorker : T.Task -> String -> Cmd T.Msg
@@ -191,7 +203,7 @@ taskDecoder =
         (D.field "worker_id" D.int)
         (D.field "name" D.string)
         (D.field "status" D.string)
-        (D.field "sent_at" decodeTime)
+        (D.field "sent_note" D.string)
 
 
 clientDecoder : D.Decoder T.Client
