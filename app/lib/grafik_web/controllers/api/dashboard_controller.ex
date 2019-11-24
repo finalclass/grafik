@@ -3,8 +3,8 @@ defmodule GrafikWeb.Api.DashboardController do
 
   alias Grafik.Projects
 
-  def index(conn, _params) do
-    projects = Projects.list_not_archived_projects()
+  def index(conn, params) do
+    projects = Projects.list_projects_filter_archived(params["archived"] == "true")
     workers = Grafik.Workers.list_workers()
     statuses = Projects.list_statuses()
     clients = Grafik.Clients.list_client()

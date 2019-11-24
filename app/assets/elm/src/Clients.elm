@@ -242,7 +242,7 @@ newClientFormView model selectClientMsg =
 
             Nothing ->
                 text ""
-        , button [ class "float-right button-small", onClick (T.ClientsSaveRequest selectClientMsg) ] [ text "Utwórz klienta" ]
+        , button [ class "float-right button-small", onClick (T.ClientsSaveRequest selectClientMsg) ] [ text "Zapisz klienta" ]
         ]
 
 

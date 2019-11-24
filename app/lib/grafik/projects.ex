@@ -31,10 +31,10 @@ defmodule Grafik.Projects do
     Repo.all query_projects()
   end
 
-  def list_not_archived_projects do
+  def list_projects_filter_archived(archived?) do
     query = query_projects()
     
-    from(p in query, where: p.is_archived == false)
+    from(p in query, where: p.is_archived == ^archived?)
       |> Repo.all
   end
   

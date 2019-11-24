@@ -17,11 +17,20 @@ decodeTime =
             )
 
 
-getAllData : Cmd T.Msg
-getAllData =
+getAllData : T.ProjectsType -> Cmd T.Msg
+getAllData projectsType =
+    let
+        urlSuffix =
+            case projectsType of
+                T.CurrentProjects ->
+                    ""
+
+                T.ArchivedProjects ->
+                    "?archived=true"
+    in
     Http.get
-        { url = "/api/all"
-        , expect = Http.expectJson T.AllDataReceived projectsDecoder
+        { url = "/api/all" ++ urlSuffix
+        , expect = Http.expectJson (T.AllDataReceived projectsType) projectsDecoder
         }
 
 

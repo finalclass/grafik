@@ -5,22 +5,24 @@ import Clients
 import Debug exposing (log)
 import Dict
 import ExpandedProjectsCache
-import Model as M
 import Process
 import Projects
 import Requests as R
 import Task
 import Time
 import Types as T
+import Utils as U
 
 
 init : String -> ( T.Model, Cmd T.Msg )
 init flags =
-    ( { projects = []
+    ( { projectsType = T.CurrentProjects
+      , projects = []
       , workers = []
       , statuses = []
       , clients = []
       , zone = Time.utc
+      , timeNow = Time.millisToPosix 0
       , modal = T.ModalHidden
       , modalPromptValue = ""
       , expandedProjects = ExpandedProjectsCache.decodeExpandedProjectsCache flags
@@ -28,9 +30,11 @@ init flags =
       , searchText = ""
       , visibleProjects = []
       , editedProject =
-            { data = Projects.emptyProject
+            { data = Projects.emptyProject (Time.millisToPosix 0)
             , deadlineString = ""
             , deadlineErr = Nothing
+            , startAtErr = Nothing
+            , startAtString = ""
             , saveErr = Nothing
             }
       , editedClient =
@@ -40,23 +44,24 @@ init flags =
             , searchText = ""
             }
       }
-    , R.getAllData
+    , R.getAllData T.CurrentProjects
     )
 
 
 update : T.Msg -> T.Model -> ( T.Model, Cmd T.Msg )
 update msg model =
     case msg of
-        T.AllDataReceived result ->
+        T.AllDataReceived projectsType result ->
             case result of
                 Ok allData ->
                     ( { model
-                        | projects = allData.projects
+                        | projectsType = projectsType
+                        , projects = allData.projects
                         , workers = allData.workers
                         , statuses = allData.statuses
                         , clients = allData.clients
                         , mainViewState = T.SuccessState
-                        , visibleProjects = M.buildVisibleProjects allData.projects ""
+                        , visibleProjects = U.buildVisibleProjects allData.projects ""
                       }
                     , Task.perform T.GotZone Time.here
                     )
@@ -68,8 +73,16 @@ update msg model =
                     in
                     ( { model | mainViewState = T.FailureState }, Cmd.none )
 
-        T.GotZone zone1 ->
-            ( { model | zone = zone1 }, Cmd.none )
+        T.GotZone zone ->
+            ( { model | zone = zone }, Task.perform T.GotTime Time.now )
+
+        T.GotTime time ->
+            ( { model | timeNow = time }, Cmd.none )
+
+        T.ToggleProjectsType ->
+            ( { model | mainViewState = T.LoadingState }
+            , R.getAllData (U.caseProjectsType model.projectsType T.ArchivedProjects T.CurrentProjects)
+            )
 
         T.TaskCreateRequest project ->
             ( { model
@@ -100,7 +113,7 @@ update msg model =
                             { model | mainViewState = T.SuccessState }
 
                         newModelWithTask =
-                            M.addTaskToProject newModel project task
+                            U.addTaskToProject newModel project task
                     in
                     ( newModelWithTask, Cmd.none )
 
@@ -113,7 +126,7 @@ update msg model =
                     model.expandedProjects
 
                 isExpanded =
-                    M.isProjectExpanded project expandedProjects
+                    U.isProjectExpanded project expandedProjects
 
                 newExpandedProjects =
                     Dict.insert (String.fromInt project.id) (not isExpanded) expandedProjects
@@ -138,7 +151,7 @@ update msg model =
                             newModel =
                                 { model | mainViewState = T.SuccessState }
                         in
-                        ( M.removeTask task newModel, Cmd.none )
+                        ( U.removeTask task newModel, Cmd.none )
 
                     else
                         ( { model | mainViewState = T.FailureState }, Cmd.none )
@@ -154,7 +167,7 @@ update msg model =
                 Ok task ->
                     let
                         newModel =
-                            M.updateTask model task
+                            U.updateTask model task
                     in
                     ( { newModel | mainViewState = T.SuccessState }, Cmd.none )
 
@@ -192,7 +205,7 @@ update msg model =
             ( { model | modalPromptValue = value }, Cmd.none )
 
         T.SearchEnterText value ->
-            ( { model | searchText = value } |> M.initVisibleProjects, Cmd.none )
+            ( { model | searchText = value } |> U.initVisibleProjects, Cmd.none )
 
         T.ProjectsAction subMsg ->
             Projects.update subMsg model

@@ -39,6 +39,8 @@ type ProjectsMsg
     | ProjectsOnInputPrice String
     | ProjectsOnInputPaid String
     | ProjectsOnClientIdSelected Int
+    | ProjectsOnInputIsArchived String
+    | ProjectsOnInputStartAtString String
     | ProjectsEditClient ClientsMsg
     | ProjectsCreated (Result Http.Error Project)
     | ProjectsUpdated (Result Http.Error Project)
@@ -46,7 +48,8 @@ type ProjectsMsg
 
 type Msg
     = ToggleProjectExpand Project
-    | AllDataReceived (Result Http.Error AllData)
+    | AllDataReceived ProjectsType (Result Http.Error AllData)
+    | ToggleProjectsType
     | TaskCreated Project (Result Http.Error Task)
     | TaskCreateRequest Project
     | TaskCreateSave Project
@@ -65,6 +68,7 @@ type Msg
     | NoOp
     | Focus String
     | GotZone Time.Zone
+    | GotTime Time.Posix
 
 
 type alias ExpandedProjects =
@@ -84,12 +88,19 @@ type Modal
     | ModalEditProject
 
 
+type ProjectsType
+    = ArchivedProjects
+    | CurrentProjects
+
+
 type alias Model =
-    { projects : List Project
+    { projectsType : ProjectsType
+    , projects : List Project
     , workers : List Worker
     , statuses : List Status
     , clients : List Client
     , zone : Time.Zone
+    , timeNow : Time.Posix
     , expandedProjects : ExpandedProjects
     , editedProject : EditedProject
     , editedClient : EditedClient
@@ -105,6 +116,8 @@ type alias EditedProject =
     { data : Project
     , deadlineString : String
     , deadlineErr : Maybe String
+    , startAtString : String
+    , startAtErr : Maybe String
     , saveErr : Maybe String
     }
 

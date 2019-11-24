@@ -1,7 +1,10 @@
-module Dates exposing (displayDate, stringToTime)
+module Dates exposing (dateInputView, displayDate, stringToTime)
 
 import Array
 import DateTime
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 import Time
 import Types as T
 
@@ -164,3 +167,36 @@ stringToTime string =
                 |> Maybe.map (\dateTime -> DateTime.toPosix dateTime)
     in
     Result.fromMaybe "Błędny format daty. Poprawnie: DD-MM-YYYY" maybePosix
+
+
+dateInputView : { label : String, time : Time.Posix, timeString : String, timeErr : Maybe String, msg : String -> a } -> T.Model -> Html a
+dateInputView data model =
+    label []
+        [ span []
+            [ text data.label
+            , span
+                [ class
+                    (case data.timeErr of
+                        Just _ ->
+                            "invalid-date"
+
+                        Nothing ->
+                            ""
+                    )
+                ]
+                [ text (" (" ++ displayDate model data.time ++ ")")
+                ]
+            ]
+        , input
+            [ type_ "text"
+            , value data.timeString
+            , onInput data.msg
+            ]
+            []
+        , case data.timeErr of
+            Just err ->
+                div [ class "error-message" ] [ text err ]
+
+            Nothing ->
+                text ""
+        ]
