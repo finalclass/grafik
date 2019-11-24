@@ -1,11 +1,27 @@
+<style>
+ .project-name {
+     float: left;
+ }
+ .project-deadline {
+     float: right;
+ }
+
+ .row {
+     overflow:hidden;
+ }
+</style>
+
 <div class="worker-tasks-list">
   <%= for project <- @projects do %>
-    <h3>
-      <%= project.client.name %>:
-      <%= project.name %>
-    </h3>
-    <h4>Termin: <%= Date.to_iso8601(project.deadline) %></h4>
-
+    <div class="row">
+      <h3 class="project-name">
+        <%= project.client.name %>:
+        <%= project.name %>
+      </h3>
+      <h4 class="project-deadline">
+        Termin: <%= Date.to_iso8601(project.deadline) %>
+      </h4>
+    </div>
     <ol>
       <%= for task <- project.tasks do %>
         <li><%= task.name %></li>

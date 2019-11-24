@@ -50,18 +50,16 @@
 - [DONE] pole uwagi do zlecenia
 - [DONE] wywalić zakładkę "zlecenia" i cały kod z tym związany
 - [DONE] wywalić zakładkę "kielnci" i cały kod z tym związany
+- [DONE] w wydruku termin w tej samej lini co klient ale dać do prawego marginesu przytuloneg
+- [DONE] w edycji zamówienia zrobić aby "Termin (DD-MM-YYYY)" zawsze się wyświetlał a gdy jest błąd aby był na czerwono
+- [DONE] Możliwość wprowadzania całości zamówienia pracując w jednym formularzu
+- [DONE] Możliwość skopiowania wprowadzonych danych do faktury w pola ADRES DOSTAWY jeżeli oba będą takie same
 - backupy
 - na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
 - daty nie powinny mieć godzin
 - wyświetlać gdzieś date wysłania
+- raz dziennie wysyłać maila do ewy z obecnym stanem wszystkich zamówień z zadaniami
 
-- w wydruku termin w tej samej lini co klient ale dać do prawego marginesu przytulone
-- w edycji zamówienia zrobić aby "Termin (DD-MM-YYYY)" zawsze się wyświetlał a gdy jest błąd aby był na czerwono
-
-    Możliwość tworzenia przyciskiem kopii zapasowej - w razie czego (robimy codzienne backupy (pgdump) na inny serwer)
-    raz dziennie wysyłać ewie maila ze zrzutem nie archiwalnych zleceń i wszystkimi zadaniami
-    Możliwość wprowadzania całości zamówienia pracując w jednym formularzu
-    MOżliwość skopiowania wprowadzonych danych do faktury w pola ADRES DOSTAWY jeżeli oba będą takie same
     Jeżeli wybierzemy status "wysłane" to przyda się pole gdzie można by było wpisać np. kurier DHL dnia 10 lipca
     W zakładce zamówienia niech się wyświetla jedynie nazwa zadania bez nazwy klienta
     Czy na wydruku dla pracowników sztywne daty zaznaczone na czerwono będą drukowały się też na czerwono?

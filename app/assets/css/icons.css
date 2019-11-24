@@ -41,3 +41,7 @@
 .icon.icon-print::after {
     content: '⎙';
 }
+
+.icon.icon-arrow-curved-down::after {
+    content: '⤵';
+}

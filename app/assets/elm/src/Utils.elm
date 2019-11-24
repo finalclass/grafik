@@ -117,3 +117,12 @@ caseProjectsType projectsType onCurrent onArchived =
 
         T.ArchivedProjects ->
             onArchived
+
+
+ternary : Bool -> a -> a -> a
+ternary condition trueValue falseValue =
+    if condition then
+        trueValue
+
+    else
+        falseValue

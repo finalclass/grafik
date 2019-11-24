@@ -13,98 +13,107 @@ update : T.ClientsMsg -> T.Model -> ( T.Model, Cmd T.Msg )
 update msg model =
     case msg of
         T.ClientsSelectState state ->
-            ( updateEditedClient model (\edCli -> { edCli | state = state }), Cmd.none )
+            ( model |> updateEditedClient (\edCli -> { edCli | state = state }), Cmd.none )
 
         T.ClientsOnInputSearchText str ->
-            ( updateEditedClient model (\edCli -> { edCli | searchText = str }), Cmd.none )
+            ( model |> updateEditedClient (\edCli -> { edCli | searchText = str }), Cmd.none )
 
         T.ClientsClientSelected makeMsg clientId ->
-            ( updateEditedClient model (\edCli -> { edCli | state = T.EditedClientSelected })
+            ( model |> updateEditedClient (\edCli -> { edCli | state = T.EditedClientSelected })
             , U.sendMsg (makeMsg clientId)
             )
 
         T.ClientsEdit client ->
-            ( updateEditedClient model
-                (\edCli ->
-                    { edCli
-                        | state = T.EditedClientEdit
-                        , data = client
-                    }
-                )
+            ( model
+                |> updateEditedClient
+                    (\edCli ->
+                        { edCli
+                            | state = T.EditedClientEdit
+                            , data = client
+                        }
+                    )
             , Cmd.none
             )
 
         T.ClientsSaveRequest makeMsg ->
-            ( updateEditedClient model (\edCli -> { edCli | saveErr = Nothing })
+            ( model |> updateEditedClient (\edCli -> { edCli | saveErr = Nothing })
             , R.createOrUpdateClient model.editedClient.data makeMsg
             )
 
         T.ClientsCreated makeMsg result ->
             case result of
                 Ok client ->
-                    let
-                        newModel =
-                            updateEditedClient model (\edCli -> { edCli | state = T.EditedClientSelected })
-                    in
-                    ( { newModel | clients = client :: model.clients }
+                    ( { model | clients = client :: model.clients }
+                        |> updateEditedClient (\edCli -> { edCli | state = T.EditedClientSelected })
                     , U.sendMsg (makeMsg client.id)
                     )
 
                 Err _ ->
-                    ( updateEditedClient model (\edCli -> { edCli | saveErr = Just "Nie udało się zapisać klienta" }), Cmd.none )
+                    ( model |> updateEditedClient (\edCli -> { edCli | saveErr = Just "Nie udało się zapisać klienta" }), Cmd.none )
 
         T.ClientsUpdated makeMsg result ->
             case result of
                 Ok client ->
-                    let
-                        newModel =
-                            updateEditedClient model (\edCli -> { edCli | state = T.EditedClientSelected })
-                    in
-                    ( { newModel | clients = replaceClient client model.clients }
+                    ( { model | clients = replaceClient client model.clients }
+                        |> updateEditedClient (\edCli -> { edCli | state = T.EditedClientSelected })
                     , U.sendMsg (makeMsg client.id)
                     )
 
                 Err _ ->
-                    ( updateEditedClient model (\edCli -> { edCli | saveErr = Just "Nie udało się zapisać klienta" }), Cmd.none )
+                    ( model |> updateEditedClient (\edCli -> { edCli | saveErr = Just "Nie udało się zapisać klienta" }), Cmd.none )
+
+        T.ClientsCopyInvoiceToDeliveryData ->
+            ( model
+                |> updateEditedClientData
+                    (\client ->
+                        { client
+                            | delivery_name = client.invoice_name
+                            , delivery_street = client.invoice_street
+                            , delivery_postcode = client.invoice_postcode
+                            , delivery_city = client.invoice_city
+                        }
+                    )
+            , Cmd.none
+            )
 
         T.ClientsOnInputName str ->
-            ( updateEditedClientData model (\c -> { c | name = str }), Cmd.none )
+            ( model |> updateEditedClientData (\c -> { c | name = str }), Cmd.none )
 
         T.ClientsOnInputInvoiceName str ->
-            ( updateEditedClientData model (\c -> { c | invoice_name = str }), Cmd.none )
+            ( model |> updateEditedClientData (\c -> { c | invoice_name = str }), Cmd.none )
 
         T.ClientsOnInputInvoiceStreet str ->
-            ( updateEditedClientData model (\c -> { c | invoice_street = str }), Cmd.none )
+            ( model |> updateEditedClientData (\c -> { c | invoice_street = str }), Cmd.none )
 
         T.ClientsOnInputInvoicePostcode str ->
-            ( updateEditedClientData model (\c -> { c | invoice_postcode = str }), Cmd.none )
+            ( model |> updateEditedClientData (\c -> { c | invoice_postcode = str }), Cmd.none )
 
         T.ClientsOnInputInvoiceCity str ->
-            ( updateEditedClientData model (\c -> { c | invoice_city = str }), Cmd.none )
+            ( model |> updateEditedClientData (\c -> { c | invoice_city = str }), Cmd.none )
 
         T.ClientsOnInputInvoiceNip str ->
-            ( updateEditedClientData model (\c -> { c | invoice_nip = str }), Cmd.none )
+            ( model |> updateEditedClientData (\c -> { c | invoice_nip = str }), Cmd.none )
 
         T.ClientsOnInputDeliveryName str ->
-            ( updateEditedClientData model (\c -> { c | delivery_name = str }), Cmd.none )
+            ( model |> updateEditedClientData (\c -> { c | delivery_name = str }), Cmd.none )
 
         T.ClientsOnInputDeliveryStreet str ->
-            ( updateEditedClientData model (\c -> { c | delivery_street = str }), Cmd.none )
+            ( model |> updateEditedClientData (\c -> { c | delivery_street = str }), Cmd.none )
 
         T.ClientsOnInputDeliveryPostcode str ->
-            ( updateEditedClientData model (\c -> { c | delivery_postcode = str }), Cmd.none )
+            ( model |> updateEditedClientData (\c -> { c | delivery_postcode = str }), Cmd.none )
 
         T.ClientsOnInputDeliveryCity str ->
-            ( updateEditedClientData model (\c -> { c | delivery_city = str }), Cmd.none )
+            ( model |> updateEditedClientData (\c -> { c | delivery_city = str }), Cmd.none )
 
         T.ClientsOnInputDeliveryContactPerson str ->
-            ( updateEditedClientData model (\c -> { c | delivery_contact_person = str }), Cmd.none )
+            ( model |> updateEditedClientData (\c -> { c | delivery_contact_person = str }), Cmd.none )
 
         T.ClientsOnInputPhoneNumber str ->
-            ( updateEditedClientData model (\c -> { c | phone_number = str }), Cmd.none )
+            ( model |> updateEditedClientData (\c -> { c | phone_number = str }), Cmd.none )
 
         T.ClientsOnInputEmail str ->
-            ( updateEditedClientData model (\c -> { c | email = str }), Cmd.none )
+            ( model |> updateEditedClientData (\c -> { c | email = str }), Cmd.none )
 
 
 replaceClient : T.Client -> List T.Client -> List T.Client
@@ -120,14 +129,14 @@ replaceClient client clients =
         clients
 
 
-updateEditedClient : T.Model -> (T.EditedClient -> T.EditedClient) -> T.Model
-updateEditedClient model func =
+updateEditedClient : (T.EditedClient -> T.EditedClient) -> T.Model -> T.Model
+updateEditedClient func model =
     { model | editedClient = func model.editedClient }
 
 
-updateEditedClientData : T.Model -> (T.Client -> T.Client) -> T.Model
-updateEditedClientData model func =
-    updateEditedClient model (\edCli -> { edCli | data = func edCli.data })
+updateEditedClientData : (T.Client -> T.Client) -> T.Model -> T.Model
+updateEditedClientData func model =
+    model |> updateEditedClient (\edCli -> { edCli | data = func edCli.data })
 
 
 emptyClient : T.Client
@@ -229,6 +238,14 @@ newClientFormView model selectClientMsg =
         , inputView "Faktura: kod pocztowy" data.invoice_postcode T.ClientsOnInputInvoicePostcode
         , inputView "Faktura: miasto" data.invoice_city T.ClientsOnInputInvoiceCity
         , inputView "Faktura: NIP" data.invoice_nip T.ClientsOnInputInvoiceNip
+        , button
+            [ class "button-small"
+            , onClick T.ClientsCopyInvoiceToDeliveryData
+            , title "Skopiuj dane z faktury na adres dostawy"
+            ]
+            [ i [ class "icon icon-arrow-curved-down" ] []
+            , text "ten sam adres dostawy"
+            ]
         , inputView "Dostawa: nazwa" data.delivery_name T.ClientsOnInputDeliveryName
         , inputView "Dostawa: ulica" data.delivery_street T.ClientsOnInputDeliveryStreet
         , inputView "Dostawa: kod pocztowy" data.delivery_postcode T.ClientsOnInputDeliveryPostcode

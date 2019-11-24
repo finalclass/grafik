@@ -119,7 +119,7 @@ projectView model project =
                                 ""
                            )
                     )
-                , title "Termin"
+                , title (U.ternary project.is_deadline_rigid "Sztywny" "Luźny" ++ " termin")
                 ]
                 [ text (Dates.displayDate model project.deadline) ]
             , th [ colspan 2, class "project-buttons" ]

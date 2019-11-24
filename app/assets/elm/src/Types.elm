@@ -24,6 +24,7 @@ type ClientsMsg
     | ClientsOnInputSearchText String
     | ClientsOnInputEmail String
     | ClientsSaveRequest (Int -> Msg)
+    | ClientsCopyInvoiceToDeliveryData
     | ClientsCreated (Int -> Msg) (Result Http.Error Client)
     | ClientsUpdated (Int -> Msg) (Result Http.Error Client)
 
