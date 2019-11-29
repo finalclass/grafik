@@ -74,3 +74,6 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :grafik, :backups_data_access_path, "http://localhost:2000/grafik-backups"
+config :grafik, :backups_data_access_secret, nil

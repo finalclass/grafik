@@ -28,6 +28,9 @@ config :grafik, GrafikWeb.Endpoint,
   http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],
   secret_key_base: secret_key_base
 
+config :grafik, :backups_data_access_secret, System.get_env("X_FCSTORE_SECRET") || raise """
+environment variable X_FCSTORE_SECRET is missing
+"""
 
 # ## Using releases (Elixir v1.9+)
 #
