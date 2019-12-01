@@ -11,7 +11,8 @@ defmodule Grafik.Application do
       # Start the Ecto repository
       Grafik.Repo,
       # Start the endpoint when the application starts
-      GrafikWeb.Endpoint
+      GrafikWeb.Endpoint,
+      Grafik.BackupsPeriodicRunner,
       # Starts a worker by calling: Grafik.Worker.start_link(arg)
       # {Grafik.Worker, arg},
     ]

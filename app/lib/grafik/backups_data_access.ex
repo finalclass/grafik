@@ -24,8 +24,6 @@ defmodule Grafik.BackupsDataAccess do
   end
   
   defp handle_result(res) do
-
-    
     %{
       lastModified: res["lastModified"] / 1000 |> round() |> DateTime.from_unix() |> elem(1),
       name: res["name"],
@@ -79,6 +77,9 @@ defmodule Grafik.BackupsDataAccess do
       
   def store(binData) do
     {:ok, now} = DateTime.now("Etc/UTC")
+    # since in round_to_quarter_of_an_hour we are always rounding down
+    # we have to add 15 minutes to date to make it right
+    now = DateTime.add(now, 15 * 60, :second)
     file_name = prefix_zero(now.day) <> "-" <> prefix_zero(now.hour) <> "-" <> round_to_quarter_of_an_hour(now.minute) <> ".json"
     file_path = Path.join(System.tmp_dir!(), file_name)
     File.write(file_path, binData)
@@ -86,6 +87,18 @@ defmodule Grafik.BackupsDataAccess do
                                    {:file, file_path, {"form-data", [name: "filedata", filename: Path.basename(file_path)]}, []}]}, @headers)
     File.rm_rf!(file_path)
     file_name
+  end
+
+  def get_latest_raw() do
+    backup_name = HTTPoison.get!(@url <> "?limit=1", @headers).body
+    |> Jason.decode!()
+    |> Enum.at(0)
+    |> Map.get("name")
+
+    HTTPoison.get!(Path.join(@url, backup_name), @headers).body
+    |> Jason.decode!()
+    |> Map.get("content")
+    |> Base.decode64!()
   end
   
 end
