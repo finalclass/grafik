@@ -1,0 +1,11 @@
+<ul class="breadcrumbs">
+  <li>Historia</li>
+</ul>
+
+<ul>
+  <%= for backup <- @backups do %>
+    <li>
+      <%= link format_date_time(backup.lastModified), to: Routes.backup_path(@conn, :show, backup.name) %>
+    </li>
+  <% end %>
+</ul>

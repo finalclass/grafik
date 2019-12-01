@@ -21,6 +21,8 @@ defmodule GrafikWeb.Router do
     resources "/workers", WorkerController
 
     get "/workers/:id/print", WorkerController, :print
+    get "/backups", BackupController, :index
+    get "/backups/:file_name", BackupController, :show
   end
 
   # Other scopes may use custom stacks.

@@ -185,7 +185,7 @@ addTaskButtonView project =
                 ]
                 [ i [ class "icon icon-plus" ]
                     []
-                , span [] [ text "dodaj produkt" ]
+                , span [] [ text "dodaj wyrób" ]
                 ]
             ]
         ]

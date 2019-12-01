@@ -1,0 +1,166 @@
+<div class="backup">
+  <h2>Stan systemu z dnia <%= format_date(@backup.lastModified) %></h2>
+
+  <h3>Zamówienia</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Nazwa</th>
+        <th>Daty</th>
+        <th>Termin</th>
+        <th>Klient</th>
+        <th>Notka</th>
+        <th title="Zarchiwizowany?">Arch?</th>
+        <th title="Numer faktury lub oferty">nr. fakt.</th>
+        <th>Kwoty</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for project <- @backup.content["projects"] do %>
+        <tr class="project-row" id="project-<%= project["id"] |> Integer.to_string() %>">
+          <td>#<%= project["id"] %> <%= project["name"] %></td>
+          <td>
+            Utworzono: <%= project["inserted_at"] |> format_date() %><br/>
+            Aktualizacja: <%= project["updated_at"] |> format_date() %><br/>
+            Rozpoczęto: <%= project["started_at"] |> format_date() %>
+          </td>
+          <td>
+            <%= project["deadline"] |> format_date() %><br/>
+            <%= if project["is_deadline_rigid"] do "Sztywny" else "Lużny" end %>
+          </td>
+          <td>
+            <a href="#client-<%= project["client_id"] %>">
+              <%= client_name(@backup, project["client_id"]) %>
+            </a>
+          </td>
+          <td><%= project["description"] %></td>
+          <td><%= if project["is_archived"] do "TAK" else "NIE" end %></td>
+          <td><%= project["invoice_number"] %></td>
+          <td>
+            Kwota: <%= project["price"] |> Float.to_string() %><br/>
+            <span title="Zapłacono">
+              Zapłac.: <%= project["paid"] |> Float.to_string() %>
+            </span>
+          </td>
+        </tr>
+        <%= if length(project["tasks"]) > 0 do %>
+          <tr>
+            <th>
+              &nbsp;&nbsp;&nbsp;&nbsp;Wyroby
+            </th>
+            <td colspan="7"></td>
+          </tr>
+        <% end %>
+        <%= for task <- project["tasks"] do %>
+          <tr id="task-<%= task["id"] |> Integer.to_string() %>">
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<%= task["name"] %> #<%= task["id"] %></td>
+            <td>
+              Utworzono: <%= task["inserted_at"] |> format_date() %><br/>
+              Aktualizacja: <%= task["updated_at"] |> format_date() %><br/>
+            </td>
+            <td><%= status_name(@backup, task["status"]) %></td>
+            <td>
+              <a href="#worker-<%= task["worker_id"] %>">
+                <%= worker_name(@backup, task["worker_id"]) %>
+              </a>
+            </td>
+            <td colspan="4">
+              <%= task["sent_node"] %>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+
+  <h3>Pracownicy</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nazwa</th>
+        <th>Utworzono</th>
+        <th>Zaktualizowano</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for worker <- @backup.content["workers"] do %>
+        <tr id="worker-<%= worker["id"] |> Integer.to_string() %>">
+          <td><%= worker["id"] %></td>
+          <td><%= worker["name"] %></td>
+          <td><%= worker["inserted_at"] %></td>
+          <td><%= worker["updated_at"] %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <h3>Statusy</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nazwa</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for status <- @backup.content["statuses"] do %>
+        <tr id="status-<%= status["id"] %>">
+          <td><%= status["id"] %></td>
+          <td><%= status["name"] %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <h3>Klienci</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nazwa</th>
+        <th>Utworzono</th>
+        <th>Zaktualizowano</th>
+        <th>Dostawa</th>
+        <th>Faktura</th>
+        <th>Tel.</th>
+        <th>email</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for client <- @backup.content["clients"] do %>
+        <tr id="client-<%= client["id"] |> Integer.to_string() %>">
+          <td><%= client["id"] %></td>
+          <td><%= client["name"] %></td>
+          <td><%= client["inserted_at"] %></td>
+          <td><%= client["updated_at"] %></td>
+          <td>
+            <%= client["delivery_name"] %> <br/>
+            <%= client["delivery_street"] %> <br/>
+            <%= client["delivery_postcode"] %> <%= client["delivery_city"] %><br/>
+            <span title="Osoba kontaktowa">
+              os. kont.:
+              <%= client["delivery_contact_person"] %>
+            </span>
+          </td>
+          <td>
+            <%= client["invoice_name"] %><br/>
+            <%= client["invoice_street"] %><br/>
+            <%= client["invoice_postcode"] %> <%= client["invoice_city"] %><br/>
+            NIP: <%= client["invoice_nip"] %>
+          </td>
+          <td>
+            <%= client["phone_number"] %>
+          </td>
+          <td>
+            <%= client["email"] %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

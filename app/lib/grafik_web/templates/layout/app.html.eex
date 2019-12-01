@@ -20,6 +20,9 @@
             <li>
               <%= link "Pracownicy", to: Routes.worker_path(@conn, :index) %>
             </li>
+            <li>
+              <%= link "Historia", to: Routes.backup_path(@conn, :index) %>
+            </li>
           </ul>
         </nav>
         <a href="/" class="grafik-logo">

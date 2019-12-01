@@ -49,3 +49,7 @@ select.full {
 td:last-child, th:last-child {
     text-align: right;
 }
+
+.backup .project-row td {
+    border-top: solid 2px #000;
+}

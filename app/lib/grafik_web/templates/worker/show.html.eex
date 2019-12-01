@@ -15,6 +15,6 @@
   </li>
 </ul>
 
-<h2>Produkty do wykonania</h2>
+<h2>Wyroby do wykonania</h2>
 
 <%= render(GrafikWeb.WorkerView, "tasks.html",  projects: @projects) %>
