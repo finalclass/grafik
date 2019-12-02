@@ -6,7 +6,6 @@ import Dates
 import Debug exposing (log)
 import Dict
 import ExpandedProjectsCache
-import Process
 import Projects
 import Requests as R
 import Task
@@ -55,15 +54,18 @@ update msg model =
         T.AllDataReceived projectsType result ->
             case result of
                 Ok allData ->
-                    ( { model
-                        | projectsType = projectsType
-                        , projects = allData.projects
-                        , workers = allData.workers
-                        , statuses = allData.statuses
-                        , clients = allData.clients
-                        , mainViewState = T.SuccessState
-                        , visibleProjects = U.buildVisibleProjects allData.projects ""
-                      }
+                    let
+                        newModel =
+                            { model
+                                | projectsType = projectsType
+                                , projects = allData.projects
+                                , workers = allData.workers
+                                , statuses = allData.statuses
+                                , clients = allData.clients
+                                , mainViewState = T.SuccessState
+                            }
+                    in
+                    ( { newModel | visibleProjects = U.buildVisibleProjects newModel }
                     , Task.perform T.GotZone Time.here
                     )
 

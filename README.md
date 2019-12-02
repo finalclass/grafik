@@ -59,14 +59,15 @@
 - [DONE] dodaj "start_at" w dashboard do projektów
 - [DONE] daty nie powinny mieć godzin
 - [DONE] Grubszą czcionką nazwy klientów i zamówień a cieńszą nazwy pól czyli np. Klient. Jest teraz odwrotnie.
-- backupy
-- raz dziennie wysyłać maila do ewy z obecnym stanem wszystkich zamówień z zadaniami
+- [DONE] dodać tło (para ze stroje.pl)
+- [DONE] backupy
+- [DONE] raz dziennie wysyłać maila do ewy z obecnym stanem wszystkich zamówień z zadaniami
+- [DONE] wyświetlać gdzieś date wysłania
+- [DONE] Szukanie działa wpisując wyrób ale często szukamy nazw zamówień lub klienta
 - na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
-- wyświetlać gdzieś date wysłania
-- Szukanie działa wpisując wyrób ale często szukamy nazw zamówień lub klienta
 - W GRAFIKU dobrze by było aby był widoczny: TERMIN, NR FAKTURY, CENA, ILE ZAPŁACONO
 - W GRAFIKU przyda się opcja rozwijania całości (wszystkich zamówień jednocześnie aby były widoczne produkty)
 - po wpisaniu numeru oferty lub faktury wypełniają się całe zamówienie i zadania
 - Dodać logi do fcstore
 - przycisk usuń zadanie ma zły padding-right
-- dodać tło (para ze stroje.pl)
+- dodać szlaczki z menu ze stroje.pl na górę

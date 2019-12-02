@@ -27,8 +27,7 @@ config :phoenix, :json_library, Jason
 
 config :grafik, :backups_data_access_path, "https://fcstore.finalclass.net/grafik-backups"
 
-config :grafik, :backups_interval, 3 * 1000
-  #15 * 60 * 1000 # In 15 minutes
+config :grafik, :backups_interval, 15 * 60 * 1000 # In 15 minutes
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

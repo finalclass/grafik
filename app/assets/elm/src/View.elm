@@ -147,7 +147,12 @@ taskView : T.Model -> T.Task -> Html T.Msg
 taskView model task =
     tr [ class ("task task-" ++ task.status) ]
         [ td [] [ text "" ]
-        , td [ class "task-name", onClick (T.TaskRenameModalShow task) ] [ text task.name ]
+        , td
+            [ class "task-name"
+            , onClick (T.TaskRenameModalShow task)
+            , title task.sent_note
+            ]
+            [ text task.name ]
         , td [ class "task-worker-select-container" ] [ selectWorkerView model task ]
         , td [ class "task-status-select-container" ] [ selectTaskStatusView model task ]
         , td [ class "task-remove-button-container" ]

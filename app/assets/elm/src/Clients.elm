@@ -1,10 +1,9 @@
-module Clients exposing (emptyClient, findClient, selectOrCreateView, update)
+module Clients exposing (emptyClient, selectOrCreateView, update)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Requests as R
-import Task
 import Types as T
 import Utils as U
 
@@ -161,7 +160,7 @@ emptyClient =
 selectOrCreateView : T.Model -> Int -> (Int -> T.Msg) -> Html T.ClientsMsg
 selectOrCreateView model clientId makeMsg =
     div [ class "client-select-or-create" ]
-        (case findClient model clientId of
+        (case U.findClient model clientId of
             Just client ->
                 case model.editedClient.state of
                     T.EditedClientSelected ->
@@ -357,12 +356,6 @@ clientView client =
                 ]
             )
         ]
-
-
-findClient : T.Model -> Int -> Maybe T.Client
-findClient model clientId =
-    List.filter (\c -> c.id == clientId) model.clients
-        |> List.head
 
 
 filterClients : String -> List T.Client -> List T.Client

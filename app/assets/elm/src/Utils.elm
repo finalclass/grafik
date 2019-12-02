@@ -6,6 +6,24 @@ import Task
 import Types as T
 
 
+projectToString : T.Model -> T.Project -> String
+projectToString model project =
+    let
+        maybeClient =
+            findClient model project.client_id
+
+        clientName =
+            maybeClient |> Maybe.map .name |> Maybe.withDefault ""
+    in
+    project.name ++ "#" ++ clientName
+
+
+findClient : T.Model -> Int -> Maybe T.Client
+findClient model clientId =
+    List.filter (\c -> c.id == clientId) model.clients
+        |> List.head
+
+
 isProjectExpanded : T.Project -> T.ExpandedProjects -> Bool
 isProjectExpanded project expandedProjects =
     case Dict.get (String.fromInt project.id) expandedProjects of
@@ -18,7 +36,7 @@ isProjectExpanded project expandedProjects =
 
 initVisibleProjects : T.Model -> T.Model
 initVisibleProjects model =
-    { model | visibleProjects = buildVisibleProjects model.projects model.searchText }
+    { model | visibleProjects = buildVisibleProjects model }
 
 
 nofHiddenProjects : T.Model -> Int
@@ -31,19 +49,22 @@ getVisibleProjects model =
     List.filter (\p -> List.any (\id -> id == p.id) model.visibleProjects) model.projects
 
 
-buildVisibleProjects : List T.Project -> String -> List Int
-buildVisibleProjects projects searchText =
-    projects
+buildVisibleProjects : T.Model -> List Int
+buildVisibleProjects model =
+    let
+        hasText =
+            \t -> String.contains (String.toLower model.searchText) (String.toLower t)
+    in
+    model.projects
         |> List.filter
             (\p ->
                 (List.length p.tasks
                     == 0
-                    && String.length searchText
+                    && String.length model.searchText
                     == 0
                 )
-                    || (p.tasks
-                            |> List.any (\t -> String.contains (String.toLower searchText) (String.toLower t.name))
-                       )
+                    || (p.tasks |> List.any (\t -> hasText t.name))
+                    || hasText (projectToString model p)
             )
         |> List.map (\p -> p.id)
 

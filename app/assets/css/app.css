@@ -7,6 +7,11 @@
 @import "./breadcrumbs.css";
 @import "./buttons.css";
 
+body {
+    background: url('/images/bg.jpg') fixed no-repeat;
+    background-position: right 5% bottom;
+}
+
 .hidden {
     display: none;
 }
