@@ -9,6 +9,39 @@ import Types as T
 import Utils as U
 
 
+addPriceZeros : String -> String
+addPriceZeros str =
+    if String.length str == 0 then
+        "00"
+
+    else if String.length str == 1 then
+        str ++ "0"
+
+    else
+        str
+
+
+formatPrice : Float -> String
+formatPrice price =
+    let
+        split =
+            price |> String.fromFloat |> String.split "."
+
+        int =
+            split
+                |> List.head
+                |> Maybe.withDefault "0"
+
+        rest =
+            split
+                |> List.tail
+                |> Maybe.andThen List.head
+                |> Maybe.withDefault "00"
+                |> addPriceZeros
+    in
+    int ++ "." ++ rest
+
+
 mainView : T.Model -> Html T.Msg
 mainView model =
     div
@@ -108,7 +141,32 @@ projectView model project =
                 [ class "project-name"
                 , onClick (T.ToggleProjectExpand project)
                 ]
-                [ text project.name ]
+                [ text (project.name ++ " ")
+                , span
+                    [ class "project-details project-invoice_number"
+                    , title "numer faktury"
+                    ]
+                    [ text
+                        (if String.length project.invoice_number > 0 then
+                            "(" ++ project.invoice_number ++ ")"
+
+                         else
+                            ""
+                        )
+                    ]
+                , span
+                    [ class "project-details project-prices"
+                    , title "zapłacono / kwota całkowita"
+                    ]
+                    [ text
+                        ("("
+                            ++ formatPrice project.paid
+                            ++ "/"
+                            ++ formatPrice project.price
+                            ++ " PLN)"
+                        )
+                    ]
+                ]
             , th
                 [ class
                     ("project-deadline "

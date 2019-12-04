@@ -154,3 +154,7 @@
 .dashboard .project-save-errors {
     color: #f00;
 }
+
+.dashboard .project-details {
+    font-weight: normal;
+}
