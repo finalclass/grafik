@@ -153,3 +153,14 @@ ternary condition trueValue falseValue =
 focus : String -> Cmd T.Msg
 focus domElementId =
     Task.attempt (\_ -> T.Focus domElementId) (Process.sleep 200)
+
+
+allProjectsExpanded : T.Model -> Bool
+allProjectsExpanded model =
+    true
+
+
+
+-- List.every (\p ->
+--                 model.expandedProjects
+--            ) model.projects

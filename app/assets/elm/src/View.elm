@@ -60,7 +60,18 @@ mainView model =
                     [ text "problem z połączeniem" ]
 
                 else
-                    [ searchBoxView model
+                    [ button
+                        [ class "button-expand-all button-small icon "
+                            ++ (if U.allProjectsExpanded model then
+                                    "caret-down"
+
+                                else
+                                    "caret-right"
+                               )
+                        , onClick T.ToggleExpandAllProjects
+                        ]
+                        []
+                    , searchBoxView model
                     , button
                         [ class "button-small button-outline"
                         , onClick (T.ProjectsAction T.ProjectsNewProject)

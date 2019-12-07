@@ -158,3 +158,8 @@
 .dashboard .project-details {
     font-weight: normal;
 }
+
+.dashboard .button-expand-all::after {
+    position: relative;
+    top: -1px;
+}

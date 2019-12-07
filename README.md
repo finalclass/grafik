@@ -65,9 +65,10 @@
 - [DONE] wyświetlać gdzieś date wysłania
 - [DONE] Szukanie działa wpisując wyrób ale często szukamy nazw zamówień lub klienta
 - [DONE] W GRAFIKU dobrze by było aby był widoczny: TERMIN, NR FAKTURY, CENA, ILE ZAPŁACONO
+- [DONE] Dodać logi do fcstore
 - W GRAFIKU przyda się opcja rozwijania całości (wszystkich zamówień jednocześnie aby były widoczne produkty)
 - po wpisaniu numeru oferty lub faktury wypełniają się całe zamówienie i zadania
-- Dodać logi do fcstore
+
 - przycisk usuń zadanie ma zły padding-right
 - dodać szlaczki z menu ze stroje.pl na górę
 - na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
