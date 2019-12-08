@@ -12,14 +12,18 @@ defmodule Grafik.BackupsEngine do
   end
 
   def backup_if_changed() do
-    curr = current_state()
-    latest_stored = BackupsDataAccess.get_latest_raw()
-
-    if (curr != latest_stored) do
-      backup()
-      :backup
-    else
-      :not_changed
+    case BackupsDataAccess.get_latest_raw() do
+      nil ->
+        backup()
+        :backup
+      latest_stored ->
+        curr = current_state()
+        if (curr != latest_stored) do
+          backup()
+          :backup
+        else
+          :not_changed
+        end
     end
   end
   

@@ -60,39 +60,13 @@ mainView model =
                     [ text "problem z połączeniem" ]
 
                 else
-                    [ div
-                        [ class
-                            "button-expand-all"
-                        , onClick T.ToggleExpandAllProjects
-                        , title
-                            (if U.allProjectsExpanded model then
-                                "Zwiń wszystko"
-
-                             else
-                                "Rozwiń wszystko"
-                            )
-                        ]
-                        [ i
-                            [ class
-                                ("icon "
-                                    ++ (if U.allProjectsExpanded model then
-                                            "caret-down"
-
-                                        else
-                                            "caret-right"
-                                       )
-                                )
+                    [ div [ class "container" ]
+                        [ div [ class "row" ]
+                            [ expandAllButtonView model
+                            , searchBoxView model
+                            , totalPriceView model
                             ]
-                            []
-                        , text
-                            (if U.allProjectsExpanded model then
-                                "zwiń"
-
-                             else
-                                "rozwiń"
-                            )
                         ]
-                    , searchBoxView model
                     , button
                         [ class "button-small button-outline"
                         , onClick (T.ProjectsAction T.ProjectsNewProject)
@@ -112,6 +86,57 @@ mainView model =
                     ]
                )
         )
+
+
+expandAllButtonView : T.Model -> Html T.Msg
+expandAllButtonView model =
+    div
+        [ class
+            "button-expand-all"
+        , onClick T.ToggleExpandAllProjects
+        , title
+            (if U.allProjectsExpanded model then
+                "Zwiń wszystko"
+
+             else
+                "Rozwiń wszystko"
+            )
+        ]
+        [ i
+            [ class
+                ("icon "
+                    ++ (if U.allProjectsExpanded model then
+                            "caret-down"
+
+                        else
+                            "caret-right"
+                       )
+                )
+            ]
+            []
+        , text
+            (if U.allProjectsExpanded model then
+                "zwiń"
+
+             else
+                "rozwiń"
+            )
+        ]
+
+
+totalPriceView : T.Model -> Html T.Msg
+totalPriceView model =
+    div
+        [ class "total-price"
+        , title "zapłacono / kwota za wszystkie zlecenia"
+        ]
+        [ text
+            (formatPrice (U.sumProjectsPaid model)
+                ++ " / "
+                ++ formatPrice (U.sumProjectsPrice model)
+                ++ " PLN"
+            )
+        ]
 
 
 searchBoxView : T.Model -> Html T.Msg
@@ -193,7 +218,7 @@ projectView model project =
                     [ text
                         ("("
                             ++ formatPrice project.paid
-                            ++ "/"
+                            ++ " / "
                             ++ formatPrice project.price
                             ++ " PLN)"
                         )

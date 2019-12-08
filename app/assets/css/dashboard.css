@@ -164,6 +164,7 @@
     margin: 3px 3px 0 0;
     cursor: default;
     width: 60px;
+    user-select: none;
 }
 
 .dashboard .button-expand-all i {
@@ -173,4 +174,9 @@
 .dashboard .button-expand-all i::after {
     position: relative;
     top: -2px;
+}
+
+.dashboard .total-price {
+    text-align: right;
+    flex: 1
 }

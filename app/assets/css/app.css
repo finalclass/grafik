@@ -19,14 +19,39 @@ body {
 }
 
 .grafik-logo {
-    color: #00aaaa;
     font-style: italic;
     font-size: 20px;
+    color: #dd1b16;
+    font-weight: bold;
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+}
+
+.grafik-logo:hover {
+    color: #b60804;
+}
+
+header {
+    background: url('/images/header.jpg') repeat-x;
+    height: 57px;
+    line-height: 57px;
+}
+
+header nav.main-nav ul {
+    margin: 0;
 }
 
 .main-nav li {
     display: inline-block;
     margin: 0 10px;
+}
+
+.main-nav a {
+    color: #0069d9;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+}
+
+.main-nav a:hover {
+    text-decoration: underline;
 }
 
 select.full {

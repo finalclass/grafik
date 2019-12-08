@@ -68,9 +68,9 @@
 - [DONE] Dodać logi do fcstore
 - [DONE] przycisk usuń zadanie ma zły padding-right
 - [DONE] W GRAFIKU przyda się opcja rozwijania całości (wszystkich zamówień jednocześnie aby były widoczne produkty)
+- [DONE] przycisk usuń zadanie ma zły padding-right
+- [DONE] dodać szlaczki z menu ze stroje.pl na górę
+- [DONE] zrobić backup od razu po wystartowaniu programu
+- [DONE] sumowanie wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
 - po wpisaniu numeru oferty lub faktury wypełniają się całe zamówienie i zadania
-- przycisk usuń zadanie ma zły padding-right
-- dodać szlaczki z menu ze stroje.pl na górę
-- na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
-
 
