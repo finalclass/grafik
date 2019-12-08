@@ -158,3 +158,19 @@
 .dashboard .project-details {
     font-weight: normal;
 }
+
+.dashboard .button-expand-all {
+    float: left;
+    margin: 3px 3px 0 0;
+    cursor: default;
+    width: 60px;
+}
+
+.dashboard .button-expand-all i {
+    margin-right: 3px;
+}
+
+.dashboard .button-expand-all i::after {
+    position: relative;
+    top: -2px;
+}

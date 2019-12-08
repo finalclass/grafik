@@ -50,6 +50,7 @@ type ProjectsMsg
 
 type Msg
     = ToggleProjectExpand Project
+    | ToggleExpandAllProjects
     | AllDataReceived ProjectsType (Result Http.Error AllData)
     | ToggleProjectsType
     | TaskCreated Project (Result Http.Error Task)

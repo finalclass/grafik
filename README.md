@@ -67,9 +67,10 @@
 - [DONE] W GRAFIKU dobrze by było aby był widoczny: TERMIN, NR FAKTURY, CENA, ILE ZAPŁACONO
 - [DONE] Dodać logi do fcstore
 - [DONE] przycisk usuń zadanie ma zły padding-right
-- W GRAFIKU przyda się opcja rozwijania całości (wszystkich zamówień jednocześnie aby były widoczne produkty)
-- na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
-- dodać szlaczki z menu ze stroje.pl na górę
+- [DONE] W GRAFIKU przyda się opcja rozwijania całości (wszystkich zamówień jednocześnie aby były widoczne produkty)
 - po wpisaniu numeru oferty lub faktury wypełniają się całe zamówienie i zadania
+- przycisk usuń zadanie ma zły padding-right
+- dodać szlaczki z menu ze stroje.pl na górę
+- na przyszłość: sumowanie: wartość zamówień XXX, zapłacono: YYY (ale nie sumować zarchiwizanych)
 
 
