@@ -3,7 +3,6 @@ module State exposing (init, update)
 import Browser.Dom
 import Clients
 import Dates
-import Debug exposing (log)
 import Dict
 import ExpandedProjectsCache
 import Projects
@@ -69,11 +68,7 @@ update msg model =
                     , Task.perform T.GotZone Time.here
                     )
 
-                Err err ->
-                    let
-                        err2 =
-                            Debug.log "error" err
-                    in
+                Err _ ->
                     ( { model | mainViewState = T.FailureState }, Cmd.none )
 
         T.GotZone zone ->

@@ -50,7 +50,9 @@ defmodule Grafik.BackupsDataAccess do
   end
   
   def list() do
-    HTTPoison.get!(@url, @headers).body
+    r = HTTPoison.get!(@url, @headers).body
+    IO.inspect(r)
+    r
     |> Jason.decode!()
     |> Enum.map(&handle_result/1)
   end

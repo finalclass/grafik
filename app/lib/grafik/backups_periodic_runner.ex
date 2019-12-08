@@ -10,24 +10,23 @@ defmodule Grafik.BackupsPeriodicRunner do
   end
 
   def init(state) do
-    backup()
-    schedule_work()
+    schedule_work(30_000)
     {:ok, state}
-  end
-
-  defp backup() do
-    IO.inspect("Running backup")
-    result = BackupsEngine.backup_if_changed()
-    IO.inspect(result)
   end
   
   def handle_info(:work, state) do
-    backup()
-    schedule_work() # Reschedule once more
+    IO.inspect("Running backup")
+    result = BackupsEngine.backup_if_changed()
+    IO.inspect(result)
+    schedule_work()
     {:noreply, state}
   end
 
   defp schedule_work() do
-    Process.send_after(self(), :work, @backups_interval)
+    schedule_work(@backups_interval)
+  end
+  
+  defp schedule_work(interval) do
+    Process.send_after(self(), :work, interval)
   end
 end
