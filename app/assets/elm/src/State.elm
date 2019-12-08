@@ -140,13 +140,21 @@ update msg model =
 
         T.ToggleExpandAllProjects ->
             let
-                newExpandedProjects = 
+                allExpanded =
+                    U.allProjectsExpanded model
 
+                newExpandedProjects =
+                    List.foldl
+                        (\p acc ->
+                            Dict.insert (String.fromInt p.id) (not allExpanded) acc
+                        )
+                        model.expandedProjects
+                        model.projects
             in
             ( { model | expandedProjects = newExpandedProjects }
             , ExpandedProjectsCache.addToCache newExpandedProjects
             )
-            
+
         T.TaskRemoveRequest task ->
             ( { model | modal = T.ModalConfirm "Potwierdź" "Czy na pewno usunąć?" (T.TaskRemoveConfirmed task) }
             , Cmd.none

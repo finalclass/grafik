@@ -10,6 +10,8 @@
 body {
     background: url('/images/bg.jpg') fixed no-repeat;
     background-position: right 5% bottom;
+    margin: 0;
+    padding: 0;
 }
 
 .hidden {

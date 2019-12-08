@@ -157,10 +157,10 @@ focus domElementId =
 
 allProjectsExpanded : T.Model -> Bool
 allProjectsExpanded model =
-    true
-
-
-
--- List.every (\p ->
---                 model.expandedProjects
---            ) model.projects
+    List.all
+        (\p ->
+            model.expandedProjects
+                |> Dict.get (String.fromInt p.id)
+                |> Maybe.withDefault False
+        )
+        model.projects
