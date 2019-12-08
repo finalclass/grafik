@@ -13,6 +13,7 @@ RUN curl -L -o elm.gz "https://github.com/elm/compiler/releases/download/0.19.1/
 ENV MIX_ENV=prod
 ARG SECRET_KEY_BASE
 ARG DATABASE_URL
+ARG X_FCSTORE_SECRET
 
 WORKDIR /srv/app
 COPY ./ /srv/app/

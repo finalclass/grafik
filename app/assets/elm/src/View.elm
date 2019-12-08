@@ -17,8 +17,22 @@ addPriceZeros str =
     else if String.length str == 1 then
         str ++ "0"
 
-    else
+    else if String.length str == 2 then
         str
+
+    else
+        String.left 2 str
+
+
+splitStringEvery : Int -> String -> String -> String
+splitStringEvery nofChars separator str =
+    if String.length str < nofChars then
+        str
+
+    else
+        splitStringEvery nofChars separator (String.dropRight nofChars str)
+            ++ separator
+            ++ String.right nofChars str
 
 
 formatPrice : Float -> String
@@ -32,6 +46,9 @@ formatPrice price =
                 |> List.head
                 |> Maybe.withDefault "0"
 
+        intSeparated =
+            splitStringEvery 3 " " int
+
         rest =
             split
                 |> List.tail
@@ -39,7 +56,7 @@ formatPrice price =
                 |> Maybe.withDefault "00"
                 |> addPriceZeros
     in
-    int ++ "." ++ rest
+    intSeparated ++ "." ++ rest
 
 
 mainView : T.Model -> Html T.Msg
@@ -60,39 +77,13 @@ mainView model =
                     [ text "problem z połączeniem" ]
 
                 else
-                    [ div
-                        [ class
-                            "button-expand-all"
-                        , onClick T.ToggleExpandAllProjects
-                        , title
-                            (if U.allProjectsExpanded model then
-                                "Zwiń wszystko"
-
-                             else
-                                "Rozwiń wszystko"
-                            )
-                        ]
-                        [ i
-                            [ class
-                                ("icon "
-                                    ++ (if U.allProjectsExpanded model then
-                                            "caret-down"
-
-                                        else
-                                            "caret-right"
-                                       )
-                                )
+                    [ div [ class "container" ]
+                        [ div [ class "row" ]
+                            [ expandAllButtonView model
+                            , searchBoxView model
+                            , totalPriceView model
                             ]
-                            []
-                        , text
-                            (if U.allProjectsExpanded model then
-                                "zwiń"
-
-                             else
-                                "rozwiń"
-                            )
                         ]
-                    , searchBoxView model
                     , button
                         [ class "button-small button-outline"
                         , onClick (T.ProjectsAction T.ProjectsNewProject)
@@ -102,16 +93,67 @@ mainView model =
                         ]
                     , button
                         [ class ("button-small float-right " ++ U.caseProjectsType model.projectsType "button-outline" "")
-                        , title ("Przełącz na " ++ U.caseProjectsType model.projectsType "archiwalne" " bierzące")
+                        , title ("Przełącz na " ++ U.caseProjectsType model.projectsType "archiwalne" " bieżące")
                         , onClick T.ToggleProjectsType
                         ]
                         [ text
-                            ("wyświetlam " ++ U.caseProjectsType model.projectsType "bierzące" "archiwalne")
+                            ("wyświetlam " ++ U.caseProjectsType model.projectsType "bieżące" "archiwalne")
                         ]
                     , projectsView model
                     ]
                )
         )
+
+
+expandAllButtonView : T.Model -> Html T.Msg
+expandAllButtonView model =
+    div
+        [ class
+            "button-expand-all"
+        , onClick T.ToggleExpandAllProjects
+        , title
+            (if U.allProjectsExpanded model then
+                "Zwiń wszystko"
+
+             else
+                "Rozwiń wszystko"
+            )
+        ]
+        [ i
+            [ class
+                ("icon "
+                    ++ (if U.allProjectsExpanded model then
+                            "caret-down"
+
+                        else
+                            "caret-right"
+                       )
+                )
+            ]
+            []
+        , text
+            (if U.allProjectsExpanded model then
+                "zwiń"
+
+             else
+                "rozwiń"
+            )
+        ]
+
+
+totalPriceView : T.Model -> Html T.Msg
+totalPriceView model =
+    div
+        [ class "total-price"
+        , title "zapłacono / kwota za wszystkie zlecenia"
+        ]
+        [ text
+            (formatPrice (U.sumProjectsPaid model)
+                ++ " / "
+                ++ formatPrice (U.sumProjectsPrice model)
+                ++ " PLN"
+            )
+        ]
 
 
 searchBoxView : T.Model -> Html T.Msg
@@ -193,7 +235,7 @@ projectView model project =
                     [ text
                         ("("
                             ++ formatPrice project.paid
-                            ++ "/"
+                            ++ " / "
                             ++ formatPrice project.price
                             ++ " PLN)"
                         )

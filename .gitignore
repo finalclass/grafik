@@ -2,3 +2,4 @@
 /backend/.elixir_ls/
 /backend/rel/
 /.log
+/.secret.sh

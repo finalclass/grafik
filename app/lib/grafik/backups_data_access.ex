@@ -22,11 +22,11 @@ defmodule Grafik.BackupsDataAccess do
       end
     end)
   end
-  
+
   defp handle_result(res) do
     %{
       lastModified: res["lastModified"] / 1000 |> round() |> DateTime.from_unix() |> elem(1),
-      name: res["name"],
+      name: String.replace(res["name"], ".json", ""),
       content: case Map.get(res, "content") do
                  nil -> nil
                  content ->
@@ -44,13 +44,15 @@ defmodule Grafik.BackupsDataAccess do
  end
   
   def get(backup_name) do
-    HTTPoison.get!(Path.join(@url, backup_name), @headers).body
+    HTTPoison.get!(Path.join(@url, backup_name <> ".json"), @headers).body
     |> Jason.decode!()
     |> handle_result()
   end
   
   def list() do
-    HTTPoison.get!(@url, @headers).body
+    r = HTTPoison.get!(@url, @headers).body
+    IO.inspect(r)
+    r
     |> Jason.decode!()
     |> Enum.map(&handle_result/1)
   end
@@ -90,15 +92,21 @@ defmodule Grafik.BackupsDataAccess do
   end
 
   def get_latest_raw() do
-    backup_name = HTTPoison.get!(@url <> "?limit=1", @headers).body
+    latest_backup = HTTPoison.get!(@url <> "?limit=1", @headers).body
     |> Jason.decode!()
     |> Enum.at(0)
-    |> Map.get("name")
-
-    HTTPoison.get!(Path.join(@url, backup_name), @headers).body
-    |> Jason.decode!()
-    |> Map.get("content")
-    |> Base.decode64!()
+    
+    case latest_backup do
+      nil -> nil
+      _ ->
+        backup_name = latest_backup
+        |> Map.get("name")
+        
+        HTTPoison.get!(Path.join(@url, backup_name), @headers).body
+        |> Jason.decode!()
+        |> Map.get("content")
+        |> Base.decode64!()
+    end
   end
   
 end

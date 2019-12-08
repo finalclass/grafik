@@ -27,7 +27,7 @@
           </td>
           <td>
             <%= project["deadline"] |> format_date() %><br/>
-            <%= if project["is_deadline_rigid"] do "Sztywny" else "Lużny" end %>
+            <%= if project["is_deadline_rigid"] do "Sztywny" else "Luźny" end %>
           </td>
           <td>
             <a href="#client-<%= project["client_id"] %>">

@@ -164,3 +164,13 @@ allProjectsExpanded model =
                 |> Maybe.withDefault False
         )
         model.projects
+
+
+sumProjectsPrice : T.Model -> Float
+sumProjectsPrice model =
+    List.foldl (\p acc -> acc + p.price) 0 model.projects
+
+
+sumProjectsPaid : T.Model -> Float
+sumProjectsPaid model =
+    List.foldl (\p acc -> acc + p.paid) 0 model.projects

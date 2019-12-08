@@ -18,6 +18,8 @@ defmodule Grafik.Clients.Client do
     field :delivery_contact_person, :string
     field :phone_number, :string
     field :email, :string
+
+    field :wfirma_contractor_id, :integer
     
     has_many :projects, Grafik.Projects.Project
 

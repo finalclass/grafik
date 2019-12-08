@@ -43,6 +43,8 @@ type ProjectsMsg
     | ProjectsOnClientIdSelected Int
     | ProjectsOnInputIsArchived String
     | ProjectsOnInputStartAtString String
+    | ProjectsOnImportRequest
+    | ProjectsOnImportReceived (Result Http.Error ImportedProject)
     | ProjectsEditClient ClientsMsg
     | ProjectsCreated (Result Http.Error Project)
     | ProjectsUpdated (Result Http.Error Project)
@@ -117,6 +119,36 @@ type alias Model =
     }
 
 
+type alias ImportedProjectClient =
+    { city : String
+    , country : String
+    , email : String
+    , name : String
+    , nip : String
+    , phone : String
+    , street : String
+    , wfirma_client_id : Int
+    , zip : String
+    }
+
+
+type alias ImportedProjectTask =
+    { count : Int
+    , name : String
+    , price : Float
+    , wfirma_good_id : Int
+    , wfirma_id : Int
+    }
+
+
+type alias ImportedProject =
+    { client : ImportedProjectClient
+    , price : Float
+    , wfirma_id : Int
+    , tasks : List ImportedProjectTask
+    }
+
+
 type alias EditedProject =
     { data : Project
     , deadlineString : String
@@ -124,6 +156,7 @@ type alias EditedProject =
     , startAtString : String
     , startAtErr : Maybe String
     , saveErr : Maybe String
+    , importedProject : Maybe ImportedProject
     }
 
 

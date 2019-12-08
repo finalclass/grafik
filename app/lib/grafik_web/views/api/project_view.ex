@@ -33,6 +33,14 @@ defmodule GrafikWeb.Api.ProjectView do
     }
   end
 
+  def render("wfirma-import.json", %{ data: data }) do
+    data
+  end
+
+  def render("project-wfirma-import-error.json", %{}) do
+    %{status: "wfirma import failed"}
+  end
+  
   def render("project-save-error.json", %{}) do
     %{status: "error"}
   end

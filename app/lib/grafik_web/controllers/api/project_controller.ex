@@ -2,6 +2,7 @@ defmodule GrafikWeb.Api.ProjectController do
   use GrafikWeb, :controller
 
   alias Grafik.Projects
+  alias Grafik.WFirma
 
   def update(conn, project_params) do
     project = Projects.get_project!(project_params["id"])
@@ -32,4 +33,17 @@ defmodule GrafikWeb.Api.ProjectController do
     end
   end
 
+  def wfirma_import(conn, %{"invoice_number" => invoice_number}) do
+    case WFirma.import_offer(invoice_number) do
+      {:ok, data} ->
+        render(conn, "wfirma-import.json", data: data)
+      {:error, err} ->
+        IO.inspect(err)
+        conn
+        |> put_status(500)
+        |> render("project-wfirma-import-error.json")
+    end
+  end
+  
+  
 end

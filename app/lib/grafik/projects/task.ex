@@ -6,6 +6,8 @@ defmodule Grafik.Projects.Task do
     field :name, :string
     field :status, :string
     field :sent_note, :string
+    field :price, :string
+    field :wfirma_invoicecontent_id, :integer
     belongs_to :project, Grafik.Projects.Project
     belongs_to :worker, Grafik.Workers.Worker
 

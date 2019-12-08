@@ -1,4 +1,4 @@
-module Requests exposing (changeTaskStatus, changeTaskWorker, createNewTask, createOrUpdateClient, createOrUpdateProject, getAllData, removeTask, renameTask)
+module Requests exposing (changeTaskStatus, changeTaskWorker, createNewTask, createOrUpdateClient, createOrUpdateProject, getAllData, importProject, removeTask, renameTask)
 
 import Http
 import Json.Decode as D
@@ -6,6 +6,7 @@ import Json.Decode.Pipeline exposing (optional, required)
 import Json.Encode as E
 import Time
 import Types as T
+import Url
 
 
 decodeTime : D.Decoder Time.Posix
@@ -31,6 +32,16 @@ getAllData projectsType =
     Http.get
         { url = "/api/all" ++ urlSuffix
         , expect = Http.expectJson (T.AllDataReceived projectsType) projectsDecoder
+        }
+
+
+importProject : String -> Cmd T.Msg
+importProject invoiceNumber =
+    Http.get
+        { url = "/api/projects/import/" ++ Url.percentEncode invoiceNumber
+        , expect =
+            Http.expectJson (\res -> T.ProjectsAction (T.ProjectsOnImportReceived res))
+                importProjectDecoder
         }
 
 
@@ -267,6 +278,38 @@ projectsDecoder =
         (D.field "clients"
             (D.list
                 clientDecoder
+            )
+        )
+
+
+importProjectDecoder : D.Decoder T.ImportedProject
+importProjectDecoder =
+    D.map4 T.ImportedProject
+        (D.field "client"
+            (D.succeed
+                T.ImportedProjectClient
+                |> required "city" D.string
+                |> required "country" D.string
+                |> required "email" D.string
+                |> required "name" D.string
+                |> required "nip" D.string
+                |> required "phone" D.string
+                |> required "street" D.string
+                |> required "wfirma_client_id" D.int
+                |> required "zip" D.string
+            )
+        )
+        (D.field "price" D.float)
+        (D.field "wfirma_id" D.int)
+        (D.field "tasks"
+            (D.list
+                (D.map5 T.ImportedProjectTask
+                    (D.field "count" D.int)
+                    (D.field "name" D.string)
+                    (D.field "price" D.float)
+                    (D.field "wfirma_good_id" D.int)
+                    (D.field "wfirma_id" D.int)
+                )
             )
         )
 
