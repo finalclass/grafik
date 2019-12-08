@@ -115,7 +115,7 @@ update msg model =
                     in
                     ( newModelWithTask, Cmd.none )
 
-                Err _ ->
+                Err err ->
                     ( { model | mainViewState = T.FailureState }, Cmd.none )
 
         T.ToggleProjectExpand project ->

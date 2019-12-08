@@ -21,6 +21,17 @@ addPriceZeros str =
         str
 
 
+splitStringEvery : Int -> String -> String -> String
+splitStringEvery nofChars separator str =
+    if String.length str < nofChars then
+        str
+
+    else
+        splitStringEvery nofChars separator (String.dropRight nofChars str)
+            ++ separator
+            ++ String.right nofChars str
+
+
 formatPrice : Float -> String
 formatPrice price =
     let
@@ -32,6 +43,9 @@ formatPrice price =
                 |> List.head
                 |> Maybe.withDefault "0"
 
+        intSeparated =
+            splitStringEvery 3 " " int
+
         rest =
             split
                 |> List.tail
@@ -39,7 +53,7 @@ formatPrice price =
                 |> Maybe.withDefault "00"
                 |> addPriceZeros
     in
-    int ++ "." ++ rest
+    intSeparated ++ "." ++ rest
 
 
 mainView : T.Model -> Html T.Msg
@@ -76,11 +90,11 @@ mainView model =
                         ]
                     , button
                         [ class ("button-small float-right " ++ U.caseProjectsType model.projectsType "button-outline" "")
-                        , title ("Przełącz na " ++ U.caseProjectsType model.projectsType "archiwalne" " bierzące")
+                        , title ("Przełącz na " ++ U.caseProjectsType model.projectsType "archiwalne" " bieżące")
                         , onClick T.ToggleProjectsType
                         ]
                         [ text
-                            ("wyświetlam " ++ U.caseProjectsType model.projectsType "bierzące" "archiwalne")
+                            ("wyświetlam " ++ U.caseProjectsType model.projectsType "bieżące" "archiwalne")
                         ]
                     , projectsView model
                     ]

@@ -5,6 +5,7 @@
     top: 5vh;
     width: 800px;
     box-sizing: border-box;
+    z-index: 100;
 }
 
 .modal .modal-content {

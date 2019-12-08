@@ -376,7 +376,15 @@ editProjectModalView model =
     div [ class "modal" ]
         [ div [ class "modal-content" ]
             [ div [ class "modal-header" ]
-                [ h3 [] [ text model.editedProject.data.name ]
+                [ h3 []
+                    [ text
+                        (if model.editedProject.data.id /= 0 then
+                            model.editedProject.data.name
+
+                         else
+                            "Nowe zlecenie"
+                        )
+                    ]
                 ]
             , div [ class "modal-body" ]
                 [ Html.map (\msg -> T.ProjectsAction msg) (formView model) ]
