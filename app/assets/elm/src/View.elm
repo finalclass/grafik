@@ -215,12 +215,11 @@ taskView model task =
         , td [ class "task-status-select-container" ] [ selectTaskStatusView model task ]
         , td [ class "task-remove-button-container" ]
             [ button
-                [ class "button-outline"
+                [ class "button-outline icon remove"
                 , title "Usuń"
                 , onClick (T.TaskRemoveRequest task)
                 ]
-                [ i [ class "icon remove" ] []
-                ]
+                []
             ]
         ]
 
