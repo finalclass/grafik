@@ -255,7 +255,7 @@ defmodule Grafik.Projects do
       where: p.is_archived != true,
       where: t.status != "received",
       where: t.status != "sent",
-      order_by: [desc: p.deadline],
+      order_by: [asc: p.deadline],
       group_by: p.id,
       preload: [
         tasks: ^tasks_q,

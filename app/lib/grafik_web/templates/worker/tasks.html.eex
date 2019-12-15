@@ -15,8 +15,7 @@
   <%= for project <- @projects do %>
     <div class="row">
       <h3 class="project-name">
-        <%= project.client.name %>:
-        <%= project.name %>
+        <%= project.client.name %>
       </h3>
       <h4 class="project-deadline">
         Termin: <%= Date.to_iso8601(project.deadline) %>
