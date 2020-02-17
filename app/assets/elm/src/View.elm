@@ -17,8 +17,11 @@ addPriceZeros str =
     else if String.length str == 1 then
         str ++ "0"
 
-    else
+    else if String.length str == 2 then
         str
+
+    else
+        String.left 2 str
 
 
 splitStringEvery : Int -> String -> String -> String

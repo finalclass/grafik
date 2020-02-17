@@ -164,15 +164,20 @@ selectOrCreateView model clientId makeMsg =
             Just client ->
                 case model.editedClient.state of
                     T.EditedClientSelected ->
-                        [ div [ onClick (T.ClientsEdit client), title "Edytuj" ]
-                            [ clientView client
-                            ]
+                        [ div [] [ clientView client ]
+                        , newButtonView
                         , button
                             [ class "float-right button button-outline button-small"
                             , onClick (T.ClientsSelectState T.EditedClientSelect)
+                            , title "Wybierz innego klienta"
                             ]
                             [ text "zmień" ]
-                        , newButtonView
+                        , button
+                            [ class "float-right button button-outline button-small"
+                            , onClick (T.ClientsEdit client)
+                            , title ("Edytuj " ++ client.name)
+                            ]
+                            [ text "edytuj" ]
                         ]
 
                     T.EditedClientSelect ->
@@ -277,12 +282,12 @@ selectView model makeMsg showCancel =
             [ div [ class "float-left" ]
                 [ text "Wybierz klienta:"
                 ]
+            , newButtonView
             , if showCancel then
                 cancelButtonView
 
               else
                 text ""
-            , newButtonView
             , input
                 [ type_ "text"
                 , placeholder "Szukaj..."
@@ -308,6 +313,40 @@ selectView model makeMsg showCancel =
 
 clientView : T.Client -> Html T.ClientsMsg
 clientView client =
+    table [ class "client-view" ]
+        [ thead []
+            [ tr []
+                [ th [] [ text "Ogólne" ]
+                , th [] [ text "Faktura" ]
+                , th [] [ text "Dostawa" ]
+                ]
+            ]
+        , tbody []
+            [ tr []
+                [ td []
+                    [ div [ class "client-name" ] [ text client.name ]
+                    , div [] [ text client.email ]
+                    ]
+                , td [ class "client-view-invoice" ]
+                    [ div [] [ text client.invoice_name ]
+                    , div [] [ text client.invoice_street ]
+                    , div [] [ text (client.invoice_postcode ++ " " ++ client.invoice_city) ]
+                    , div [] [ text ("NIP: " ++ client.invoice_nip) ]
+                    ]
+                , td [ class "client-view-delivery" ]
+                    [ div [] [ text client.delivery_name ]
+                    , div [] [ text client.delivery_street ]
+                    , div [] [ text (client.delivery_postcode ++ " " ++ client.delivery_city) ]
+                    , div [] [ text ("os. kontakt.: " ++ client.delivery_contact_person) ]
+                    , div [] [ text ("tel.: " ++ client.phone_number) ]
+                    ]
+                ]
+            ]
+        ]
+
+
+clientView2 : T.Client -> Html T.ClientsMsg
+clientView2 client =
     div [ class "client-view" ]
         [ strong [] [ text (client.name ++ " ") ]
         , text

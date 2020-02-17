@@ -1,5 +1,5 @@
 defmodule GrafikWeb.BackupController do
-    use GrafikWeb, :controller
+  use GrafikWeb, :controller
 
   alias Grafik.BackupsDataAccess
 
