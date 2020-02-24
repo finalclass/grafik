@@ -49,4 +49,5 @@ defmodule Grafik.Projects.Project do
     ])
     |> validate_required([:name, :deadline, :client_id])
   end
+
 end
