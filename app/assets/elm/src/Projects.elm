@@ -31,7 +31,7 @@ update msg model =
             )
 
         T.ProjectsSaveRequest ->
-            ( { model | mainViewState = T.LoadingState }, R.createOrUpdateProject model.editedProject.data )
+            ( { model | mainViewState = T.LoadingState }, R.createOrUpdateProject model.editedProject )
 
         T.ProjectsCreated project ->
             case project of

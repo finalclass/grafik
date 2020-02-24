@@ -1,10 +1,19 @@
 defmodule Grafik.WFirma do
 
+  @auth_encoded [
+      Application.get_env(:grafik, :wfirma_login),
+      Application.get_env(:grafik, :wfirma_password)
+    ]
+    |> Enum.join(":")
+    |> Base.encode64()
+  
   @url "https://api2.wfirma.pl"
+  
   @headers [
-    "Authorization": "Basic " <> ("" |> Base.encode64()),
+    "Authorization": "Basic #{@auth_encoded}",
     "Content-type": "application/json"
   ]
+  
   @format "inputFormat=json&outputFormat=json"
   
   def import_offer(offer_number) do

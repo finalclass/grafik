@@ -26,8 +26,10 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :grafik, :backups_data_access_path, "https://fcstore.finalclass.net/grafik-backups"
-
 config :grafik, :backups_interval, 15 * 60 * 1000 # In 15 minutes
+
+config :grafik, :wfirma_login, System.get_env("WFIRMA_LOGIN")
+config :grafik, :wfirma_password, System.get_env("WFIRMA_PASSWORD")
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

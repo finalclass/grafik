@@ -32,6 +32,14 @@ config :grafik, :backups_data_access_secret, System.get_env("X_FCSTORE_SECRET") 
 environment variable X_FCSTORE_SECRET is missing
 """
 
+config :grafik, :wfirma_login, System.get_env("WFIRMA_LOGIN") || raise """
+environment variable WFIRMA_LOGIN is missing
+"""
+config :grafik, :wfirma_password, System.get_env("WFIRMA_PASSWORD") || raise ""
+environment variable WFIRMA_PASSWORD is missing
+""'
+
+
 # ## Using releases (Elixir v1.9+)
 #
 # If you are doing OTP releases, you need to instruct Phoenix

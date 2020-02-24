@@ -4,9 +4,8 @@ defmodule GrafikWeb.Api.ProjectController do
   alias Grafik.Projects
   alias Grafik.WFirma
 
-  def update(conn, project_params) do
+  def update(conn, %{"project" => project_params, "tasks" => tasks}) do
     project = Projects.get_project!(project_params["id"])
-
     case Projects.update_project(project, project_params) do
       {:ok, project} ->
         render(conn, "project.json", project: Projects.get_project_with_tasks!(project.id))
@@ -20,7 +19,7 @@ defmodule GrafikWeb.Api.ProjectController do
     
   end
 
-  def create(conn, project_params) do
+  def create(conn, %{"project" => project_params, "tasks" => tasks}) do
     case Projects.create_project(project_params) do
       {:ok, project} ->
         render(conn, "project.json", project: project)

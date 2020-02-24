@@ -45,9 +45,12 @@ importProject invoiceNumber =
         }
 
 
-createOrUpdateProject : T.Project -> Cmd T.Msg
-createOrUpdateProject project =
+createOrUpdateProject : T.EditedProject -> Cmd T.Msg
+createOrUpdateProject editedProject =
     let
+        project =
+            editedProject.data
+
         data =
             if project.id /= 0 then
                 { url = "/api/projects/" ++ String.fromInt project.id
@@ -71,17 +74,39 @@ createOrUpdateProject project =
         , body =
             Http.jsonBody
                 (E.object
-                    [ ( "name", E.string project.name )
-                    , ( "description", E.string project.description )
-                    , ( "client_id", E.int project.client_id )
-                    , ( "deadline", E.int (Time.posixToMillis project.deadline) )
-                    , ( "start_at", E.int (Time.posixToMillis project.start_at) )
-                    , ( "name", E.string project.name )
-                    , ( "is_archived", E.bool project.is_archived )
-                    , ( "invoice_number", E.string project.invoice_number )
-                    , ( "price", E.float project.price )
-                    , ( "paid", E.float project.paid )
-                    , ( "is_deadline_rigid", E.bool project.is_deadline_rigid )
+                    [ ( "project"
+                      , E.object
+                            [ ( "name", E.string project.name )
+                            , ( "description", E.string project.description )
+                            , ( "client_id", E.int project.client_id )
+                            , ( "deadline", E.int (Time.posixToMillis project.deadline) )
+                            , ( "start_at", E.int (Time.posixToMillis project.start_at) )
+                            , ( "name", E.string project.name )
+                            , ( "is_archived", E.bool project.is_archived )
+                            , ( "invoice_number", E.string project.invoice_number )
+                            , ( "price", E.float project.price )
+                            , ( "paid", E.float project.paid )
+                            , ( "is_deadline_rigid", E.bool project.is_deadline_rigid )
+                            ]
+                      )
+                    , ( "tasks"
+                      , case editedProject.importedProject of
+                            Just importedProject ->
+                                importedProject.tasks
+                                    |> E.list
+                                        (\task ->
+                                            E.object
+                                                [ ( "count", E.int task.count )
+                                                , ( "name", E.string task.name )
+                                                , ( "price", E.float task.price )
+                                                , ( "wfirma_good_id", E.int task.wfirma_good_id )
+                                                , ( "wfirma_id", E.int task.wfirma_id )
+                                                ]
+                                        )
+
+                            Nothing ->
+                                E.null
+                      )
                     ]
                 )
         }
