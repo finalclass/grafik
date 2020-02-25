@@ -35,7 +35,8 @@
     margin: 0;
 }
 
-.dashboard .task-name {
+.dashboard .task-name,
+.dashboard .task-price {
     cursor: default;
 }
 

@@ -168,12 +168,44 @@ allProjectsExpanded model =
 
 sumProjectsPrice : T.Model -> Float
 sumProjectsPrice model =
-    List.foldl (\p acc -> acc + p.price) 0 model.projects
+    List.foldl (\p acc -> acc + sumProjectPrice p) 0 model.projects
 
 
 sumProjectsPaid : T.Model -> Float
 sumProjectsPaid model =
     List.foldl (\p acc -> acc + p.paid) 0 model.projects
+
+
+sumProjectPrice : T.Project -> Float
+sumProjectPrice project =
+    if project.price > 0 then
+        project.price
+
+    else
+        project.tasks |> List.foldl (\t acc -> acc + t.price) 0
+
+
+sumFinishedTasks : List T.Task -> Float
+sumFinishedTasks tasks =
+    tasks
+        |> List.foldl
+            (\t acc ->
+                let
+                    price =
+                        if t.status == "received" then
+                            t.price
+
+                        else
+                            0
+                in
+                acc + price
+            )
+            0
+
+
+sumAllFinished : T.Model -> Float
+sumAllFinished model =
+    model.projects |> List.foldl (\p acc -> acc + sumFinishedTasks p.tasks) 0
 
 
 splitStringEvery : Int -> String -> String -> String

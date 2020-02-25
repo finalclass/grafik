@@ -213,7 +213,7 @@ update msg model =
         T.TaskChangePriceModalShow task ->
             ( { model
                 | modal = T.ModalPrompt "Cena" (T.TaskPriceChangeRequest task)
-                , modalPromptValue = String.fromFloat task.price
+                , modalPromptValue = U.formatPrice task.price
               }
             , U.focus "modal-prompt-input"
             )

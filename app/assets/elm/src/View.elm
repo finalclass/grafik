@@ -95,10 +95,12 @@ totalPriceView : T.Model -> Html T.Msg
 totalPriceView model =
     div
         [ class "total-price"
-        , title "zapłacono / kwota za wszystkie zlecenia"
+        , title "SUMA: zapłacono / wykonano / kwota całkowita"
         ]
         [ text
             (U.formatPrice (U.sumProjectsPaid model)
+                ++ " / "
+                ++ U.formatPrice (U.sumAllFinished model)
                 ++ " / "
                 ++ U.formatPrice (U.sumProjectsPrice model)
                 ++ " PLN"
@@ -172,7 +174,7 @@ projectView model project =
                     ]
                     [ text
                         (if String.length project.invoice_number > 0 then
-                            "(" ++ project.invoice_number ++ ")"
+                            "(" ++ project.invoice_number ++ ") "
 
                          else
                             ""
@@ -180,13 +182,15 @@ projectView model project =
                     ]
                 , span
                     [ class "project-details project-prices"
-                    , title "zapłacono / kwota całkowita"
+                    , title "ZLECENIE: zapłacono / kwota wykonana / kwota całkowita"
                     ]
                     [ text
                         ("("
                             ++ U.formatPrice project.paid
                             ++ " / "
-                            ++ U.formatPrice project.price
+                            ++ U.formatPrice (U.sumFinishedTasks project.tasks)
+                            ++ " / "
+                            ++ U.formatPrice (U.sumProjectPrice project)
                             ++ " PLN)"
                         )
                     ]
@@ -237,7 +241,7 @@ taskView model task =
             ]
             [ text task.name ]
         , td
-            [ class "task-price-container"
+            [ class "task-price"
             , onClick (T.TaskChangePriceModalShow task)
             ]
             [ text (U.formatPrice task.price ++ " PLN") ]
