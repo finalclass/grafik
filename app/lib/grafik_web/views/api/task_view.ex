@@ -8,7 +8,8 @@ defmodule GrafikWeb.Api.TaskView do
       name: task.name,
       status: task.status,
       worker_id: task.worker_id || 0,
-      sent_note: task.sent_note || ""
+      sent_note: task.sent_note || "",
+      price: task.price || 0.0
     }
   end
 

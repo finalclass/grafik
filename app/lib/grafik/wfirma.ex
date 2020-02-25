@@ -58,7 +58,7 @@ defmodule Grafik.WFirma do
       %{
         "name" => item["name"],
         "price" => to_float!(item["price"]),
-        "count" => to_int!(item["count"], 1),
+        "count" => item["count"] |> to_float!() |> round(),
         "wfirma_id" => to_int!(item["id"]),
         "wfirma_good_id" => to_int!(item |> Map.get("good") |> Map.get("id"))
       }

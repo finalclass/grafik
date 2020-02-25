@@ -9,56 +9,6 @@ import Types as T
 import Utils as U
 
 
-addPriceZeros : String -> String
-addPriceZeros str =
-    if String.length str == 0 then
-        "00"
-
-    else if String.length str == 1 then
-        str ++ "0"
-
-    else if String.length str == 2 then
-        str
-
-    else
-        String.left 2 str
-
-
-splitStringEvery : Int -> String -> String -> String
-splitStringEvery nofChars separator str =
-    if String.length str < nofChars then
-        str
-
-    else
-        splitStringEvery nofChars separator (String.dropRight nofChars str)
-            ++ separator
-            ++ String.right nofChars str
-
-
-formatPrice : Float -> String
-formatPrice price =
-    let
-        split =
-            price |> String.fromFloat |> String.split "."
-
-        int =
-            split
-                |> List.head
-                |> Maybe.withDefault "0"
-
-        intSeparated =
-            splitStringEvery 3 " " int
-
-        rest =
-            split
-                |> List.tail
-                |> Maybe.andThen List.head
-                |> Maybe.withDefault "00"
-                |> addPriceZeros
-    in
-    intSeparated ++ "." ++ rest
-
-
 mainView : T.Model -> Html T.Msg
 mainView model =
     div
@@ -148,9 +98,9 @@ totalPriceView model =
         , title "zapłacono / kwota za wszystkie zlecenia"
         ]
         [ text
-            (formatPrice (U.sumProjectsPaid model)
+            (U.formatPrice (U.sumProjectsPaid model)
                 ++ " / "
-                ++ formatPrice (U.sumProjectsPrice model)
+                ++ U.formatPrice (U.sumProjectsPrice model)
                 ++ " PLN"
             )
         ]
@@ -234,15 +184,16 @@ projectView model project =
                     ]
                     [ text
                         ("("
-                            ++ formatPrice project.paid
+                            ++ U.formatPrice project.paid
                             ++ " / "
-                            ++ formatPrice project.price
+                            ++ U.formatPrice project.price
                             ++ " PLN)"
                         )
                     ]
                 ]
             , th
-                [ class
+                [ colspan 2
+                , class
                     ("project-deadline "
                         ++ (if project.is_deadline_rigid then
                                 "rigid-deadline"
@@ -285,6 +236,11 @@ taskView model task =
             , title task.sent_note
             ]
             [ text task.name ]
+        , td
+            [ class "task-price-container"
+            , onClick (T.TaskChangePriceModalShow task)
+            ]
+            [ text (U.formatPrice task.price ++ " PLN") ]
         , td [ class "task-worker-select-container" ] [ selectWorkerView model task ]
         , td [ class "task-status-select-container" ] [ selectTaskStatusView model task ]
         , td [ class "task-remove-button-container" ]

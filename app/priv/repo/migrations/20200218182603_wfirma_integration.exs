@@ -3,7 +3,7 @@ defmodule Grafik.Repo.Migrations.WfirmaIntegration do
 
   def change do
     alter table(:tasks) do
-      add :price, :string
+      add :price, :float
       add :wfirma_invoicecontent_id, :integer
     end
     alter table(:clients) do

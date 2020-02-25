@@ -197,6 +197,14 @@ update msg model =
             , U.focus "modal-prompt-input"
             )
 
+        T.TaskChangePriceModalShow task ->
+            ( { model
+                | modal = T.ModalPrompt "Cena" (T.TaskPriceChangeRequest task)
+                , modalPromptValue = String.fromFloat task.price
+              }
+            , U.focus "modal-prompt-input"
+            )
+
         T.TaskRenameRequest task ->
             let
                 taskName =
@@ -209,6 +217,24 @@ update msg model =
               }
             , R.renameTask task taskName
             )
+
+        T.TaskPriceChangeRequest task ->
+            let
+                maybePrice =
+                    String.toFloat model.modalPromptValue
+            in
+            case maybePrice of
+                Just price ->
+                    ( { model
+                        | modalPromptValue = ""
+                        , modal = T.ModalHidden
+                        , mainViewState = T.LoadingState
+                      }
+                    , R.setTaskPrice task price
+                    )
+
+                Nothing ->
+                    ( model, Cmd.none )
 
         T.TaskChangeStatusRequest task status ->
             if status == "sent" then

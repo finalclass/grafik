@@ -1,4 +1,4 @@
-module Requests exposing (changeTaskStatus, changeTaskWorker, createNewTask, createOrUpdateClient, createOrUpdateProject, getAllData, importProject, removeTask, renameTask)
+module Requests exposing (changeTaskStatus, changeTaskWorker, createNewTask, createOrUpdateClient, createOrUpdateProject, getAllData, importProject, removeTask, renameTask, setTaskPrice)
 
 import Http
 import Json.Decode as D
@@ -232,15 +232,21 @@ renameTask task newName =
     modifyTask task [ ( "name", E.string newName ) ]
 
 
+setTaskPrice : T.Task -> Float -> Cmd T.Msg
+setTaskPrice task price =
+    modifyTask task [ ( "price", E.float price ) ]
+
+
 taskDecoder : D.Decoder T.Task
 taskDecoder =
-    D.map6 T.Task
+    D.map7 T.Task
         (D.field "id" D.int)
         (D.field "project_id" D.int)
         (D.field "worker_id" D.int)
         (D.field "name" D.string)
         (D.field "status" D.string)
         (D.field "sent_note" D.string)
+        (D.field "price" D.float)
 
 
 clientDecoder : D.Decoder T.Client

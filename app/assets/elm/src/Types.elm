@@ -65,6 +65,8 @@ type Msg
     | TaskRemoved Task (Result Http.Error Bool)
     | TaskRenameModalShow Task
     | TaskRenameRequest Task
+    | TaskChangePriceModalShow Task
+    | TaskPriceChangeRequest Task
     | TaskSetSentNote Task
     | TaskFixStatus String Task
     | TaskChangeStatusRequest Task String
@@ -187,6 +189,7 @@ type alias Task =
     , name : String
     , status : String
     , sent_note : String
+    , price : Float
     }
 
 

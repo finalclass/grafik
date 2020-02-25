@@ -174,3 +174,53 @@ sumProjectsPrice model =
 sumProjectsPaid : T.Model -> Float
 sumProjectsPaid model =
     List.foldl (\p acc -> acc + p.paid) 0 model.projects
+
+
+splitStringEvery : Int -> String -> String -> String
+splitStringEvery nofChars separator str =
+    if String.length str < nofChars then
+        str
+
+    else
+        splitStringEvery nofChars separator (String.dropRight nofChars str)
+            ++ separator
+            ++ String.right nofChars str
+
+
+addPriceZeros : String -> String
+addPriceZeros str =
+    if String.length str == 0 then
+        "00"
+
+    else if String.length str == 1 then
+        str ++ "0"
+
+    else if String.length str == 2 then
+        str
+
+    else
+        String.left 2 str
+
+
+formatPrice : Float -> String
+formatPrice price =
+    let
+        split =
+            price |> String.fromFloat |> String.split "."
+
+        int =
+            split
+                |> List.head
+                |> Maybe.withDefault "0"
+
+        intSeparated =
+            splitStringEvery 3 " " int
+
+        rest =
+            split
+                |> List.tail
+                |> Maybe.andThen List.head
+                |> Maybe.withDefault "00"
+                |> addPriceZeros
+    in
+    intSeparated ++ "." ++ rest
