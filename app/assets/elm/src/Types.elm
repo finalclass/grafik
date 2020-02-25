@@ -236,3 +236,7 @@ type alias Status =
     { id : String
     , name : String
     }
+
+type alias ProjectSaveResult = {
+    project : Project
+        tasks: List

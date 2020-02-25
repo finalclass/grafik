@@ -13,6 +13,7 @@ defmodule GrafikWeb.Api.ProjectController do
   end
 
   def update(conn, %{"project" => project_params, "tasks" => tasks}) do
+    IO.inspect(project_params)
     with {_, project} <- {:project, Projects.get_project!(project_params["id"])},
          {_, {:ok, project}} <- {:update, Projects.update_project(project, project_params)},
          {_, :ok} <- {:tasks, Projects.sync_project_tasks(project.id, tasks)} do

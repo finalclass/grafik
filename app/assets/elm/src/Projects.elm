@@ -396,15 +396,20 @@ importedProjectTasksView : Maybe T.ImportedProject -> Html T.ProjectsMsg
 importedProjectTasksView maybeImportedProject =
     case maybeImportedProject of
         Just importedProject ->
-            ul []
-                (importedProject.tasks
-                    |> List.map
-                        (\t ->
-                            li []
-                                [ text (String.fromInt t.count ++ "x " ++ t.name ++ " - " ++ String.fromFloat t.price ++ "zł")
-                                ]
-                        )
-                )
+            div []
+                [ strong []
+                    [ text "Po zapisaniu zlecenia poniższe wyroby zostaną dodane (jeśli nie były dodane wcześniej):"
+                    ]
+                , ul []
+                    (importedProject.tasks
+                        |> List.map
+                            (\t ->
+                                li []
+                                    [ text (String.fromInt t.count ++ "x " ++ t.name ++ " - " ++ String.fromFloat t.price ++ "zł")
+                                    ]
+                            )
+                    )
+                ]
 
         Nothing ->
             text ""

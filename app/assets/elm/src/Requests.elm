@@ -76,7 +76,8 @@ createOrUpdateProject editedProject =
                 (E.object
                     [ ( "project"
                       , E.object
-                            [ ( "name", E.string project.name )
+                            [ ( "id", E.int project.id )
+                            , ( "name", E.string project.name )
                             , ( "description", E.string project.description )
                             , ( "client_id", E.int project.client_id )
                             , ( "deadline", E.int (Time.posixToMillis project.deadline) )

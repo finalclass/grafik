@@ -270,10 +270,10 @@ defmodule Grafik.Projects do
     project = get_project_with_tasks!(project_id)
 
     tasks |> Enum.each(fn wfirma_task ->
-      unless has_task_by_wfirma_id(wfirma_task.wfirma_id, project.tasks) do
+      unless has_task_by_wfirma_id(wfirma_task["wfirma_id"], project.tasks) do
         %Task{}
         |> Task.changeset(%{
-          "name" => wfirma_task["name"],
+          "name" => Integer.to_string(wfirma_task["count"]) <> "x " <> wfirma_task["name"],
           "status" => "todo",
           "project_id" => project_id,
           "price" => wfirma_task["price"],
