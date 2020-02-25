@@ -192,7 +192,7 @@ sumFinishedTasks tasks =
             (\t acc ->
                 let
                     price =
-                        if t.status == "received" then
+                        if t.status == "received" || t.status == "sent" then
                             t.price
 
                         else
