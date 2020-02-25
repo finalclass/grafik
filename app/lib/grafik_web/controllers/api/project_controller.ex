@@ -33,7 +33,7 @@ defmodule GrafikWeb.Api.ProjectController do
   def create(conn, %{"project" => project_params, "tasks" => tasks}) do
     with {_, {:ok, project}} <- {:create, Projects.create_project(project_params)},
          {_, :ok} <- {:sync, Projects.sync_project_tasks(project.id, tasks)} do
-      render(conn, "project.json", project: project)
+      render(conn, "project.json", project: Projects.get_project_with_tasks!(project.id))
     else
       {:create, {:error, err}} ->
         project_save_error(conn, err)
