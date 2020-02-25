@@ -197,14 +197,6 @@ update msg model =
             , U.focus "modal-prompt-input"
             )
 
-        T.TaskChangePriceModalShow task ->
-            ( { model
-                | modal = T.ModalPrompt "Cena" (T.TaskPriceChangeRequest task)
-                , modalPromptValue = String.fromFloat task.price
-              }
-            , U.focus "modal-prompt-input"
-            )
-
         T.TaskRenameRequest task ->
             let
                 taskName =
@@ -218,10 +210,21 @@ update msg model =
             , R.renameTask task taskName
             )
 
+        T.TaskChangePriceModalShow task ->
+            ( { model
+                | modal = T.ModalPrompt "Cena" (T.TaskPriceChangeRequest task)
+                , modalPromptValue = String.fromFloat task.price
+              }
+            , U.focus "modal-prompt-input"
+            )
+
         T.TaskPriceChangeRequest task ->
             let
                 maybePrice =
-                    String.toFloat model.modalPromptValue
+                    model.modalPromptValue
+                        |> String.replace "," "."
+                        |> String.replace " " ""
+                        |> String.toFloat
             in
             case maybePrice of
                 Just price ->
