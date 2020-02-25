@@ -281,7 +281,7 @@ defmodule Grafik.Projects do
           "name" => Integer.to_string(wfirma_task["count"]) <> "x " <> wfirma_task["name"],
           "status" => "todo",
           "project_id" => project_id,
-          "price" => (wfirma_task["count"] * wfirma_task["price"] / 1),
+          "price" => wfirma_task["price"],
           "wfirma_invoicecontent_id" => wfirma_task["wfirma_id"]
         })
         |> Repo.insert()
