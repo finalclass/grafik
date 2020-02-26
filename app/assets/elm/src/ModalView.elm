@@ -36,6 +36,17 @@ modalView model =
         T.ModalEditProject ->
             Projects.editProjectModalView model
 
+        T.ModalAlert header renderView msg ->
+            alertModalView header renderView msg
+
+
+alertModalView : String -> Html T.Msg -> T.Msg -> Html T.Msg
+alertModalView header renderView msg =
+    commonModal header
+        [ renderView ]
+        [ button [ class "float-right", onClick msg ] [ text "OK" ]
+        ]
+
 
 commonModal : String -> List (Html T.Msg) -> List (Html T.Msg) -> Html T.Msg
 commonModal headerText body footer =

@@ -190,6 +190,11 @@
     flex: 1
 }
 
+.dashboard .total-price,
+.dashboard .project-prices {
+    cursor: help;
+}
+
 .dashboard .invoice-number {
     display: flex;
 }

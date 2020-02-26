@@ -104,6 +104,13 @@ update msg model =
             else
                 update T.ModalClose model
 
+        T.ShowAlertModal header renderView modalMsg ->
+            ( { model
+                | modal = T.ModalAlert header renderView modalMsg
+              }
+            , Cmd.none
+            )
+
         T.TaskCreated project result ->
             case result of
                 Ok task ->

@@ -145,6 +145,7 @@ totalPriceView : T.Model -> Html T.Msg
 totalPriceView model =
     div
         [ class "total-price"
+        , onClick (T.ShowAlertModal "Kwoty całkowite" (pricesView (U.sumProjectsPaid model) (U.sumAllFinished model) (U.sumProjectsPrice model)) T.ModalClose)
         , title "SUMA: zapłacono / wykonano / kwota całkowita"
         ]
         [ text
@@ -232,6 +233,7 @@ projectView model project =
                     ]
                 , span
                     [ class "project-details project-prices"
+                    , onClick (T.ShowAlertModal "Kwoty za zlecenie" (pricesView project.paid (U.sumFinishedTasks project.tasks) (U.sumProjectPrice project)) T.ModalClose)
                     , title "ZLECENIE: zapłacono / kwota wykonana / kwota całkowita"
                     ]
                     [ text
@@ -278,6 +280,15 @@ projectView model project =
       else
         text ""
     ]
+
+
+pricesView : Float -> Float -> Float -> Html T.Msg
+pricesView paid done total =
+    div []
+        [ div [] [ text ("Zapłacono: " ++ U.formatPrice paid ++ " PLN") ]
+        , div [] [ text ("Wykonano: " ++ U.formatPrice done ++ " PLN") ]
+        , div [] [ text ("Na fakturze: " ++ U.formatPrice total ++ " PLN") ]
+        ]
 
 
 taskView : T.Model -> T.Task -> Html T.Msg

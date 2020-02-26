@@ -1,6 +1,7 @@
 module Types exposing (..)
 
 import Dict exposing (Dict)
+import Html exposing (Html)
 import Http
 import Time
 
@@ -73,6 +74,7 @@ type Msg
     | ModalUpdatePromptValue String
     | ProjectsAction ProjectsMsg
     | ModalClose
+    | ShowAlertModal String (Html Msg) Msg
     | SearchEnterText String
     | NoOp
     | Focus String
@@ -92,6 +94,7 @@ type MainViewState
 
 type Modal
     = ModalHidden
+    | ModalAlert String (Html Msg) Msg
     | ModalConfirm String String Msg
     | ModalPrompt String Msg
     | ModalEditProject
