@@ -265,8 +265,8 @@ sortTasksByName tasks =
 
 allTasksFinished : List T.Task -> Bool
 allTasksFinished tasks =
-    tasks |> List.all (\t -> t.status == "sent" || t.status == "received")
+    List.length tasks > 0 && (tasks |> List.all (\t -> t.status == "sent" || t.status == "received"))
 
 
 allTasksSent tasks =
-    tasks |> List.all (\t -> t.status == "sent")
+    List.length tasks > 0 && (tasks |> List.all (\t -> t.status == "sent"))
