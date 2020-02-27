@@ -268,7 +268,7 @@ projectView model project =
         ]
     , if U.isProjectExpanded project model.expandedProjects then
         tbody []
-            (List.map (taskView model) project.tasks
+            (List.map (taskView model) (U.sortTasksByName project.tasks)
                 ++ [ addTaskButtonView project ]
             )
 

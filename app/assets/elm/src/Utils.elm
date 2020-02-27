@@ -256,3 +256,8 @@ formatPrice price =
                 |> addPriceZeros
     in
     intSeparated ++ "." ++ rest
+
+
+sortTasksByName : List T.Task -> List T.Task
+sortTasksByName tasks =
+    tasks |> List.sortBy .name
