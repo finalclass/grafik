@@ -78,10 +78,14 @@ mainView model =
 
                 else
                     [ div [ class "container" ]
-                        [ div [ class "row" ]
+                        [ div [ class "row tool-bar" ]
                             [ expandAllButtonView model
                             , searchBoxView model
-                            , totalPriceView model
+                            , pricesMiniView "Suma kwot za wszystkie zlecenia"
+                                { paid = U.sumProjectsPaid model
+                                , finished = U.sumAllFinished model
+                                , total = U.sumProjectsPrice model
+                                }
                             ]
                         ]
                     , button
@@ -141,21 +145,22 @@ expandAllButtonView model =
         ]
 
 
-totalPriceView : T.Model -> Html T.Msg
-totalPriceView model =
-    div
-        [ class "total-price"
-        , onClick (T.ShowAlertModal "Kwoty całkowite" (pricesView (U.sumProjectsPaid model) (U.sumAllFinished model) (U.sumProjectsPrice model)) T.ModalClose)
-        , title "SUMA: zapłacono / wykonano / kwota całkowita"
+pricesMiniView : String -> { paid : Float, finished : Float, total : Float } -> Html T.Msg
+pricesMiniView header prices =
+    span
+        [ class "prices-mini-view"
+        , onClick (T.ShowAlertModal header (pricesView prices) T.ModalClose)
+        , title (header ++ ": zapłacono / wykonano / kwota całkowita")
         ]
-        [ text
-            (U.formatPrice (U.sumProjectsPaid model)
-                ++ " / "
-                ++ U.formatPrice (U.sumAllFinished model)
-                ++ " / "
-                ++ U.formatPrice (U.sumProjectsPrice model)
-                ++ " PLN"
-            )
+        [ span [] [ text (U.formatPrice prices.paid ++ " / ") ]
+        , span [ class "finished-tasks-price" ] [ text (U.formatPrice prices.finished) ]
+        , span []
+            [ text
+                (" / "
+                    ++ U.formatPrice prices.total
+                    ++ " PLN"
+                )
+            ]
         ]
 
 
@@ -231,21 +236,11 @@ projectView model project =
                             ""
                         )
                     ]
-                , span
-                    [ class "project-details project-prices"
-                    , onClick (T.ShowAlertModal "Kwoty za zlecenie" (pricesView project.paid (U.sumFinishedTasks project.tasks) (U.sumProjectPrice project)) T.ModalClose)
-                    , title "ZLECENIE: zapłacono / kwota wykonana / kwota całkowita"
-                    ]
-                    [ text
-                        ("("
-                            ++ U.formatPrice project.paid
-                            ++ " / "
-                            ++ U.formatPrice (U.sumFinishedTasks project.tasks)
-                            ++ " / "
-                            ++ U.formatPrice (U.sumProjectPrice project)
-                            ++ " PLN)"
-                        )
-                    ]
+                , pricesMiniView "Za zlecenie"
+                    { paid = project.paid
+                    , finished = U.sumFinishedTasks project.tasks
+                    , total = U.sumProjectPrice project
+                    }
                 ]
             , th
                 [ colspan 2
@@ -282,12 +277,18 @@ projectView model project =
     ]
 
 
-pricesView : Float -> Float -> Float -> Html T.Msg
-pricesView paid done total =
+pricesView : { paid : Float, finished : Float, total : Float } -> Html T.Msg
+pricesView prices =
     div []
-        [ div [] [ text ("Zapłacono: " ++ U.formatPrice paid ++ " PLN") ]
-        , div [] [ text ("Wykonano: " ++ U.formatPrice done ++ " PLN") ]
-        , div [] [ text ("Na fakturze: " ++ U.formatPrice total ++ " PLN") ]
+        [ div [] [ text ("Zapłacono już przez klienta: " ++ U.formatPrice prices.paid ++ " PLN") ]
+        , div []
+            [ text
+                ("Produkty za tę kwote zostały wykonane (mają status \"Odebrane\" lub \"Wysłane\"): "
+                    ++ U.formatPrice prices.finished
+                    ++ " PLN"
+                )
+            ]
+        , div [] [ text ("Kwota na fakturze: " ++ U.formatPrice prices.total ++ " PLN") ]
         ]
 
 

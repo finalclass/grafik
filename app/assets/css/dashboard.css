@@ -44,6 +44,10 @@
     color: #6bbdff;
 }
 
+.dashboard .task-todo {
+    color: #f90;
+}
+
 .dashboard .task-sent {
     color: #bbb;
 }
@@ -185,14 +189,18 @@
     top: -2px;
 }
 
-.dashboard .total-price {
+.dashboard .prices-mini-view {
+    cursor: help;
+    font-weight: normal;
+}
+
+.dashboard .tool-bar .prices-mini-view {
     text-align: right;
     flex: 1
 }
 
-.dashboard .total-price,
-.dashboard .project-prices {
-    cursor: help;
+.dashboard .prices-mini-view .finished-tasks-price {
+    color: #6bbdff;
 }
 
 .dashboard .invoice-number {
