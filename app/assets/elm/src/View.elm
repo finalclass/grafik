@@ -205,7 +205,20 @@ mergeProjects model project all =
 projectView : T.Model -> T.Project -> List (Html T.Msg)
 projectView model project =
     [ thead []
-        [ tr [ class "project-row" ]
+        [ tr
+            [ class
+                ("project-row "
+                    ++ (if U.allTasksFinished project.tasks && not (U.allTasksSent project.tasks) then
+                            "finished"
+
+                        else if U.allTasksSent project.tasks then
+                            "sent"
+
+                        else
+                            ""
+                       )
+                )
+            ]
             [ th
                 [ onClick (T.ToggleProjectExpand project)
                 , class
@@ -220,21 +233,21 @@ projectView model project =
                 ]
                 []
             , th
-                [ class "project-name"
-                , onClick (T.ToggleProjectExpand project)
-                ]
-                [ text (project.name ++ " ")
-                , span
-                    [ class "project-details project-invoice_number"
-                    , title "numer faktury"
-                    ]
-                    [ text
-                        (if String.length project.invoice_number > 0 then
-                            "(" ++ project.invoice_number ++ ") "
+                [ class "project-name-row" ]
+                [ span [ onClick (T.ToggleProjectExpand project) ]
+                    [ span [ class "project-name" ] [ text (project.name ++ " ") ]
+                    , span
+                        [ class "project-details project-invoice_number"
+                        , title "numer faktury"
+                        ]
+                        [ text
+                            (if String.length project.invoice_number > 0 then
+                                "(" ++ project.invoice_number ++ ") "
 
-                         else
-                            ""
-                        )
+                             else
+                                ""
+                            )
+                        ]
                     ]
                 , pricesMiniView "Za zlecenie"
                     { paid = project.paid

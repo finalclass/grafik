@@ -261,3 +261,12 @@ formatPrice price =
 sortTasksByName : List T.Task -> List T.Task
 sortTasksByName tasks =
     tasks |> List.sortBy .name
+
+
+allTasksFinished : List T.Task -> Bool
+allTasksFinished tasks =
+    tasks |> List.all (\t -> t.status == "sent" || t.status == "received")
+
+
+allTasksSent tasks =
+    tasks |> List.all (\t -> t.status == "sent")

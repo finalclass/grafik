@@ -11,7 +11,7 @@
     padding-right: 0;
 }
 
-.dashboard .project-name {
+.dashboard .project-name-row {
     margin-left: 0;
     padding-left: 0;
     cursor: default;
@@ -75,6 +75,20 @@
 
 .dashboard .add-task-button-container {
     text-align: left;
+}
+
+.dashboard .project-row.finished .project-name {
+    color: #6bbdff;
+}
+
+.dashboard .project-row.sent .project-name {
+    color: #bbb;
+}
+
+.dashboard .project-row.finished .project-name:before {
+    content: '❗';
+    color: red;
+    padding-right: 2px;
 }
 
 .dashboard .project-buttons {
@@ -210,3 +224,4 @@
 .dashboard .invoice-number button {
     margin-left: 5px;
 }
+
