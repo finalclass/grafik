@@ -70,7 +70,7 @@
               Wfirma_id: <%= Integer.to_string(task["wfirma_invoicecontent_id"] || 0) %>
             </td>
             <td colspan="2">
-              <%= task["sent_node"] %>
+              <%= task["sent_note"] %>
             </td>
           </tr>
         <% end %>
