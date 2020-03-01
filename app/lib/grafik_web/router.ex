@@ -30,9 +30,11 @@ defmodule GrafikWeb.Router do
     pipe_through :api
 
     get "/all", DashboardController, :index
+    get "/projects/import/:invoice_number", ProjectController, :wfirma_import
     post "/projects/:project_id/tasks/", TaskController, :create
     delete "/projects/:project_id/tasks/:task_id", TaskController, :delete
     put "/projects/:project_id/tasks/:task_id", TaskController, :update
+    
     resources "/clients", ClientController, only: [:create, :update]
     resources "/projects", ProjectController, only: [:create, :update]
   end

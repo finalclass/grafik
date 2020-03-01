@@ -65,7 +65,11 @@
                 <%= worker_name(@backup, task["worker_id"]) %>
               </a>
             </td>
-            <td colspan="4">
+            <td colspan="2">
+              Cena: <%= Float.to_string(task["price"] || 0.0) %>&nbsp;PLN <br/>
+              Wfirma_id: <%= Integer.to_string(task["wfirma_invoicecontent_id"] || 0) %>
+            </td>
+            <td colspan="2">
               <%= task["sent_node"] %>
             </td>
           </tr>

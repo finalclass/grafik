@@ -1,6 +1,7 @@
 module Types exposing (..)
 
 import Dict exposing (Dict)
+import Html exposing (Html)
 import Http
 import Time
 
@@ -43,6 +44,8 @@ type ProjectsMsg
     | ProjectsOnClientIdSelected Int
     | ProjectsOnInputIsArchived String
     | ProjectsOnInputStartAtString String
+    | ProjectsOnImportRequest
+    | ProjectsOnImportReceived (Result Http.Error ImportedProject)
     | ProjectsEditClient ClientsMsg
     | ProjectsCreated (Result Http.Error Project)
     | ProjectsUpdated (Result Http.Error Project)
@@ -63,12 +66,15 @@ type Msg
     | TaskRemoved Task (Result Http.Error Bool)
     | TaskRenameModalShow Task
     | TaskRenameRequest Task
+    | TaskChangePriceModalShow Task
+    | TaskPriceChangeRequest Task
     | TaskSetSentNote Task
     | TaskFixStatus String Task
     | TaskChangeStatusRequest Task String
     | ModalUpdatePromptValue String
     | ProjectsAction ProjectsMsg
     | ModalClose
+    | ShowAlertModal String (Html Msg) Msg
     | SearchEnterText String
     | NoOp
     | Focus String
@@ -88,6 +94,7 @@ type MainViewState
 
 type Modal
     = ModalHidden
+    | ModalAlert String (Html Msg) Msg
     | ModalConfirm String String Msg
     | ModalPrompt String Msg
     | ModalEditProject
@@ -117,6 +124,36 @@ type alias Model =
     }
 
 
+type alias ImportedProjectClient =
+    { city : String
+    , country : String
+    , email : String
+    , name : String
+    , nip : String
+    , phone : String
+    , street : String
+    , wfirma_client_id : Int
+    , zip : String
+    }
+
+
+type alias ImportedProjectTask =
+    { count : Int
+    , name : String
+    , price : Float
+    , wfirma_good_id : Int
+    , wfirma_id : Int
+    }
+
+
+type alias ImportedProject =
+    { client : ImportedProjectClient
+    , price : Float
+    , wfirma_id : Int
+    , tasks : List ImportedProjectTask
+    }
+
+
 type alias EditedProject =
     { data : Project
     , deadlineString : String
@@ -124,6 +161,7 @@ type alias EditedProject =
     , startAtString : String
     , startAtErr : Maybe String
     , saveErr : Maybe String
+    , importedProject : Maybe ImportedProject
     }
 
 
@@ -154,6 +192,7 @@ type alias Task =
     , name : String
     , status : String
     , sent_note : String
+    , price : Float
     }
 
 

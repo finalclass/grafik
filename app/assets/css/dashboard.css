@@ -11,7 +11,7 @@
     padding-right: 0;
 }
 
-.dashboard .project-name {
+.dashboard .project-name-row {
     margin-left: 0;
     padding-left: 0;
     cursor: default;
@@ -35,12 +35,17 @@
     margin: 0;
 }
 
-.dashboard .task-name {
+.dashboard .task-name,
+.dashboard .task-price {
     cursor: default;
 }
 
 .dashboard .task-received {
     color: #6bbdff;
+}
+
+.dashboard .task-todo {
+    color: #f90;
 }
 
 .dashboard .task-sent {
@@ -70,6 +75,20 @@
 
 .dashboard .add-task-button-container {
     text-align: left;
+}
+
+.dashboard .project-row.finished .project-name {
+    color: #6bbdff;
+}
+
+.dashboard .project-row.sent .project-name {
+    color: #bbb;
+}
+
+.dashboard .project-row.finished .project-name:before {
+    content: '❗';
+    color: red;
+    padding-right: 2px;
 }
 
 .dashboard .project-buttons {
@@ -184,7 +203,25 @@
     top: -2px;
 }
 
-.dashboard .total-price {
+.dashboard .prices-mini-view {
+    cursor: help;
+    font-weight: normal;
+}
+
+.dashboard .tool-bar .prices-mini-view {
     text-align: right;
     flex: 1
 }
+
+.dashboard .prices-mini-view .finished-tasks-price {
+    color: #6bbdff;
+}
+
+.dashboard .invoice-number {
+    display: flex;
+}
+
+.dashboard .invoice-number button {
+    margin-left: 5px;
+}
+

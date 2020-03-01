@@ -28,27 +28,26 @@ defmodule Grafik.Projects do
 
   """
   def list_projects do
-    Repo.all query_projects()
+    Repo.all(query_projects())
   end
 
   def list_projects_filter_archived(archived?) do
     query = query_projects()
-    
+
     from(p in query, where: p.is_archived == ^archived?)
-      |> Repo.all
+    |> Repo.all()
   end
-  
+
   def query_projects do
     task_query = from t in Task, order_by: t.id
-    
+
     from p in Project,
       order_by: [asc: p.is_archived, asc: p.deadline],
       preload: [
         tasks: ^task_query
       ]
-    
   end
-    
+
   @doc """
   Gets a single project.
 
@@ -71,7 +70,7 @@ defmodule Grafik.Projects do
 
   def get_project_with_tasks!(id) do
     query = query_projects()
-    Repo.one(from(p in query, where: (p.id == ^id)))
+    Repo.one(from(p in query, where: p.id == ^id))
   end
 
   @doc """
@@ -242,25 +241,58 @@ defmodule Grafik.Projects do
   end
 
   def get_worker_tasks(worker_id) do
-    tasks_q = from t in Task,
-      where: t.worker_id == ^worker_id,
-      where: t.status != "received",
-      where: t.status != "sent"
-    client_q = from c in Grafik.Clients.Client
+    tasks_q =
+      from t in Task,
+        where: t.worker_id == ^worker_id,
+        where: t.status != "received",
+        where: t.status != "sent"
+
+    client_q = from(c in Grafik.Clients.Client)
+
     Repo.all(
       from p in Project,
-      join: t in Task,
-      on: t.project_id == p.id,
-      where: t.worker_id == ^worker_id,
-      where: p.is_archived != true,
-      where: t.status != "received",
-      where: t.status != "sent",
-      order_by: [asc: p.deadline],
-      group_by: p.id,
-      preload: [
-        tasks: ^tasks_q,
-        client: ^client_q
-      ]
+        join: t in Task,
+        on: t.project_id == p.id,
+        where: t.worker_id == ^worker_id,
+        where: p.is_archived != true,
+        where: t.status != "received",
+        where: t.status != "sent",
+        order_by: [asc: p.deadline],
+        group_by: p.id,
+        preload: [
+          tasks: ^tasks_q,
+          client: ^client_q
+        ]
     )
+  end
+
+  def sync_project_tasks(_project_id, nil) do
+    :ok
+  end
+  
+  def sync_project_tasks(project_id, tasks) do
+    project = get_project_with_tasks!(project_id)
+
+    tasks |> Enum.each(fn wfirma_task ->
+      unless has_task_by_wfirma_id(wfirma_task["wfirma_id"], project.tasks) do
+        IO.inspect(wfirma_task)
+        %Task{}
+        |> Task.changeset(%{
+          "name" => Integer.to_string(wfirma_task["count"]) <> "x " <> wfirma_task["name"],
+          "status" => "todo",
+          "project_id" => project_id,
+          "price" => wfirma_task["price"],
+          "wfirma_invoicecontent_id" => wfirma_task["wfirma_id"]
+        })
+        |> Repo.insert()
+      end
+    end)
+    :ok
+  end
+
+  defp has_task_by_wfirma_id(wfirma_id, project_tasks) do
+    project_tasks |> Enum.any?(fn task ->
+      task.wfirma_invoicecontent_id == wfirma_id
+    end)
   end
 end

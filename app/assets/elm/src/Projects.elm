@@ -31,7 +31,7 @@ update msg model =
             )
 
         T.ProjectsSaveRequest ->
-            ( { model | mainViewState = T.LoadingState }, R.createOrUpdateProject model.editedProject.data )
+            ( { model | mainViewState = T.LoadingState }, R.createOrUpdateProject model.editedProject )
 
         T.ProjectsCreated project ->
             case project of
@@ -159,6 +159,20 @@ update msg model =
         T.ProjectsOnInputPaid newPaidString ->
             ( model |> updateEditedProjectData (\p -> { p | paid = Maybe.withDefault 0.0 (String.toFloat newPaidString) }), Cmd.none )
 
+        T.ProjectsOnImportRequest ->
+            ( { model | mainViewState = T.LoadingState }, R.importProject model.editedProject.data.invoice_number )
+
+        T.ProjectsOnImportReceived importedProjectResult ->
+            case importedProjectResult of
+                Ok importedProject ->
+                    ( { model | mainViewState = T.SuccessState }
+                        |> updateEditedProject (\ed -> { ed | importedProject = Just importedProject })
+                    , Cmd.none
+                    )
+
+                Err err ->
+                    ( model |> saveError, Cmd.none )
+
         T.ProjectsEditClient clientMsg ->
             Clients.update clientMsg model
 
@@ -189,6 +203,7 @@ initEditedProject project model =
                 , startAtString = Dates.displayDate model project.start_at
                 , startAtErr = Nothing
                 , saveErr = Nothing
+                , importedProject = Nothing
                 }
             )
 
@@ -288,6 +303,21 @@ formView model =
                 []
             ]
         , label []
+            [ span [] [ text "Numer faktury / oferty" ]
+            , div [ class "invoice-number" ]
+                [ input
+                    [ type_ "text"
+                    , value data.invoice_number
+                    , onInput T.ProjectsOnInputInvoiceNumber
+                    ]
+                    []
+                , button
+                    [ onClick T.ProjectsOnImportRequest ]
+                    [ text "importuj z wfirma" ]
+                ]
+            ]
+        , importedProjectTasksView model.editedProject.importedProject
+        , label []
             [ span [] [ text "Notatka" ]
             , textarea
                 [ onInput T.ProjectsOnInputDescription
@@ -331,15 +361,6 @@ formView model =
                 )
             ]
         , label []
-            [ span [] [ text "Numer faktury / oferty" ]
-            , input
-                [ type_ "text"
-                , value data.invoice_number
-                , onInput T.ProjectsOnInputInvoiceNumber
-                ]
-                []
-            ]
-        , label []
             [ span [] [ text "Cena" ]
             , input
                 [ type_ "number"
@@ -369,6 +390,29 @@ formView model =
                 []
             ]
         ]
+
+
+importedProjectTasksView : Maybe T.ImportedProject -> Html T.ProjectsMsg
+importedProjectTasksView maybeImportedProject =
+    case maybeImportedProject of
+        Just importedProject ->
+            div []
+                [ strong []
+                    [ text "Po zapisaniu zlecenia poniższe wyroby zostaną dodane (jeśli nie były dodane wcześniej):"
+                    ]
+                , ul []
+                    (importedProject.tasks
+                        |> List.map
+                            (\t ->
+                                li []
+                                    [ text (String.fromInt t.count ++ "x " ++ t.name ++ " - " ++ U.formatPrice t.price ++ " PLN")
+                                    ]
+                            )
+                    )
+                ]
+
+        Nothing ->
+            text ""
 
 
 editProjectModalView : T.Model -> Html T.Msg

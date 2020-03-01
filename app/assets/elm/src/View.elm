@@ -78,10 +78,14 @@ mainView model =
 
                 else
                     [ div [ class "container" ]
-                        [ div [ class "row" ]
+                        [ div [ class "row tool-bar" ]
                             [ expandAllButtonView model
                             , searchBoxView model
-                            , totalPriceView model
+                            , pricesMiniView "Suma kwot za wszystkie zlecenia"
+                                { paid = U.sumProjectsPaid model
+                                , finished = U.sumAllFinished model
+                                , total = U.sumProjectsPrice model
+                                }
                             ]
                         ]
                     , button
@@ -141,18 +145,22 @@ expandAllButtonView model =
         ]
 
 
-totalPriceView : T.Model -> Html T.Msg
-totalPriceView model =
-    div
-        [ class "total-price"
-        , title "zapłacono / kwota za wszystkie zlecenia"
+pricesMiniView : String -> { paid : Float, finished : Float, total : Float } -> Html T.Msg
+pricesMiniView header prices =
+    span
+        [ class "prices-mini-view"
+        , onClick (T.ShowAlertModal header (pricesView prices) T.ModalClose)
+        , title (header ++ ": zapłacono / wykonano / kwota całkowita")
         ]
-        [ text
-            (formatPrice (U.sumProjectsPaid model)
-                ++ " / "
-                ++ formatPrice (U.sumProjectsPrice model)
-                ++ " PLN"
-            )
+        [ span [] [ text (U.formatPrice prices.paid ++ " / ") ]
+        , span [ class "finished-tasks-price" ] [ text (U.formatPrice prices.finished) ]
+        , span []
+            [ text
+                (" / "
+                    ++ U.formatPrice prices.total
+                    ++ " PLN"
+                )
+            ]
         ]
 
 
@@ -197,7 +205,20 @@ mergeProjects model project all =
 projectView : T.Model -> T.Project -> List (Html T.Msg)
 projectView model project =
     [ thead []
-        [ tr [ class "project-row" ]
+        [ tr
+            [ class
+                ("project-row "
+                    ++ (if U.allTasksFinished project.tasks && not (U.allTasksSent project.tasks) then
+                            "finished"
+
+                        else if U.allTasksSent project.tasks then
+                            "sent"
+
+                        else
+                            ""
+                       )
+                )
+            ]
             [ th
                 [ onClick (T.ToggleProjectExpand project)
                 , class
@@ -212,37 +233,31 @@ projectView model project =
                 ]
                 []
             , th
-                [ class "project-name"
-                , onClick (T.ToggleProjectExpand project)
-                ]
-                [ text (project.name ++ " ")
-                , span
-                    [ class "project-details project-invoice_number"
-                    , title "numer faktury"
-                    ]
-                    [ text
-                        (if String.length project.invoice_number > 0 then
-                            "(" ++ project.invoice_number ++ ")"
+                [ class "project-name-row" ]
+                [ span [ onClick (T.ToggleProjectExpand project) ]
+                    [ span [ class "project-name" ] [ text (project.name ++ " ") ]
+                    , span
+                        [ class "project-details project-invoice_number"
+                        , title "numer faktury"
+                        ]
+                        [ text
+                            (if String.length project.invoice_number > 0 then
+                                "(" ++ project.invoice_number ++ ") "
 
-                         else
-                            ""
-                        )
+                             else
+                                ""
+                            )
+                        ]
                     ]
-                , span
-                    [ class "project-details project-prices"
-                    , title "zapłacono / kwota całkowita"
-                    ]
-                    [ text
-                        ("("
-                            ++ formatPrice project.paid
-                            ++ " / "
-                            ++ formatPrice project.price
-                            ++ " PLN)"
-                        )
-                    ]
+                , pricesMiniView "Za zlecenie"
+                    { paid = project.paid
+                    , finished = U.sumFinishedTasks project.tasks
+                    , total = U.sumProjectPrice project
+                    }
                 ]
             , th
-                [ class
+                [ colspan 2
+                , class
                     ("project-deadline "
                         ++ (if project.is_deadline_rigid then
                                 "rigid-deadline"
@@ -266,13 +281,28 @@ projectView model project =
         ]
     , if U.isProjectExpanded project model.expandedProjects then
         tbody []
-            (List.map (taskView model) project.tasks
+            (List.map (taskView model) (U.sortTasksByName project.tasks)
                 ++ [ addTaskButtonView project ]
             )
 
       else
         text ""
     ]
+
+
+pricesView : { paid : Float, finished : Float, total : Float } -> Html T.Msg
+pricesView prices =
+    div []
+        [ div [] [ text ("Zapłacono już przez klienta: " ++ U.formatPrice prices.paid ++ " PLN") ]
+        , div []
+            [ text
+                ("Produkty za tę kwote zostały wykonane (mają status \"Odebrane\" lub \"Wysłane\"): "
+                    ++ U.formatPrice prices.finished
+                    ++ " PLN"
+                )
+            ]
+        , div [] [ text ("Kwota na fakturze: " ++ U.formatPrice prices.total ++ " PLN") ]
+        ]
 
 
 taskView : T.Model -> T.Task -> Html T.Msg
@@ -285,6 +315,11 @@ taskView model task =
             , title task.sent_note
             ]
             [ text task.name ]
+        , td
+            [ class "task-price"
+            , onClick (T.TaskChangePriceModalShow task)
+            ]
+            [ text (U.formatPrice task.price ++ " PLN") ]
         , td [ class "task-worker-select-container" ] [ selectWorkerView model task ]
         , td [ class "task-status-select-container" ] [ selectTaskStatusView model task ]
         , td [ class "task-remove-button-container" ]

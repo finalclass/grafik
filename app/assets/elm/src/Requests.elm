@@ -1,4 +1,4 @@
-module Requests exposing (changeTaskStatus, changeTaskWorker, createNewTask, createOrUpdateClient, createOrUpdateProject, getAllData, removeTask, renameTask)
+module Requests exposing (changeTaskStatus, changeTaskWorker, createNewTask, createOrUpdateClient, createOrUpdateProject, getAllData, importProject, removeTask, renameTask, setTaskPrice)
 
 import Http
 import Json.Decode as D
@@ -6,6 +6,7 @@ import Json.Decode.Pipeline exposing (optional, required)
 import Json.Encode as E
 import Time
 import Types as T
+import Url
 
 
 decodeTime : D.Decoder Time.Posix
@@ -34,9 +35,22 @@ getAllData projectsType =
         }
 
 
-createOrUpdateProject : T.Project -> Cmd T.Msg
-createOrUpdateProject project =
+importProject : String -> Cmd T.Msg
+importProject invoiceNumber =
+    Http.get
+        { url = "/api/projects/import/" ++ Url.percentEncode invoiceNumber
+        , expect =
+            Http.expectJson (\res -> T.ProjectsAction (T.ProjectsOnImportReceived res))
+                importProjectDecoder
+        }
+
+
+createOrUpdateProject : T.EditedProject -> Cmd T.Msg
+createOrUpdateProject editedProject =
     let
+        project =
+            editedProject.data
+
         data =
             if project.id /= 0 then
                 { url = "/api/projects/" ++ String.fromInt project.id
@@ -60,17 +74,40 @@ createOrUpdateProject project =
         , body =
             Http.jsonBody
                 (E.object
-                    [ ( "name", E.string project.name )
-                    , ( "description", E.string project.description )
-                    , ( "client_id", E.int project.client_id )
-                    , ( "deadline", E.int (Time.posixToMillis project.deadline) )
-                    , ( "start_at", E.int (Time.posixToMillis project.start_at) )
-                    , ( "name", E.string project.name )
-                    , ( "is_archived", E.bool project.is_archived )
-                    , ( "invoice_number", E.string project.invoice_number )
-                    , ( "price", E.float project.price )
-                    , ( "paid", E.float project.paid )
-                    , ( "is_deadline_rigid", E.bool project.is_deadline_rigid )
+                    [ ( "project"
+                      , E.object
+                            [ ( "id", E.int project.id )
+                            , ( "name", E.string project.name )
+                            , ( "description", E.string project.description )
+                            , ( "client_id", E.int project.client_id )
+                            , ( "deadline", E.int (Time.posixToMillis project.deadline) )
+                            , ( "start_at", E.int (Time.posixToMillis project.start_at) )
+                            , ( "name", E.string project.name )
+                            , ( "is_archived", E.bool project.is_archived )
+                            , ( "invoice_number", E.string project.invoice_number )
+                            , ( "price", E.float project.price )
+                            , ( "paid", E.float project.paid )
+                            , ( "is_deadline_rigid", E.bool project.is_deadline_rigid )
+                            ]
+                      )
+                    , ( "tasks"
+                      , case editedProject.importedProject of
+                            Just importedProject ->
+                                importedProject.tasks
+                                    |> E.list
+                                        (\task ->
+                                            E.object
+                                                [ ( "count", E.int task.count )
+                                                , ( "name", E.string task.name )
+                                                , ( "price", E.float task.price )
+                                                , ( "wfirma_good_id", E.int task.wfirma_good_id )
+                                                , ( "wfirma_id", E.int task.wfirma_id )
+                                                ]
+                                        )
+
+                            Nothing ->
+                                E.null
+                      )
                     ]
                 )
         }
@@ -195,15 +232,21 @@ renameTask task newName =
     modifyTask task [ ( "name", E.string newName ) ]
 
 
+setTaskPrice : T.Task -> Float -> Cmd T.Msg
+setTaskPrice task price =
+    modifyTask task [ ( "price", E.float price ) ]
+
+
 taskDecoder : D.Decoder T.Task
 taskDecoder =
-    D.map6 T.Task
+    D.map7 T.Task
         (D.field "id" D.int)
         (D.field "project_id" D.int)
         (D.field "worker_id" D.int)
         (D.field "name" D.string)
         (D.field "status" D.string)
         (D.field "sent_note" D.string)
+        (D.field "price" D.float)
 
 
 clientDecoder : D.Decoder T.Client
@@ -267,6 +310,38 @@ projectsDecoder =
         (D.field "clients"
             (D.list
                 clientDecoder
+            )
+        )
+
+
+importProjectDecoder : D.Decoder T.ImportedProject
+importProjectDecoder =
+    D.map4 T.ImportedProject
+        (D.field "client"
+            (D.succeed
+                T.ImportedProjectClient
+                |> required "city" D.string
+                |> required "country" D.string
+                |> required "email" D.string
+                |> required "name" D.string
+                |> required "nip" D.string
+                |> required "phone" D.string
+                |> required "street" D.string
+                |> required "wfirma_client_id" D.int
+                |> required "zip" D.string
+            )
+        )
+        (D.field "price" D.float)
+        (D.field "wfirma_id" D.int)
+        (D.field "tasks"
+            (D.list
+                (D.map5 T.ImportedProjectTask
+                    (D.field "count" D.int)
+                    (D.field "name" D.string)
+                    (D.field "price" D.float)
+                    (D.field "wfirma_good_id" D.int)
+                    (D.field "wfirma_id" D.int)
+                )
             )
         )
 

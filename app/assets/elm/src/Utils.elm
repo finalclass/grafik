@@ -168,9 +168,105 @@ allProjectsExpanded model =
 
 sumProjectsPrice : T.Model -> Float
 sumProjectsPrice model =
-    List.foldl (\p acc -> acc + p.price) 0 model.projects
+    List.foldl (\p acc -> acc + sumProjectPrice p) 0 model.projects
 
 
 sumProjectsPaid : T.Model -> Float
 sumProjectsPaid model =
     List.foldl (\p acc -> acc + p.paid) 0 model.projects
+
+
+sumProjectPrice : T.Project -> Float
+sumProjectPrice project =
+    if project.price > 0 then
+        project.price
+
+    else
+        project.tasks |> List.foldl (\t acc -> acc + t.price) 0
+
+
+sumFinishedTasks : List T.Task -> Float
+sumFinishedTasks tasks =
+    tasks
+        |> List.foldl
+            (\t acc ->
+                let
+                    price =
+                        if t.status == "received" || t.status == "sent" then
+                            t.price
+
+                        else
+                            0
+                in
+                acc + price
+            )
+            0
+
+
+sumAllFinished : T.Model -> Float
+sumAllFinished model =
+    model.projects |> List.foldl (\p acc -> acc + sumFinishedTasks p.tasks) 0
+
+
+splitStringEvery : Int -> String -> String -> String
+splitStringEvery nofChars separator str =
+    if String.length str < nofChars then
+        str
+
+    else
+        splitStringEvery nofChars separator (String.dropRight nofChars str)
+            ++ separator
+            ++ String.right nofChars str
+
+
+addPriceZeros : String -> String
+addPriceZeros str =
+    if String.length str == 0 then
+        "00"
+
+    else if String.length str == 1 then
+        str ++ "0"
+
+    else if String.length str == 2 then
+        str
+
+    else
+        String.left 2 str
+
+
+formatPrice : Float -> String
+formatPrice price =
+    let
+        split =
+            price |> String.fromFloat |> String.split "."
+
+        int =
+            split
+                |> List.head
+                |> Maybe.withDefault "0"
+
+        intSeparated =
+            splitStringEvery 3 " " int
+
+        rest =
+            split
+                |> List.tail
+                |> Maybe.andThen List.head
+                |> Maybe.withDefault "00"
+                |> addPriceZeros
+    in
+    intSeparated ++ "." ++ rest
+
+
+sortTasksByName : List T.Task -> List T.Task
+sortTasksByName tasks =
+    tasks |> List.sortBy .name
+
+
+allTasksFinished : List T.Task -> Bool
+allTasksFinished tasks =
+    List.length tasks > 0 && (tasks |> List.all (\t -> t.status == "sent" || t.status == "received"))
+
+
+allTasksSent tasks =
+    List.length tasks > 0 && (tasks |> List.all (\t -> t.status == "sent"))

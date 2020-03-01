@@ -35,6 +35,7 @@ init flags =
             , startAtErr = Nothing
             , startAtString = ""
             , saveErr = Nothing
+            , importedProject = Nothing
             }
       , editedClient =
             { data = Clients.emptyClient
@@ -102,6 +103,13 @@ update msg model =
 
             else
                 update T.ModalClose model
+
+        T.ShowAlertModal header renderView modalMsg ->
+            ( { model
+                | modal = T.ModalAlert header renderView modalMsg
+              }
+            , Cmd.none
+            )
 
         T.TaskCreated project result ->
             case result of
@@ -208,6 +216,35 @@ update msg model =
               }
             , R.renameTask task taskName
             )
+
+        T.TaskChangePriceModalShow task ->
+            ( { model
+                | modal = T.ModalPrompt "Cena" (T.TaskPriceChangeRequest task)
+                , modalPromptValue = U.formatPrice task.price
+              }
+            , U.focus "modal-prompt-input"
+            )
+
+        T.TaskPriceChangeRequest task ->
+            let
+                maybePrice =
+                    model.modalPromptValue
+                        |> String.replace "," "."
+                        |> String.replace " " ""
+                        |> String.toFloat
+            in
+            case maybePrice of
+                Just price ->
+                    ( { model
+                        | modalPromptValue = ""
+                        , modal = T.ModalHidden
+                        , mainViewState = T.LoadingState
+                      }
+                    , R.setTaskPrice task price
+                    )
+
+                Nothing ->
+                    ( model, Cmd.none )
 
         T.TaskChangeStatusRequest task status ->
             if status == "sent" then
