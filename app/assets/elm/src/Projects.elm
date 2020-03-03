@@ -405,7 +405,7 @@ importedProjectTasksView maybeImportedProject =
                         |> List.map
                             (\t ->
                                 li []
-                                    [ text (String.fromInt t.count ++ "x " ++ t.name ++ " - " ++ U.formatPrice t.price ++ " PLN")
+                                    [ text (String.fromInt t.count ++ "x " ++ t.name ++ " - " ++ U.formatPrice t.price ++ "zł")
                                     ]
                             )
                     )

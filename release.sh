@@ -14,7 +14,7 @@ docker build \
        --tag finalclass/grafik:latest \
        .
        
-# docker push finalclass/grafik:latest
+docker push finalclass/grafik:latest
 
-# ssh fc1 "fc-grafik sync && fc-grafik restart"
+ssh fc1 "fc-grafik sync && fc-grafik restart"
 

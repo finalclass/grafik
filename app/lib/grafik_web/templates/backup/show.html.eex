@@ -66,7 +66,7 @@
               </a>
             </td>
             <td colspan="2">
-              Cena: <%= Float.to_string(task["price"] || 0.0) %>&nbsp;PLN <br/>
+              Cena: <%= Float.to_string(task["price"] || 0.0) %>zł <br/>
               Wfirma_id: <%= Integer.to_string(task["wfirma_invoicecontent_id"] || 0) %>
             </td>
             <td colspan="2">

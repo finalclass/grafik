@@ -158,7 +158,7 @@ pricesMiniView header prices =
             [ text
                 (" / "
                     ++ U.formatPrice prices.total
-                    ++ " PLN"
+                    ++ "zł"
                 )
             ]
         ]
@@ -293,15 +293,15 @@ projectView model project =
 pricesView : { paid : Float, finished : Float, total : Float } -> Html T.Msg
 pricesView prices =
     div []
-        [ div [] [ text ("Zapłacono już przez klienta: " ++ U.formatPrice prices.paid ++ " PLN") ]
+        [ div [] [ text ("Zapłacono już przez klienta: " ++ U.formatPrice prices.paid ++ "zł") ]
         , div []
             [ text
                 ("Produkty za tę kwote zostały wykonane (mają status \"Odebrane\" lub \"Wysłane\"): "
                     ++ U.formatPrice prices.finished
-                    ++ " PLN"
+                    ++ "zł"
                 )
             ]
-        , div [] [ text ("Kwota na fakturze: " ++ U.formatPrice prices.total ++ " PLN") ]
+        , div [] [ text ("Kwota na fakturze: " ++ U.formatPrice prices.total ++ "zł") ]
         ]
 
 
@@ -319,7 +319,7 @@ taskView model task =
             [ class "task-price"
             , onClick (T.TaskChangePriceModalShow task)
             ]
-            [ text (U.formatPrice task.price ++ " PLN") ]
+            [ text (U.formatPrice task.price ++ "zł") ]
         , td [ class "task-worker-select-container" ] [ selectWorkerView model task ]
         , td [ class "task-status-select-container" ] [ selectTaskStatusView model task ]
         , td [ class "task-remove-button-container" ]
