@@ -47,7 +47,6 @@ defmodule GrafikWeb.Api.ProjectController do
 
       {:error, err} ->
         IO.inspect(err)
-
         conn
         |> put_status(500)
         |> render("project-wfirma-import-error.json")

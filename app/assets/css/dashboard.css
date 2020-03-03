@@ -20,7 +20,6 @@
 
 .dashboard .project-deadline {
     font-weight: normal;
-    width: 115px;
 }
 
 .dashboard .project-deadline.rigid-deadline {
@@ -91,11 +90,16 @@
     padding-right: 2px;
 }
 
-.dashboard .project-buttons {
+.dashboard .project-utils {
     padding: 0 0.2rem;
+    min-width: 180px;
 }
 
-.dashboard .project-buttons .button {
+.dashboard .project-utils .project-deadline {
+    margin-right: 3px;
+}
+
+.dashboard .project-utils .button {
     margin-left: 0.2rem;
 }
 

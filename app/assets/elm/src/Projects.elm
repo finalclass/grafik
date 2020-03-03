@@ -171,7 +171,7 @@ update msg model =
                     )
 
                 Err err ->
-                    ( model |> saveError, Cmd.none )
+                    ( { model | mainViewState = T.SuccessState }, Cmd.none )
 
         T.ProjectsEditClient clientMsg ->
             Clients.update clientMsg model

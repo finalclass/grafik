@@ -233,7 +233,7 @@ projectView model project =
                 ]
                 []
             , th
-                [ class "project-name-row" ]
+                [ class "project-name-row", colspan 3 ]
                 [ span [ onClick (T.ToggleProjectExpand project) ]
                     [ span [ class "project-name" ] [ text (project.name ++ " ") ]
                     , span
@@ -255,22 +255,21 @@ projectView model project =
                     , total = U.sumProjectPrice project
                     }
                 ]
-            , th
-                [ colspan 2
-                , class
-                    ("project-deadline "
-                        ++ (if project.is_deadline_rigid then
-                                "rigid-deadline"
+            , th [ colspan 2, class "project-utils" ]
+                [ span
+                    [ class
+                        ("project-deadline "
+                            ++ (if project.is_deadline_rigid then
+                                    "rigid-deadline"
 
-                            else
-                                ""
-                           )
-                    )
-                , title (U.ternary project.is_deadline_rigid "Sztywny" "Luźny" ++ " termin")
-                ]
-                [ text (Dates.displayDate model project.deadline) ]
-            , th [ colspan 2, class "project-buttons" ]
-                [ a
+                                else
+                                    ""
+                               )
+                        )
+                    , title (U.ternary project.is_deadline_rigid "Sztywny" "Luźny" ++ " termin")
+                    ]
+                    [ text (Dates.displayDate model project.deadline) ]
+                , a
                     [ class "button button-outline"
                     , title "Edycja zlecenia"
                     , onClick (T.ProjectsAction (T.ProjectsStartEdit project))
