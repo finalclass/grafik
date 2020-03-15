@@ -5,7 +5,9 @@
  .project-deadline {
      float: right;
  }
-
+ .project-deadline.rigid-deadline {
+     color: #f00;
+ }
  .row {
      overflow:hidden;
  }
@@ -17,7 +19,7 @@
       <h3 class="project-name">
         <%= project.client.name %>
       </h3>
-      <h4 class="project-deadline">
+      <h4 class="project-deadline <%= if project.is_deadline_rigid do "rigid-deadline" end %>">
         Termin: <%= Date.to_iso8601(project.deadline) %>
       </h4>
     </div>
