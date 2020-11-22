@@ -1,6 +1,8 @@
 module State exposing (init, update)
 
+import Browser
 import Browser.Dom
+import Browser.Navigation as Nav
 import Clients
 import Dates
 import Dict
@@ -10,12 +12,14 @@ import Requests as R
 import Task
 import Time
 import Types as T
+import Url exposing (Url)
 import Utils as U
 
 
-init : String -> ( T.Model, Cmd T.Msg )
-init flags =
+init : String -> Url -> Nav.Key -> ( T.Model, Cmd T.Msg )
+init flags url navKey =
     ( { projectsType = T.CurrentProjects
+      , navKey = navKey
       , projects = []
       , workers = []
       , statuses = []
@@ -71,6 +75,21 @@ update msg model =
 
                 Err _ ->
                     ( { model | mainViewState = T.FailureState }, Cmd.none )
+
+        T.ClickedLink urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model
+                    , Nav.pushUrl model.navKey (Url.toString url)
+                    )
+
+                Browser.External url ->
+                    ( model
+                    , Nav.load url
+                    )
+
+        T.UrlChanged url ->
+            ( model, Cmd.none )
 
         T.GotZone zone ->
             ( { model | zone = zone }, Task.perform T.GotTime Time.now )

@@ -14,18 +14,6 @@ defmodule GrafikWeb.Router do
 
   end
 
-  scope "/", GrafikWeb do
-    pipe_through :browser
-
-    get "/", DashboardController, :index
-    resources "/workers", WorkerController
-
-    get "/workers/:id/print", WorkerController, :print
-    get "/backups", BackupController, :index
-    get "/backups/:file_name", BackupController, :show
-  end
-
-  # Other scopes may use custom stacks.
   scope "/api", GrafikWeb.Api, as: :api do
     pipe_through :api
 
@@ -38,4 +26,14 @@ defmodule GrafikWeb.Router do
     resources "/clients", ClientController, only: [:create, :update]
     resources "/projects", ProjectController, only: [:create, :update]
   end
+  
+  scope "/", GrafikWeb do
+    pipe_through :browser
+
+    get "/workers/:id/print", WorkerController, :print
+    get "/backups", BackupController, :index
+    get "/backups/:file_name", BackupController, :show
+    get "/*path", DashboardController, :index
+  end
+
 end
