@@ -3,6 +3,7 @@ module Main exposing (main)
 import Browser
 import Browser.Navigation as Nav
 import Element
+import Tasks.State
 import Types exposing (..)
 import Url
 import Url.Parser as UrlParser
@@ -25,6 +26,7 @@ init : String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url navKey =
     ( { navKey = navKey
       , route = urlToRoute url
+      , tasks = Tasks.State.init
       }
     , Cmd.none
     )
@@ -53,6 +55,13 @@ update msg model =
             ( { model | route = urlToRoute url }
             , Cmd.none
             )
+
+        TasksMsg subMsg ->
+            let
+                ( tasks, cmd ) =
+                    Tasks.State.update subMsg model.tasks
+            in
+            ( { model | tasks = tasks }, cmd )
 
 
 urlToRoute : Url.Url -> Route

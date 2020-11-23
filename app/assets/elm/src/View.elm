@@ -3,6 +3,7 @@ module View exposing (..)
 import Element exposing (..)
 import Element.Background as Background
 import Element.Font as Font
+import Tasks.View
 import Types exposing (..)
 
 
@@ -24,13 +25,15 @@ layout model =
                     ]
                 ]
             ]
-        , case model.route of
-            TasksRoute ->
-                el [] (text "Tasks")
+        , row [ width (px 1120), centerX ]
+            [ case model.route of
+                TasksRoute ->
+                    map (\msg -> TasksMsg msg) (Tasks.View.layout model.tasks)
 
-            WorkersRoute ->
-                el [] (text "Workers")
+                WorkersRoute ->
+                    el [] (text "Workers")
 
-            NotFoundRoute ->
-                el [] (text "Not found")
+                NotFoundRoute ->
+                    el [] (text "Not found")
+            ]
         ]
