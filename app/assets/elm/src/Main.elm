@@ -27,12 +27,15 @@ init flags url navKey =
     let
         ( tasks, cmd ) =
             Tasks.State.init
+
+        mappedCmd =
+            Cmd.map (\tasksMsg -> TasksMsg tasksMsg) cmd
     in
     ( { navKey = navKey
       , route = urlToRoute url
       , tasks = tasks
       }
-    , cmd
+    , mappedCmd
     )
 
 
@@ -56,16 +59,33 @@ update msg model =
                     ( model, Nav.load url )
 
         ChangeUrl url ->
-            ( { model | route = urlToRoute url }
-            , Cmd.none
-            )
+            let
+                route =
+                    urlToRoute url
+
+                ( newModel, cmd ) =
+                    case route of
+                        TasksRoute ->
+                            let
+                                ( tasksModel, tasksCmd ) =
+                                    Tasks.State.init
+                            in
+                            ( { model | tasks = tasksModel }, Cmd.map (\tasksMsg -> TasksMsg tasksMsg) tasksCmd )
+
+                        WorkersRoute ->
+                            ( model, Cmd.none )
+
+                        NotFoundRoute ->
+                            ( model, Cmd.none )
+            in
+            ( { newModel | route = route }, cmd )
 
         TasksMsg subMsg ->
             let
-                ( tasks, cmd ) =
+                ( tasksModel, tasksCmd ) =
                     Tasks.State.update subMsg model.tasks
             in
-            ( { model | tasks = tasks }, cmd )
+            ( { model | tasks = tasksModel }, Cmd.map (\tasksMsg -> TasksMsg tasksMsg) tasksCmd )
 
 
 urlToRoute : Url.Url -> Route

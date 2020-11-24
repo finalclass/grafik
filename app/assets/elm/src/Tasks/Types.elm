@@ -1,11 +1,17 @@
 module Tasks.Types exposing (..)
 
+import Dict exposing (Dict)
 import Http
+import List
 import Time
 
 
 type Msg
     = CurrentProjectsReceived (Result Http.Error AllData)
+    | GotZone Time.Zone
+    | GotTime Time.Posix
+    | Focus String
+    | NoOp
 
 
 type MainViewState
@@ -14,9 +20,28 @@ type MainViewState
     | FailureState
 
 
+type ProjectsType
+    = CurrentProjects
+    | ArchivedProjects
+
+
 type alias Model =
     { mainViewState : MainViewState
+    , projectsType : ProjectsType
+    , projects : List Project
+    , workers : List Worker
+    , statuses : List Status
+    , clients : List Client
+    , visibleProjects : List Int
+    , zone : Time.Zone
+    , timeNow : Time.Posix
+    , searchText : String
+    , expandedProjects : ExpandedProjects
     }
+
+
+type alias ExpandedProjects =
+    Dict String Bool
 
 
 type alias Worker =
