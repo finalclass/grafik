@@ -10,7 +10,7 @@ import Types exposing (..)
 layout : Model -> Element Msg
 layout model =
     let
-        linkColorAttr =
+        topBarLinkColor =
             Font.color (rgb255 0 105 217)
     in
     column [ width fill ]
@@ -20,8 +20,8 @@ layout model =
                     [ Font.color (rgb255 221 27 22), Font.heavy, Font.italic ]
                     { url = "/", label = text "Grafik" }
                 , row [ spacing 16, alignRight ]
-                    [ link [ linkColorAttr ] { url = "/", label = text "Zamówienia" }
-                    , link [ linkColorAttr ] { url = "/workers", label = text "Pracownicy" }
+                    [ link [ topBarLinkColor ] { url = "/", label = text "Zamówienia" }
+                    , link [ topBarLinkColor ] { url = "/workers", label = text "Pracownicy" }
                     ]
                 ]
             ]

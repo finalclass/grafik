@@ -24,11 +24,15 @@ main =
 
 init : String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url navKey =
+    let
+        ( tasks, cmd ) =
+            Tasks.State.init
+    in
     ( { navKey = navKey
       , route = urlToRoute url
-      , tasks = Tasks.State.init
+      , tasks = tasks
       }
-    , Cmd.none
+    , cmd
     )
 
 
