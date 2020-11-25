@@ -11,7 +11,12 @@ type Msg
     | GotZone Time.Zone
     | GotTime Time.Posix
     | Focus String
+    | ProjectsMsg ProjectsMsgs
     | NoOp
+
+
+type ProjectsMsgs
+    = NewProject
 
 
 type MainViewState

@@ -61,3 +61,12 @@ update msg model =
 
         Focus id ->
             ( model, Task.attempt (\_ -> NoOp) (Browser.Dom.focus id) )
+
+        ProjectsMsg subMsg ->
+            updateProjects subMsg model
+
+
+updateProjects subMsg model =
+    case subMsg of
+        NewProject ->
+            ( model, Cmd.none )
