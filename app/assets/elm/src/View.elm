@@ -3,11 +3,11 @@ module View exposing (..)
 import Element exposing (..)
 import Element.Background as Background
 import Element.Font as Font
+import Model as M
 import Tasks.View
-import Types exposing (..)
 
 
-layout : Model -> Element Msg
+layout : M.Model -> Element M.Msg
 layout model =
     let
         topBarLinkColor =
@@ -27,13 +27,13 @@ layout model =
             ]
         , row [ width (px 1120), centerX ]
             [ case model.route of
-                TasksRoute ->
-                    map (\msg -> TasksMsg msg) (Tasks.View.layout model.tasks)
+                M.TasksRoute ->
+                    map (\msg -> M.TasksMsg msg) (Tasks.View.layout model.tasks)
 
-                WorkersRoute ->
+                M.WorkersRoute ->
                     el [] (text "Workers")
 
-                NotFoundRoute ->
+                M.NotFoundRoute ->
                     el [] (text "Not found")
             ]
         ]

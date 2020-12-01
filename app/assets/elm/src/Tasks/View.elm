@@ -5,21 +5,22 @@ import Element exposing (..)
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
-import Tasks.Types exposing (..)
-import Tasks.Utils as U
+import Tasks.Model as M
 
 
-layout : Model -> Element Msg
+layout : M.Model -> Element M.Msg
 layout model =
     case model.mainViewState of
-        LoadingState ->
+        M.LoadingState ->
             el [] (text "ładowanie...")
 
-        FailureState ->
+        M.FailureState ->
             el [] (text "wystąpił błąd (sprawdź połączenie)")
 
-        SuccessState ->
-            toolBar model
+        M.SuccessState ->
+            column [ width fill ]
+                [ toolBar model
+                ]
 
 
 toolBar model =
@@ -28,15 +29,15 @@ toolBar model =
             [ expandAll model
             , searchBox model
             , pricesMini "Suma kwot za wszystkie zlecenia"
-                { paid = U.sumProjectsPaid model
-                , finished = U.sumAllFinished model
-                , total = U.sumProjectsPrice model
+                { paid = M.sumProjectsPaid model
+                , finished = M.sumAllFinished model
+                , total = M.sumProjectsPrice model
                 }
             ]
         , row [ width fill ]
             [ button
                 { label = "dodaj zamówienie"
-                , onPress = ProjectsMsg NewProject
+                , onPress = M.ProjectsMsg M.NewProject
                 , icon = Icons.plusCircleOutlined
                 }
             ]
@@ -71,6 +72,6 @@ expandAll model =
     el [] (text "rozwiń")
 
 
-pricesMini : String -> { paid : Float, finished : Float, total : Float } -> Element Msg
+pricesMini : String -> { paid : Float, finished : Float, total : Float } -> Element M.Msg
 pricesMini header prices =
     el [] (text "ceny")

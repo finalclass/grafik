@@ -4,28 +4,28 @@ import Http
 import Json.Decode as D
 import Json.Decode.Pipeline exposing (optional, required)
 import Json.Encode as E
-import Tasks.Types exposing (..)
+import Tasks.Model as M
 import Time
 import Url
 
 
-getCurrentProjects : Cmd Msg
+getCurrentProjects : Cmd M.Msg
 getCurrentProjects =
     Http.get
         { url = "/api/all"
-        , expect = Http.expectJson CurrentProjectsReceived projectsDecoder
+        , expect = Http.expectJson M.CurrentProjectsReceived projectsDecoder
         }
 
 
-projectsDecoder : D.Decoder AllData
+projectsDecoder : D.Decoder M.AllData
 projectsDecoder =
-    D.map4 AllData
+    D.map4 M.AllData
         (D.field "projects"
             (D.list projectDecoder)
         )
         (D.field "workers"
             (D.list
-                (D.map2 Worker
+                (D.map2 M.Worker
                     (D.field "id" D.int)
                     (D.field "name" D.string)
                 )
@@ -33,7 +33,7 @@ projectsDecoder =
         )
         (D.field "statuses"
             (D.list
-                (D.map2 Status
+                (D.map2 M.Status
                     (D.field "id" D.string)
                     (D.field "name" D.string)
                 )
@@ -55,9 +55,9 @@ decodeTime =
             )
 
 
-projectDecoder : D.Decoder Project
+projectDecoder : D.Decoder M.Project
 projectDecoder =
-    D.succeed Project
+    D.succeed M.Project
         |> required "id" D.int
         |> required "client_id" D.int
         |> required "name" D.string
@@ -72,9 +72,9 @@ projectDecoder =
         |> required "start_at" decodeTime
 
 
-taskDecoder : D.Decoder Task
+taskDecoder : D.Decoder M.Task
 taskDecoder =
-    D.map7 Task
+    D.map7 M.Task
         (D.field "id" D.int)
         (D.field "project_id" D.int)
         (D.field "worker_id" D.int)
@@ -84,9 +84,9 @@ taskDecoder =
         (D.field "price" D.float)
 
 
-clientDecoder : D.Decoder Client
+clientDecoder : D.Decoder M.Client
 clientDecoder =
-    D.succeed Client
+    D.succeed M.Client
         |> required "id" D.int
         |> required "name" D.string
         |> optional "invoice_name" D.string ""
