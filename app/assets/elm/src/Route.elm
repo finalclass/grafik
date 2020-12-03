@@ -6,6 +6,7 @@ import Url.Parser as UrlParser
 
 type Route
     = ProjectsRoute
+    | WorkersRoute
     | NotFoundRoute
 
 
@@ -13,6 +14,7 @@ routeParser : UrlParser.Parser (Route -> a) a
 routeParser =
     UrlParser.oneOf
         [ UrlParser.map ProjectsRoute UrlParser.top
+        , UrlParser.map WorkersRoute (UrlParser.s "workers")
         ]
 
 
