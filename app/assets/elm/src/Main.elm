@@ -22,26 +22,12 @@ type Model
     | Workers Page.Workers.Model
     | NotFound Session
     | Redirect Session
+    | Init Url.Url Nav.Key Time.Zone
 
 
 init : String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url navKey =
-    changeRouteTo (Route.urlToRoute url) (Redirect (Session.init navKey))
-
-
-toSession model =
-    case model of
-        NotFound session ->
-            session
-
-        Redirect session ->
-            session
-
-        Projects projectsModel ->
-            Page.Projects.toSession projectsModel
-
-        Workers workersModel ->
-            Page.Workers.toSession workersModel
+    ( Init url navKey Time.utc, Task.perform GotZone Time.here )
 
 
 changeRouteTo : Route.Route -> Model -> ( Model, Cmd Msg )
@@ -69,8 +55,20 @@ changeRouteTo route model =
             ( NotFound session, Cmd.none )
 
 
+toSession : Model -> Session
+toSession model =
+    case model of
+        NotFound session ->
+            session
 
--- UPDATE
+        Redirect session ->
+            session
+
+        Projects projectsModel ->
+            Page.Projects.toSession projectsModel
+
+        Workers workersModel ->
+            Page.Workers.toSession workersModel
 
 
 type Msg
@@ -78,11 +76,19 @@ type Msg
     | ChangeUrl Url.Url
     | ProjectsMsg Page.Projects.Msg
     | WorkersMsg Page.Workers.Msg
+    | GotZone Time.Zone
+    | GotTime Time.Posix
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model ) of
+        ( GotZone zone, Init url navKey _ ) ->
+            ( Init url navKey zone, Task.perform GotTime Time.now )
+
+        ( GotTime time, Init url navKey zone ) ->
+            changeRouteTo (Route.urlToRoute url) (Redirect (Session.init navKey zone time))
+
         ( ClickLink urlRequest, _ ) ->
             case urlRequest of
                 Browser.Internal url ->
