@@ -1,12 +1,23 @@
 module Page.Projects exposing (Model, Msg, init, toSession, update, view)
 
 import Ant.Icons as Icons
+import Client exposing (Client)
+import Currency
 import Dates
-import Element exposing (Element, alignRight, column, el, fill, row, text, width)
+import Element exposing (Element, alignRight, alpha, column, el, fill, html, htmlAttribute, map, pointer, row, text, width)
+import Element.Events exposing (onClick)
+import Element.Keyed as Keyed
+import Html
+import Html.Attributes
+import Html.Events
 import Http
 import Json.Decode as D
 import Json.Decode.Pipeline exposing (optional, required)
-import Session exposing (Session)
+import Json.Encode as E
+import Project exposing (Project)
+import ProjectTask exposing (ProjectTask)
+import Session
+import Set exposing (Set)
 import Time
 import ViewElements exposing (..)
 
@@ -21,47 +32,21 @@ type MainViewState
     | SuccessState
 
 
+type alias PriceTrio =
+    { paid : Float
+    , finished : Float
+    , total : Float
+    }
+
+
 type alias Model =
-    { session : Session
+    { session : Session.Model
     , mainViewState : MainViewState
     , projects : List Project
     , workers : List Worker
     , statuses : List Status
     , clients : List Client
-    }
-
-
-type alias Project =
-    { id : Int
-    , client_id : Int
-    , name : String
-    , description : String
-    , is_deadline_rigid : Bool
-    , deadline : Time.Posix
-    , invoice_number : String
-    , price : Float
-    , paid : Float
-    , tasks : List Task
-    , is_archived : Bool
-    , start_at : Time.Posix
-    }
-
-
-type alias Client =
-    { id : Int
-    , name : String
-    , invoice_name : String
-    , invoice_street : String
-    , invoice_postcode : String
-    , invoice_city : String
-    , invoice_nip : String
-    , delivery_name : String
-    , delivery_street : String
-    , delivery_postcode : String
-    , delivery_city : String
-    , delivery_contact_person : String
-    , phone_number : String
-    , email : String
+    , expandedProjects : Set Int
     }
 
 
@@ -85,18 +70,7 @@ type alias Worker =
     }
 
 
-type alias Task =
-    { id : Int
-    , project_id : Int
-    , worker_id : Int
-    , name : String
-    , status : String
-    , sent_note : String
-    , price : Float
-    }
-
-
-init : Session -> ( Model, Cmd Msg )
+init : Session.Model -> ( Model, Cmd Msg )
 init session =
     ( { session = session
       , mainViewState = SuccessState
@@ -104,14 +78,24 @@ init session =
       , workers = []
       , statuses = []
       , clients = []
+      , expandedProjects = Set.empty
       }
-    , getCurrentProjects
+    , getCurrentProjectsRequest
     )
 
 
-toSession : Model -> Session
+toSession : Model -> Session.Model
 toSession model =
     model.session
+
+
+expandCollapseProject : Project -> Set Int -> Set Int
+expandCollapseProject project expandedProjects =
+    if Set.member project.id expandedProjects then
+        Set.remove project.id expandedProjects
+
+    else
+        Set.insert project.id expandedProjects
 
 
 
@@ -122,6 +106,8 @@ type Msg
     = NoOp
     | NewProject
     | CurrentProjectsReceived (Result Http.Error AllData)
+    | ExpandCollapseProject Project
+    | TaskAction TaskMsg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -146,24 +132,124 @@ update msg model =
         CurrentProjectsReceived (Err error) ->
             ( { model | mainViewState = FailureState }, Cmd.none )
 
+        ExpandCollapseProject project ->
+            ( { model | expandedProjects = expandCollapseProject project model.expandedProjects }, Cmd.none )
+
+        TaskAction taskMsg ->
+            let
+                ( newModel, cmd ) =
+                    updateTask taskMsg model
+            in
+            ( newModel, Cmd.map TaskAction cmd )
+
+
+type TaskMsg
+    = SelectTaskWorker ProjectTask String
+    | SelectTaskStatus ProjectTask String
+    | TaskUpdated (Result Http.Error ProjectTask)
+
+
+updateTask : TaskMsg -> Model -> ( Model, Cmd TaskMsg )
+updateTask taskMsg model =
+    case taskMsg of
+        SelectTaskWorker task workerId ->
+            ( { model | mainViewState = LoadingState }
+            , changeTaskWorkerRequest task workerId
+            )
+
+        SelectTaskStatus task statusId ->
+            ( { model | mainViewState = LoadingState }
+            , changeTaskStatusRequest task statusId
+            )
+
+        TaskUpdated (Err error) ->
+            ( { model | mainViewState = FailureState }, Cmd.none )
+
+        TaskUpdated (Ok task) ->
+            ( { model | mainViewState = SuccessState } |> modifyTask task, Cmd.none )
+
+
+modifyTask : ProjectTask -> Model -> Model
+modifyTask task model =
+    modifyProjectById task.project_id model (modifyTaskInProject task)
+
+
+modifyProjectById : Int -> Model -> (Project -> Project) -> Model
+modifyProjectById projectId model func =
+    { model
+        | projects =
+            List.map
+                (\p ->
+                    if p.id == projectId then
+                        func p
+
+                    else
+                        p
+                )
+                model.projects
+    }
+
+
+modifyTaskInProject : ProjectTask -> Project -> Project
+modifyTaskInProject task project =
+    { project
+        | tasks =
+            List.map
+                (\t ->
+                    if t.id == task.id then
+                        task
+
+                    else
+                        t
+                )
+                project.tasks
+    }
+
 
 
 -- REQUESTS
 
 
-getCurrentProjects : Cmd Msg
-getCurrentProjects =
-    Http.get
-        { url = "/api/all"
-        , expect = Http.expectJson CurrentProjectsReceived projectsDecoder
+changeTaskWorkerRequest : ProjectTask -> String -> Cmd TaskMsg
+changeTaskWorkerRequest task workerId =
+    modifyTaskRequest task [ ( "worker_id", E.string workerId ) ]
+
+
+changeTaskStatusRequest : ProjectTask -> String -> Cmd TaskMsg
+changeTaskStatusRequest task statusId =
+    modifyTaskRequest task [ ( "status_id", E.string statusId ) ]
+
+
+modifyTaskRequest : ProjectTask -> List ( String, E.Value ) -> Cmd TaskMsg
+modifyTaskRequest task fields =
+    Http.request
+        { method = "PUT"
+        , url = "/api/projects/" ++ String.fromInt task.project_id ++ "/tasks/" ++ String.fromInt task.id
+        , body =
+            Http.jsonBody
+                (E.object
+                    [ ( "task", E.object fields ) ]
+                )
+        , headers = []
+        , expect = Http.expectJson TaskUpdated ProjectTask.decoder
+        , timeout = Nothing
+        , tracker = Nothing
         }
 
 
-projectsDecoder : D.Decoder AllData
-projectsDecoder =
+getCurrentProjectsRequest : Cmd Msg
+getCurrentProjectsRequest =
+    Http.get
+        { url = "/api/all"
+        , expect = Http.expectJson CurrentProjectsReceived allDataDecoder
+        }
+
+
+allDataDecoder : D.Decoder AllData
+allDataDecoder =
     D.map4 AllData
         (D.field "projects"
-            (D.list projectDecoder)
+            (D.list Project.decoder)
         )
         (D.field "workers"
             (D.list
@@ -181,68 +267,7 @@ projectsDecoder =
                 )
             )
         )
-        (D.field "clients"
-            (D.list
-                clientDecoder
-            )
-        )
-
-
-taskDecoder : D.Decoder Task
-taskDecoder =
-    D.map7 Task
-        (D.field "id" D.int)
-        (D.field "project_id" D.int)
-        (D.field "worker_id" D.int)
-        (D.field "name" D.string)
-        (D.field "status" D.string)
-        (D.field "sent_note" D.string)
-        (D.field "price" D.float)
-
-
-decodeTime : D.Decoder Time.Posix
-decodeTime =
-    D.int
-        |> D.andThen
-            (\ms ->
-                D.succeed <| Time.millisToPosix ms
-            )
-
-
-projectDecoder : D.Decoder Project
-projectDecoder =
-    D.succeed Project
-        |> required "id" D.int
-        |> required "client_id" D.int
-        |> required "name" D.string
-        |> required "description" D.string
-        |> required "is_deadline_rigid" D.bool
-        |> required "deadline" decodeTime
-        |> optional "invoice_number" D.string ""
-        |> optional "price" D.float 0
-        |> optional "paid" D.float 0
-        |> required "tasks" (D.list taskDecoder)
-        |> required "is_archived" D.bool
-        |> required "start_at" decodeTime
-
-
-clientDecoder : D.Decoder Client
-clientDecoder =
-    D.succeed Client
-        |> required "id" D.int
-        |> required "name" D.string
-        |> optional "invoice_name" D.string ""
-        |> optional "invoice_street" D.string ""
-        |> optional "invoice_postcode" D.string ""
-        |> optional "invoice_city" D.string ""
-        |> optional "invoice_nip" D.string ""
-        |> optional "delivery_name" D.string ""
-        |> optional "delivery_street" D.string ""
-        |> optional "delivery_postcode" D.string ""
-        |> optional "delivery_city" D.string ""
-        |> optional "delivery_contact_person" D.string ""
-        |> optional "phone_number" D.string ""
-        |> optional "email" D.string ""
+        (D.field "clients" (D.list Client.decoder))
 
 
 
@@ -251,24 +276,108 @@ clientDecoder =
 
 view : Model -> Element Msg
 view model =
-    case model.mainViewState of
-        LoadingState ->
-            el [] (text "ładowanie...")
+    if model.mainViewState == FailureState then
+        el [] (text "wystąpił błąd (sprawdź połączenie)")
 
-        FailureState ->
-            el [] (text "wystąpił błąd (sprawdź połączenie)")
+    else
+        let
+            loadingArgs =
+                if model.mainViewState == LoadingState then
+                    [ alpha 0.2, htmlAttribute (Html.Attributes.style "pointer-events" "none") ]
 
-        SuccessState ->
-            column [ width fill ]
-                (toolBar model :: List.map (projectView model) model.projects)
+                else
+                    []
+        in
+        column (width fill :: loadingArgs)
+            (toolBar model :: List.map (projectView model) model.projects)
 
 
 projectView : Model -> Project -> Element Msg
 projectView model project =
+    let
+        isExpanded =
+            Set.member project.id model.expandedProjects
+    in
+    Keyed.column [ width fill ]
+        (( "main"
+         , row [ width fill ]
+            [ el [ onClick (ExpandCollapseProject project) ]
+                (if isExpanded then
+                    Icons.caretDownOutlined []
+
+                 else
+                    Icons.caretRightOutlined []
+                )
+            , el [ onClick (ExpandCollapseProject project) ] (text project.name)
+            , pricesMini "Za zlecenie"
+                { paid = project.paid
+                , finished = ProjectTask.sumFinished project.tasks
+                , total = Project.price project
+                }
+            , el [ alignRight ] (text (Dates.displayDate (toSession model) project.deadline))
+            ]
+         )
+            :: (if isExpanded then
+                    List.map (\task -> ( String.fromInt task.id, map TaskAction (taskView model task) )) project.tasks
+
+                else
+                    []
+               )
+        )
+
+
+taskView : Model -> ProjectTask -> Element TaskMsg
+taskView model task =
     row [ width fill ]
-        [ Icons.caretRightOutlined []
-        , text project.name
-        , el [ alignRight ] (text (Dates.displayDate (toSession model) project.deadline))
+        [ el [] (text task.name)
+        , el [ alignRight ] (text (Currency.format task.price))
+        , selectWorker model task
+        , selectStatus model task
+        ]
+
+
+selectStatus : Model -> ProjectTask -> Element TaskMsg
+selectStatus model task =
+    html
+        (Html.select [ Html.Events.onInput (SelectTaskStatus task) ]
+            (Html.option [] []
+                :: List.map
+                    (\status ->
+                        Html.option
+                            [ Html.Attributes.value status.id
+                            , Html.Attributes.selected (status.id == task.status)
+                            ]
+                            [ Html.text status.name ]
+                    )
+                    model.statuses
+            )
+        )
+
+
+selectWorker : Model -> ProjectTask -> Element TaskMsg
+selectWorker model task =
+    html
+        (Html.select [ Html.Events.onInput (SelectTaskWorker task) ]
+            (Html.option [] []
+                :: List.map
+                    (\worker ->
+                        Html.option
+                            [ Html.Attributes.value (String.fromInt worker.id)
+                            , Html.Attributes.selected (worker.id == task.worker_id)
+                            ]
+                            [ Html.text worker.name ]
+                    )
+                    model.workers
+            )
+        )
+
+
+pricesMini : String -> PriceTrio -> Element Msg
+pricesMini header prices =
+    row []
+        [ el [] (text (Currency.format prices.paid ++ "/"))
+        , el [] (text (Currency.format prices.finished ++ "/"))
+        , el [] (text (Currency.format prices.total ++ "zł"))
         ]
 
 
@@ -278,7 +387,13 @@ toolBar model =
         [ row [ width fill ]
             [ el [] (text "expand")
             , el [] (text "search")
-            , el [] (text "prices mini")
+            , el []
+                (pricesMini "Suma kwot za wszystkie zlecenia"
+                    { paid = Project.sumPaid model.projects
+                    , finished = Project.sumFinished model.projects
+                    , total = Project.sumPrice model.projects
+                    }
+                )
             ]
         , row [ width fill ]
             [ button

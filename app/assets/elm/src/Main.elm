@@ -8,7 +8,9 @@ import Element.Font as Font
 import Page.Projects
 import Page.Workers
 import Route
-import Session exposing (Session)
+import Session
+import Task
+import Time
 import Url
 import Url.Parser as UrlParser
 
@@ -20,8 +22,8 @@ import Url.Parser as UrlParser
 type Model
     = Projects Page.Projects.Model
     | Workers Page.Workers.Model
-    | NotFound Session
-    | Redirect Session
+    | NotFound Session.Model
+    | Redirect Session.Model
     | Init Url.Url Nav.Key Time.Zone
 
 
@@ -55,7 +57,7 @@ changeRouteTo route model =
             ( NotFound session, Cmd.none )
 
 
-toSession : Model -> Session
+toSession : Model -> Session.Model
 toSession model =
     case model of
         NotFound session ->
@@ -69,6 +71,9 @@ toSession model =
 
         Workers workersModel ->
             Page.Workers.toSession workersModel
+
+        Init _ navKey _ ->
+            Session.empty navKey
 
 
 type Msg
@@ -149,11 +154,11 @@ layout model =
                 Workers workersModel ->
                     map WorkersMsg (Page.Workers.view workersModel)
 
-                Redirect _ ->
-                    el [] (text "")
-
                 NotFound _ ->
                     el [] (text "Not found")
+
+                _ ->
+                    el [] (text "")
             ]
         ]
 

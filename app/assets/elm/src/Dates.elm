@@ -1,11 +1,12 @@
-module Dates exposing (dateInputView, displayDate, stringToTime)
+module Dates exposing (dateInputView, decode, displayDate, stringToTime)
 
 import Array
 import DateTime
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Session exposing (Session)
+import Json.Decode as D
+import Session
 import Time
 
 
@@ -62,7 +63,7 @@ prefixZero num =
         numStr
 
 
-displayDate : Session -> Time.Posix -> String
+displayDate : Session.Model -> Time.Posix -> String
 displayDate session posixTime =
     prefixZero (Time.toDay session.zone posixTime)
         ++ "-"
@@ -169,7 +170,7 @@ stringToTime string =
     Result.fromMaybe "Błędny format daty. Poprawnie: DD-MM-YYYY" maybePosix
 
 
-dateInputView : { label : String, time : Time.Posix, timeString : String, timeErr : Maybe String, msg : String -> a } -> Session -> Html a
+dateInputView : { label : String, time : Time.Posix, timeString : String, timeErr : Maybe String, msg : String -> a } -> Session.Model -> Html a
 dateInputView data session =
     label []
         [ span []
@@ -200,3 +201,12 @@ dateInputView data session =
             Nothing ->
                 text ""
         ]
+
+
+decode : D.Decoder Time.Posix
+decode =
+    D.int
+        |> D.andThen
+            (\ms ->
+                D.succeed <| Time.millisToPosix ms
+            )
