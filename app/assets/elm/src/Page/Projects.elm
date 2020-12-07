@@ -107,7 +107,9 @@ type Msg
     | NewProject
     | CurrentProjectsReceived (Result Http.Error AllData)
     | ExpandCollapseProject Project
-    | TaskAction TaskMsg
+    | SelectTaskWorker ProjectTask String
+    | SelectTaskStatus ProjectTask String
+    | TaskUpdated (Result Http.Error ProjectTask)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -135,23 +137,6 @@ update msg model =
         ExpandCollapseProject project ->
             ( { model | expandedProjects = expandCollapseProject project model.expandedProjects }, Cmd.none )
 
-        TaskAction taskMsg ->
-            let
-                ( newModel, cmd ) =
-                    updateTask taskMsg model
-            in
-            ( newModel, Cmd.map TaskAction cmd )
-
-
-type TaskMsg
-    = SelectTaskWorker ProjectTask String
-    | SelectTaskStatus ProjectTask String
-    | TaskUpdated (Result Http.Error ProjectTask)
-
-
-updateTask : TaskMsg -> Model -> ( Model, Cmd TaskMsg )
-updateTask taskMsg model =
-    case taskMsg of
         SelectTaskWorker task workerId ->
             ( { model | mainViewState = LoadingState }
             , changeTaskWorkerRequest task workerId
@@ -210,17 +195,17 @@ modifyTaskInProject task project =
 -- REQUESTS
 
 
-changeTaskWorkerRequest : ProjectTask -> String -> Cmd TaskMsg
+changeTaskWorkerRequest : ProjectTask -> String -> Cmd Msg
 changeTaskWorkerRequest task workerId =
     modifyTaskRequest task [ ( "worker_id", E.string workerId ) ]
 
 
-changeTaskStatusRequest : ProjectTask -> String -> Cmd TaskMsg
+changeTaskStatusRequest : ProjectTask -> String -> Cmd Msg
 changeTaskStatusRequest task statusId =
     modifyTaskRequest task [ ( "status_id", E.string statusId ) ]
 
 
-modifyTaskRequest : ProjectTask -> List ( String, E.Value ) -> Cmd TaskMsg
+modifyTaskRequest : ProjectTask -> List ( String, E.Value ) -> Cmd Msg
 modifyTaskRequest task fields =
     Http.request
         { method = "PUT"
@@ -307,7 +292,7 @@ projectView model project =
 
         subTasks =
             if isExpanded then
-                List.map (\task -> map TaskAction (taskView model task)) project.tasks
+                List.map (\task -> taskView model task) project.tasks
 
             else
                 []
@@ -332,7 +317,7 @@ projectView model project =
         ]
 
 
-taskView : Model -> ProjectTask -> Element TaskMsg
+taskView : Model -> ProjectTask -> Element Msg
 taskView model task =
     row [ width fill ]
         [ el [] (text task.name)
@@ -342,7 +327,7 @@ taskView model task =
         ]
 
 
-selectStatus : Model -> ProjectTask -> Element TaskMsg
+selectStatus : Model -> ProjectTask -> Element Msg
 selectStatus model task =
     html
         (Html.select [ Html.Events.onInput (SelectTaskStatus task) ]
@@ -360,7 +345,7 @@ selectStatus model task =
         )
 
 
-selectWorker : Model -> ProjectTask -> Element TaskMsg
+selectWorker : Model -> ProjectTask -> Element Msg
 selectWorker model task =
     html
         (Html.select [ Html.Events.onInput (SelectTaskWorker task) ]
