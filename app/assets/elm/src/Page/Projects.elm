@@ -4,9 +4,9 @@ import Ant.Icons as Icons
 import Client exposing (Client)
 import Currency
 import Dates
-import Element exposing (Element, alignRight, alpha, column, el, fill, html, htmlAttribute, map, pointer, row, text, width)
+import Element exposing (Element, alignRight, alpha, column, el, fill, html, htmlAttribute, map, paddingEach, pointer, row, text, width)
 import Element.Events exposing (onClick)
-import Element.Keyed as Keyed
+import Element.Font as Font
 import Html
 import Html.Attributes
 import Html.Events
@@ -297,18 +297,26 @@ projectView model project =
     let
         isExpanded =
             Set.member project.id model.expandedProjects
-    in
-    Keyed.column [ width fill ]
-        (( "main"
-         , row [ width fill ]
-            [ el [ onClick (ExpandCollapseProject project) ]
-                (if isExpanded then
-                    Icons.caretDownOutlined []
 
-                 else
-                    Icons.caretRightOutlined []
-                )
-            , el [ onClick (ExpandCollapseProject project) ] (text project.name)
+        icon =
+            if isExpanded then
+                Icons.caretDownOutlined []
+
+            else
+                Icons.caretRightOutlined []
+
+        subTasks =
+            if isExpanded then
+                List.map (\task -> map TaskAction (taskView model task)) project.tasks
+
+            else
+                []
+    in
+    column [ width fill ]
+        [ row [ width fill ]
+            [ el [ onClick (ExpandCollapseProject project) ]
+                icon
+            , el [ onClick (ExpandCollapseProject project), Font.bold ] (text project.name)
             , pricesMini "Za zlecenie"
                 { paid = project.paid
                 , finished = ProjectTask.sumFinished project.tasks
@@ -316,21 +324,19 @@ projectView model project =
                 }
             , el [ alignRight ] (text (Dates.displayDate (toSession model) project.deadline))
             ]
-         )
-            :: (if isExpanded then
-                    List.map (\task -> ( String.fromInt task.id, map TaskAction (taskView model task) )) project.tasks
-
-                else
-                    []
-               )
-        )
+        , column
+            [ width fill
+            , paddingEach { top = 0, right = 0, bottom = 0, left = 20 }
+            ]
+            subTasks
+        ]
 
 
 taskView : Model -> ProjectTask -> Element TaskMsg
 taskView model task =
     row [ width fill ]
         [ el [] (text task.name)
-        , el [ alignRight ] (text (Currency.format task.price))
+        , el [ alignRight ] (text (Currency.format task.price ++ "zł"))
         , selectWorker model task
         , selectStatus model task
         ]
