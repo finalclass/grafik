@@ -6,7 +6,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode as D
-import Session
+import Session exposing (Session)
 import Time
 
 
@@ -63,7 +63,7 @@ prefixZero num =
         numStr
 
 
-displayDate : Session.Model -> Time.Posix -> String
+displayDate : Session -> Time.Posix -> String
 displayDate session posixTime =
     prefixZero (Time.toDay session.zone posixTime)
         ++ "-"
@@ -170,7 +170,7 @@ stringToTime string =
     Result.fromMaybe "Błędny format daty. Poprawnie: DD-MM-YYYY" maybePosix
 
 
-dateInputView : { label : String, time : Time.Posix, timeString : String, timeErr : Maybe String, msg : String -> a } -> Session.Model -> Html a
+dateInputView : { label : String, time : Time.Posix, timeString : String, timeErr : Maybe String, msg : String -> a } -> Session -> Html a
 dateInputView data session =
     label []
         [ span []

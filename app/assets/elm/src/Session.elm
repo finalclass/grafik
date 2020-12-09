@@ -1,17 +1,17 @@
-module Session exposing (Model, empty, init)
+module Session exposing (Session, empty, init, saveToLocalStorage)
 
 import Browser.Navigation as Nav
 import Time
 
 
-type alias Model =
+type alias Session =
     { navKey : Nav.Key
     , zone : Time.Zone
     , timeNow : Time.Posix
     }
 
 
-empty : Nav.Key -> Model
+empty : Nav.Key -> Session
 empty navKey =
     { navKey = navKey
     , zone = Time.utc
@@ -19,9 +19,14 @@ empty navKey =
     }
 
 
-init : Nav.Key -> Time.Zone -> Time.Posix -> Model
+init : Nav.Key -> Time.Zone -> Time.Posix -> Session
 init navKey zone time =
     { navKey = navKey
     , zone = zone
     , timeNow = time
     }
+
+
+saveToLocalStorage : Session -> { key : String, value : String } -> Session
+saveToLocalStorage session item =
+    session

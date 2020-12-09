@@ -1,4 +1,4 @@
-module Page.Projects exposing (Model, Msg, init, toSession, update, view)
+module Page.Projects exposing (Model, Msg, init, toSession, update, updateSession, view)
 
 import Ant.Icons as Icons
 import Client exposing (Client)
@@ -16,7 +16,7 @@ import Json.Decode.Pipeline exposing (optional, required)
 import Json.Encode as E
 import Project exposing (Project)
 import ProjectTask exposing (ProjectTask)
-import Session
+import Session exposing (Session)
 import Set exposing (Set)
 import Time
 import ViewElements exposing (..)
@@ -40,7 +40,7 @@ type alias PriceTrio =
 
 
 type alias Model =
-    { session : Session.Model
+    { session : Session
     , mainViewState : MainViewState
     , projects : List Project
     , workers : List Worker
@@ -76,7 +76,7 @@ type alias Worker =
     }
 
 
-init : Session.Model -> ( Model, Cmd Msg )
+init : Session -> ( Model, Cmd Msg )
 init session =
     ( { session = session
       , mainViewState = LoadingState
@@ -91,9 +91,14 @@ init session =
     )
 
 
-toSession : Model -> Session.Model
+toSession : Model -> Session
 toSession model =
     model.session
+
+
+updateSession : Model -> Session -> Model
+updateSession model session =
+    { model | session = session }
 
 
 expandCollapseProject : Project -> Set Int -> Set Int

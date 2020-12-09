@@ -1,29 +1,45 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
 import Element exposing (Element, alignRight, centerX, column, el, fill, height, link, map, px, rgb255, row, spacing, text, width)
 import Element.Background as Background
 import Element.Font as Font
+import Json.Decode as D
+import Json.Encode as E
 import Page.Projects
 import Page.Workers
 import Route
-import Session
+import Session exposing (Session)
 import Task
 import Time
+import Tuple
 import Url
 import Url.Parser as UrlParser
 
 
 
--- Model
+-- PORTS
+
+
+port localStoragePutItem : E.Value -> Cmd msg
+
+
+port localStorageGetItem : E.Value -> Cmd msg
+
+
+port localStorage : (E.Value -> msg) -> Sub msg
+
+
+
+-- MODEL
 
 
 type Model
     = Projects Page.Projects.Model
     | Workers Page.Workers.Model
-    | NotFound Session.Model
-    | Redirect Session.Model
+    | NotFound Session
+    | Redirect Session
     | Init Url.Url Nav.Key Time.Zone
 
 
@@ -57,7 +73,7 @@ changeRouteTo route model =
             ( NotFound session, Cmd.none )
 
 
-toSession : Model -> Session.Model
+toSession : Model -> Session
 toSession model =
     case model of
         NotFound session ->
@@ -76,6 +92,26 @@ toSession model =
             Session.empty navKey
 
 
+updateSession : Model -> Session -> Model
+updateSession model session =
+    case model of
+        NotFound _ ->
+            NotFound session
+
+        Redirect _ ->
+            Redirect session
+
+        Projects projectsModel ->
+            Projects (Page.Projects.updateSession projectsModel session)
+
+        Workers workersModel ->
+            Workers (Page.Workers.updateSession workersModel session)
+
+        Init a b c ->
+            -- session is not ready yet
+            Init a b c
+
+
 type Msg
     = ClickLink Browser.UrlRequest
     | ChangeUrl Url.Url
@@ -83,6 +119,9 @@ type Msg
     | WorkersMsg Page.Workers.Msg
     | GotZone Time.Zone
     | GotTime Time.Posix
+    | LocalStorageUpdate E.Value
+    | LocalStorageGetRequest String
+    | LocalStoragePutRequest String String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -112,9 +151,46 @@ update msg model =
             in
             ( Projects newProjectsModel, Cmd.map ProjectsMsg projectsCmd )
 
+        ( LocalStorageUpdate str, _ ) ->
+            case D.decodeValue decodeLocalStorage str of
+                Ok item ->
+                    ( item
+                        |> Session.saveToLocalStorage (toSession model)
+                        |> updateSession model
+                    , Cmd.none
+                    )
+
+                Err _ ->
+                    ( model, Cmd.none )
+
+        ( LocalStorageGetRequest key, _ ) ->
+            ( model, localStorageGetItem (encodeLocalStorage { key = key, value = "" }) )
+
+        ( LocalStoragePutRequest key value, _ ) ->
+            ( model, localStoragePutItem (encodeLocalStorage { key = key, value = value }) )
+
         ( _, _ ) ->
             -- Disregard messages that arrived for the wrong page.
             ( model, Cmd.none )
+
+
+type alias LocalStorageItem =
+    { key : String, value : String }
+
+
+encodeLocalStorage : LocalStorageItem -> E.Value
+encodeLocalStorage item =
+    E.object
+        [ ( "key", E.string item.key )
+        , ( "value", E.string item.value )
+        ]
+
+
+decodeLocalStorage : D.Decoder LocalStorageItem
+decodeLocalStorage =
+    D.map2 LocalStorageItem
+        (D.field "key" D.string)
+        (D.field "value" D.string)
 
 
 
@@ -172,7 +248,7 @@ main =
     Browser.application
         { init = init
         , update = update
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = \_ -> localStorage LocalStorageUpdate
         , view = view
         , onUrlRequest = ClickLink
         , onUrlChange = ChangeUrl

@@ -5,21 +5,26 @@ import { Elm } from '../elm/src/Main.elm';
 
 const storageKey = 'grafik-dashboard';
 const app = Elm.Main.init({
-    flags: localStorage.getItem(storageKey) || "{}"
+    flags: "{}"
 });
 
-// const externalApi = {
-//     localStorage: ({ key, value }) => localStorage.setItem(key, JSON.stringify(value))
-// };
+app.ports.localStoragePutItem.subscribe(message => {
+    const obj = JSON.parse(message);
+    localStorage.setItem(obj.key, obj.message);
+});
 
-// app.ports.externalApi.subscribe(msg => externalApi[msg.type](msg));
+app.ports.localStorageGetItem.subscribe(key => {
+    app.ports.localStorage.send(JSON.stringify({
+        key,
+        value: localStorage.getItem(key)
+    }));
+});
 
-//  window.addEventListener('storage', function(event) {
-//      if (event.storageArea === localStorage) {
-//          app.ports.externalApi.send({
-//              type: 'localStorage',
-//              key: event.key,
-//              value: event.newValue
-//          });
-//      }
-//  }, false);
+window.addEventListener('storage', function(event) {
+    if (event.storageArea === localStorage) {
+        app.ports.localStorage.send(JSON.stringify({
+            key: event.key,
+            value: event.newValue
+        }));
+    }
+}, false);

@@ -1,11 +1,11 @@
-module Page.Workers exposing (Model, Msg, init, toSession, update, view)
+module Page.Workers exposing (Model, Msg, init, toSession, update, updateSession, view)
 
 import Element exposing (Element, el, text)
-import Session
+import Session exposing (Session)
 
 
 type alias Model =
-    { session : Session.Model
+    { session : Session
     }
 
 
@@ -13,9 +13,14 @@ type Msg
     = NoOp
 
 
-toSession : Model -> Session.Model
+toSession : Model -> Session
 toSession model =
     model.session
+
+
+updateSession : Model -> Session -> Model
+updateSession model session =
+    { model | session = session }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -25,7 +30,7 @@ update msg model =
             ( model, Cmd.none )
 
 
-init : Session.Model -> ( Model, Cmd Msg )
+init : Session -> ( Model, Cmd Msg )
 init session =
     ( { session = session }, Cmd.none )
 
