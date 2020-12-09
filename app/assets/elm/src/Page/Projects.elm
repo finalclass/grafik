@@ -47,7 +47,13 @@ type alias Model =
     , statuses : List Status
     , clients : List Client
     , expandedProjects : Set Int
+    , projectsType : ProjectsType
     }
+
+
+type ProjectsType
+    = CurrentProjects
+    | ArchivedProjects
 
 
 type alias AllData =
@@ -73,12 +79,13 @@ type alias Worker =
 init : Session.Model -> ( Model, Cmd Msg )
 init session =
     ( { session = session
-      , mainViewState = SuccessState
+      , mainViewState = LoadingState
       , projects = []
       , workers = []
       , statuses = []
       , clients = []
       , expandedProjects = Set.empty
+      , projectsType = CurrentProjects
       }
     , getCurrentProjectsRequest
     )
@@ -104,8 +111,10 @@ expandCollapseProject project expandedProjects =
 
 type Msg
     = NoOp
+    | LoadCurrentProjects
+    | LoadArchivedProjects
     | NewProject
-    | CurrentProjectsReceived (Result Http.Error AllData)
+    | AllDataReceived ProjectsType (Result Http.Error AllData)
     | ExpandCollapseProject Project
     | SelectTaskWorker ProjectTask String
     | SelectTaskStatus ProjectTask String
@@ -118,20 +127,28 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
+        LoadCurrentProjects ->
+            ( { model | mainViewState = LoadingState }, getCurrentProjectsRequest )
+
+        LoadArchivedProjects ->
+            ( { model | mainViewState = LoadingState }, getArchivedProjectsRequest )
+
         NewProject ->
             ( model, Cmd.none )
 
-        CurrentProjectsReceived (Ok allData) ->
+        AllDataReceived projectsType (Ok allData) ->
             ( { model
                 | projects = allData.projects
                 , workers = allData.workers
                 , statuses = allData.statuses
                 , clients = allData.clients
+                , projectsType = projectsType
+                , mainViewState = SuccessState
               }
             , Cmd.none
             )
 
-        CurrentProjectsReceived (Err error) ->
+        AllDataReceived _ (Err error) ->
             ( { model | mainViewState = FailureState }, Cmd.none )
 
         ExpandCollapseProject project ->
@@ -226,7 +243,15 @@ getCurrentProjectsRequest : Cmd Msg
 getCurrentProjectsRequest =
     Http.get
         { url = "/api/all"
-        , expect = Http.expectJson CurrentProjectsReceived allDataDecoder
+        , expect = Http.expectJson (AllDataReceived CurrentProjects) allDataDecoder
+        }
+
+
+getArchivedProjectsRequest : Cmd Msg
+getArchivedProjectsRequest =
+    Http.get
+        { url = "/api/all?archived=true"
+        , expect = Http.expectJson (AllDataReceived ArchivedProjects) allDataDecoder
         }
 
 
@@ -392,5 +417,21 @@ toolBar model =
                 , onPress = NewProject
                 , icon = Icons.plusCircleOutlined
                 }
+            , el [ alignRight ]
+                (button
+                    (case model.projectsType of
+                        CurrentProjects ->
+                            { label = "wyświetlam bierzące"
+                            , onPress = LoadArchivedProjects
+                            , icon = Icons.scissorOutlined
+                            }
+
+                        ArchivedProjects ->
+                            { label = "wyświetlam archiwalne"
+                            , onPress = LoadCurrentProjects
+                            , icon = Icons.hourglassOutlined
+                            }
+                    )
+                )
             ]
         ]
