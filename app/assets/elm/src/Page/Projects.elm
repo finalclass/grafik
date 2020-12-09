@@ -133,9 +133,6 @@ update msg model =
         LoadArchivedProjects ->
             ( { model | mainViewState = LoadingState }, getArchivedProjectsRequest )
 
-        NewProject ->
-            ( model, Cmd.none )
-
         AllDataReceived projectsType (Ok allData) ->
             ( { model
                 | projects = allData.projects
@@ -150,6 +147,9 @@ update msg model =
 
         AllDataReceived _ (Err error) ->
             ( { model | mainViewState = FailureState }, Cmd.none )
+
+        NewProject ->
+            ( model, Cmd.none )
 
         ExpandCollapseProject project ->
             ( { model | expandedProjects = expandCollapseProject project model.expandedProjects }, Cmd.none )

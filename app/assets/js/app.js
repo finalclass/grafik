@@ -7,12 +7,19 @@ const storageKey = 'grafik-dashboard';
 const app = Elm.Main.init({
     flags: localStorage.getItem(storageKey) || "{}"
 });
-    
-// app.ports.commonPort.subscribe(function(msg) {
-//     switch (msg.type) {
-//     case "setExpandedProjects":
-//         localStorage.setItem(storageKey, JSON.stringify(msg.value));
-//         break;
-//     }
-// });
 
+// const externalApi = {
+//     localStorage: ({ key, value }) => localStorage.setItem(key, JSON.stringify(value))
+// };
+
+// app.ports.externalApi.subscribe(msg => externalApi[msg.type](msg));
+
+//  window.addEventListener('storage', function(event) {
+//      if (event.storageArea === localStorage) {
+//          app.ports.externalApi.send({
+//              type: 'localStorage',
+//              key: event.key,
+//              value: event.newValue
+//          });
+//      }
+//  }, false);
