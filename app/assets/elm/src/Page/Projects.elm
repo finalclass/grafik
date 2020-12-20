@@ -39,9 +39,15 @@ type alias PriceTrio =
 
 
 type Model
-    = InitializingModel Session
+    = InitializingModel InitData
     | FailedModel Session
     | ReadyModel ModelData
+
+
+type alias InitData =
+    { session : Session
+    , allData : Maybe AllData
+    }
 
 
 type alias ModelData =
@@ -83,14 +89,14 @@ type alias Worker =
 
 init : Session -> ( Model, Cmd Msg )
 init session =
-    ( InitializingModel session, getCurrentProjectsRequest )
+    ( InitializingModel { session = session, allData = Nothing }, getCurrentProjectsRequest )
 
 
 toSession : Model -> Session
 toSession model =
     case model of
-        InitializingModel session ->
-            session
+        InitializingModel initData ->
+            initData.session
 
         FailedModel session ->
             session
@@ -102,8 +108,8 @@ toSession model =
 updateSession : Model -> Session -> Model
 updateSession model session =
     case model of
-        InitializingModel _ ->
-            InitializingModel session
+        InitializingModel initData ->
+            InitializingModel { initData | session = session }
 
         FailedModel _ ->
             FailedModel session
@@ -144,12 +150,12 @@ update msg model =
             ( model, Cmd.none )
 
         ( LoadCurrentProjects, ReadyModel _ ) ->
-            ( InitializingModel (toSession model), getCurrentProjectsRequest )
+            ( InitializingModel { session = toSession model, allData = Nothing }, getCurrentProjectsRequest )
 
         ( LoadArchivedProjects, ReadyModel _ ) ->
-            ( InitializingModel (toSession model), getArchivedProjectsRequest )
+            ( InitializingModel { session = toSession model, allData = Nothing }, getArchivedProjectsRequest )
 
-        ( AllDataReceived projectsType (Ok allData), InitializingModel session ) ->
+        ( AllDataReceived projectsType (Ok allData), _ ) ->
             ( ReadyModel
                 { projects = allData.projects
                 , workers = allData.workers
@@ -157,14 +163,14 @@ update msg model =
                 , clients = allData.clients
                 , projectsType = projectsType
                 , mainViewState = SuccessState
-                , session = session
+                , session = toSession model
                 , expandedProjects = Set.empty
                 }
             , Cmd.none
             )
 
-        ( AllDataReceived _ (Err error), InitializingModel session ) ->
-            ( FailedModel session, Cmd.none )
+        ( AllDataReceived _ (Err error), _ ) ->
+            ( FailedModel (toSession model), Cmd.none )
 
         ( NewProject, _ ) ->
             ( model, Cmd.none )
