@@ -28,7 +28,6 @@ import ViewElements exposing (..)
 
 type MainViewState
     = LoadingState
-    | FailureState
     | SuccessState
 
 
@@ -39,7 +38,13 @@ type alias PriceTrio =
     }
 
 
-type alias Model =
+type Model
+    = InitializingModel Session
+    | FailedModel Session
+    | ReadyModel ModelData
+
+
+type alias ModelData =
     { session : Session
     , mainViewState : MainViewState
     , projects : List Project
@@ -78,27 +83,33 @@ type alias Worker =
 
 init : Session -> ( Model, Cmd Msg )
 init session =
-    ( { session = session
-      , mainViewState = LoadingState
-      , projects = []
-      , workers = []
-      , statuses = []
-      , clients = []
-      , expandedProjects = Set.empty
-      , projectsType = CurrentProjects
-      }
-    , getCurrentProjectsRequest
-    )
+    ( InitializingModel session, getCurrentProjectsRequest )
 
 
 toSession : Model -> Session
 toSession model =
-    model.session
+    case model of
+        InitializingModel session ->
+            session
+
+        FailedModel session ->
+            session
+
+        ReadyModel modelData ->
+            modelData.session
 
 
 updateSession : Model -> Session -> Model
 updateSession model session =
-    { model | session = session }
+    case model of
+        InitializingModel _ ->
+            InitializingModel session
+
+        FailedModel _ ->
+            FailedModel session
+
+        ReadyModel modelData ->
+            ReadyModel { modelData | session = session }
 
 
 expandCollapseProject : Project -> Set Int -> Set Int
@@ -128,62 +139,71 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        NoOp ->
+    case ( msg, model ) of
+        ( NoOp, _ ) ->
             ( model, Cmd.none )
 
-        LoadCurrentProjects ->
-            ( { model | mainViewState = LoadingState }, getCurrentProjectsRequest )
+        ( LoadCurrentProjects, ReadyModel _ ) ->
+            ( InitializingModel (toSession model), getCurrentProjectsRequest )
 
-        LoadArchivedProjects ->
-            ( { model | mainViewState = LoadingState }, getArchivedProjectsRequest )
+        ( LoadArchivedProjects, ReadyModel _ ) ->
+            ( InitializingModel (toSession model), getArchivedProjectsRequest )
 
-        AllDataReceived projectsType (Ok allData) ->
-            ( { model
-                | projects = allData.projects
+        ( AllDataReceived projectsType (Ok allData), InitializingModel session ) ->
+            ( ReadyModel
+                { projects = allData.projects
                 , workers = allData.workers
                 , statuses = allData.statuses
                 , clients = allData.clients
                 , projectsType = projectsType
                 , mainViewState = SuccessState
-              }
+                , session = session
+                , expandedProjects = Set.empty
+                }
             , Cmd.none
             )
 
-        AllDataReceived _ (Err error) ->
-            ( { model | mainViewState = FailureState }, Cmd.none )
+        ( AllDataReceived _ (Err error), InitializingModel session ) ->
+            ( FailedModel session, Cmd.none )
 
-        NewProject ->
+        ( NewProject, _ ) ->
             ( model, Cmd.none )
 
-        ExpandCollapseProject project ->
-            ( { model | expandedProjects = expandCollapseProject project model.expandedProjects }, Cmd.none )
+        ( ExpandCollapseProject project, ReadyModel modelData ) ->
+            ( ReadyModel { modelData | expandedProjects = expandCollapseProject project modelData.expandedProjects }
+            , Cmd.none
+            )
 
-        SelectTaskWorker task workerId ->
-            ( { model | mainViewState = LoadingState }
+        ( SelectTaskWorker task workerId, ReadyModel modelData ) ->
+            ( ReadyModel { modelData | mainViewState = LoadingState }
             , changeTaskWorkerRequest task workerId
             )
 
-        SelectTaskStatus task statusId ->
-            ( { model | mainViewState = LoadingState }
+        ( SelectTaskStatus task statusId, ReadyModel modelData ) ->
+            ( ReadyModel { modelData | mainViewState = LoadingState }
             , changeTaskStatusRequest task statusId
             )
 
-        TaskUpdated (Err error) ->
-            ( { model | mainViewState = FailureState }, Cmd.none )
+        ( TaskUpdated (Err error), ReadyModel _ ) ->
+            ( FailedModel (toSession model), Cmd.none )
 
-        TaskUpdated (Ok task) ->
-            ( { model | mainViewState = SuccessState } |> modifyTask task, Cmd.none )
+        ( TaskUpdated (Ok task), ReadyModel modelData ) ->
+            ( ReadyModel ({ modelData | mainViewState = SuccessState } |> modifyTask task)
+            , Cmd.none
+            )
+
+        ( _, _ ) ->
+            ( model, Cmd.none )
 
 
-modifyTask : ProjectTask -> Model -> Model
-modifyTask task model =
-    modifyProjectById task.project_id model (modifyTaskInProject task)
+modifyTask : ProjectTask -> ModelData -> ModelData
+modifyTask task modelData =
+    modifyProjectById task.project_id modelData (modifyTaskInProject task)
 
 
-modifyProjectById : Int -> Model -> (Project -> Project) -> Model
-modifyProjectById projectId model func =
-    { model
+modifyProjectById : Int -> ModelData -> (Project -> Project) -> ModelData
+modifyProjectById projectId modelData func =
+    { modelData
         | projects =
             List.map
                 (\p ->
@@ -193,7 +213,7 @@ modifyProjectById projectId model func =
                     else
                         p
                 )
-                model.projects
+                modelData.projects
     }
 
 
@@ -291,27 +311,31 @@ allDataDecoder =
 
 view : Model -> Element Msg
 view model =
-    if model.mainViewState == FailureState then
-        el [] (text "wystąpił błąd (sprawdź połączenie)")
+    case model of
+        InitializingModel _ ->
+            el [] (text "ładowanie...")
 
-    else
-        let
-            loadingArgs =
-                if model.mainViewState == LoadingState then
-                    [ alpha 0.2, htmlAttribute (Html.Attributes.style "pointer-events" "none") ]
+        FailedModel _ ->
+            el [] (text "wystąpił błąd (sprawdź połączenie)")
 
-                else
-                    []
-        in
-        column (width fill :: loadingArgs)
-            (toolBar model :: List.map (projectView model) model.projects)
+        ReadyModel modelData ->
+            let
+                loadingArgs =
+                    if modelData.mainViewState == LoadingState then
+                        [ alpha 0.2, htmlAttribute (Html.Attributes.style "pointer-events" "none") ]
+
+                    else
+                        []
+            in
+            column (width fill :: loadingArgs)
+                (toolBar modelData :: List.map (projectView modelData) modelData.projects)
 
 
-projectView : Model -> Project -> Element Msg
-projectView model project =
+projectView : ModelData -> Project -> Element Msg
+projectView modelData project =
     let
         isExpanded =
-            Set.member project.id model.expandedProjects
+            Set.member project.id modelData.expandedProjects
 
         icon =
             if isExpanded then
@@ -322,7 +346,7 @@ projectView model project =
 
         subTasks =
             if isExpanded then
-                List.map (\task -> taskView model task) project.tasks
+                List.map (\task -> taskView modelData task) project.tasks
 
             else
                 []
@@ -337,7 +361,7 @@ projectView model project =
                 , finished = ProjectTask.sumFinished project.tasks
                 , total = Project.price project
                 }
-            , el [ alignRight ] (text (Dates.displayDate (toSession model) project.deadline))
+            , el [ alignRight ] (text (Dates.displayDate (toSession (ReadyModel modelData)) project.deadline))
             ]
         , column
             [ width fill
@@ -347,18 +371,18 @@ projectView model project =
         ]
 
 
-taskView : Model -> ProjectTask -> Element Msg
-taskView model task =
+taskView : ModelData -> ProjectTask -> Element Msg
+taskView modelData task =
     row [ width fill ]
         [ el [] (text task.name)
         , el [ alignRight ] (text (Currency.format task.price ++ "zł"))
-        , selectWorker model task
-        , selectStatus model task
+        , selectWorker modelData task
+        , selectStatus modelData task
         ]
 
 
-selectStatus : Model -> ProjectTask -> Element Msg
-selectStatus model task =
+selectStatus : ModelData -> ProjectTask -> Element Msg
+selectStatus modelData task =
     html
         (Html.select [ Html.Events.onInput (SelectTaskStatus task) ]
             (Html.option [] []
@@ -370,13 +394,13 @@ selectStatus model task =
                             ]
                             [ Html.text status.name ]
                     )
-                    model.statuses
+                    modelData.statuses
             )
         )
 
 
-selectWorker : Model -> ProjectTask -> Element Msg
-selectWorker model task =
+selectWorker : ModelData -> ProjectTask -> Element Msg
+selectWorker modelData task =
     html
         (Html.select [ Html.Events.onInput (SelectTaskWorker task) ]
             (Html.option [] []
@@ -388,7 +412,7 @@ selectWorker model task =
                             ]
                             [ Html.text worker.name ]
                     )
-                    model.workers
+                    modelData.workers
             )
         )
 
@@ -402,17 +426,17 @@ pricesMini header prices =
         ]
 
 
-toolBar : Model -> Element Msg
-toolBar model =
+toolBar : ModelData -> Element Msg
+toolBar modelData =
     column [ width fill ]
         [ row [ width fill ]
             [ el [] (text "expand")
             , el [] (text "search")
             , el []
                 (pricesMini "Suma kwot za wszystkie zlecenia"
-                    { paid = Project.sumPaid model.projects
-                    , finished = Project.sumFinished model.projects
-                    , total = Project.sumPrice model.projects
+                    { paid = Project.sumPaid modelData.projects
+                    , finished = Project.sumFinished modelData.projects
+                    , total = Project.sumPrice modelData.projects
                     }
                 )
             ]
@@ -424,7 +448,7 @@ toolBar model =
                 }
             , el [ alignRight ]
                 (button
-                    (case model.projectsType of
+                    (case modelData.projectsType of
                         CurrentProjects ->
                             { label = "wyświetlam bierzące"
                             , onPress = LoadArchivedProjects
