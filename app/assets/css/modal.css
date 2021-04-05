@@ -8,6 +8,14 @@
     z-index: 100;
 }
 
+@media(max-width: 800px) {
+    .modal {
+        left: 0;
+        width: 100%;
+        margin: 0;
+    }
+}
+
 .modal .modal-content {
     box-shadow: -2px 4px 12px 0 rgba(0, 0, 0, 0.05);
     overflow: hidden;
